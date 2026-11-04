@@ -16,6 +16,26 @@ const SUGERENCIAS_INTERES = {
   escenario: { es: 'Ofrécele contar o representar historias ante el grupo.', en: 'Invite them to tell or act out stories for the group.' },
 }
 
+// Ideas para casa (informe sencillo para docente y familia)
+const CASA_INTERES = {
+  taller: { es: 'Construid juntos algo con materiales de casa (cajas, tapones, cuerdas).', en: 'Build something together with household materials.' },
+  selva: { es: 'Salid a observar plantas o animales y que os cuente lo que ve.', en: 'Go outside to observe plants or animals and let them tell you what they see.' },
+  arte: { es: 'Dejad papel y colores a mano: que dibuje lo que ha hecho en el día.', en: 'Keep paper and colours handy: let them draw their day.' },
+  hospital: { es: 'Dadle pequeñas responsabilidades de cuidado (una planta, ayudar a un hermano).', en: 'Give them small caring tasks (a plant, helping a sibling).' },
+  mercado: { es: 'Que os ayude con la compra: contar dinero, comparar precios.', en: 'Let them help with shopping: counting money, comparing prices.' },
+  escenario: { es: 'Pedidle que os cuente cuentos o historias de vuestro país.', en: 'Ask them to tell you stories from your home country.' },
+}
+
+// Vocabulario técnico para el informe del psicólogo o psicopedagogo
+// (áreas de referencia: escalas de desarrollo tipo MP-R, competencias CASEL, pensamiento divergente)
+export const TERMINO_TECNICO = {
+  logica: { es: 'Área cognitiva · razonamiento lógico y reconocimiento de patrones', en: 'Cognitive · logical reasoning and pattern recognition' },
+  perseverancia: { es: 'Persistencia en la tarea · autorregulación ante el error', en: 'Task persistence · self-regulation after errors' },
+  creatividad: { es: 'Pensamiento divergente · fluidez, flexibilidad y originalidad', en: 'Divergent thinking · fluency, flexibility and originality' },
+  comunicacion: { es: 'Lenguaje y comunicación · reconocimiento emocional y toma de perspectiva', en: 'Language and communication · emotion recognition and perspective taking' },
+  colaboracion: { es: 'Área socioemocional · cooperación y conducta prosocial', en: 'Social-emotional · cooperation and prosocial behaviour' },
+}
+
 // Resumen agregado y anónimo: es lo único que se enviaría a la IA (sin avatar ni identificadores)
 export function resumenParaIA(jugador) {
   const p = jugador.partidas
@@ -122,8 +142,11 @@ export function informeSinIA(jugador, idioma) {
     sugerencias.push(en ? 'Responds well to challenges they can retry: give chances to improve their own work.' : 'Responde bien a retos que puede repetir: dale oportunidades de mejorar su propio trabajo.')
   }
 
+  const casa = jugador.intereses.map((id) => CASA_INTERES[id]?.[en ? 'en' : 'es']).filter(Boolean)
+
   return {
     generadoConIA: false,
+    casa,
     actividad: { partidas: r.partidas, dias: r.dias, preferido: preferido && preferido[1] > 0 ? preferido : null },
     capacidades,
     intereses: jugador.intereses.map((id) => ISLAS.find((i) => i.id === id)).filter(Boolean),

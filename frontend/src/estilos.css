@@ -63,3 +63,4 @@ h2 { font-size: 1.15rem; margin: 0 0 6px; }
 .casilla.nivel .numero { font-size: 1.4rem; font-weight: 800; }
 .casilla.nivel .estrellas { font-size: .7rem; letter-spacing: -1px; }
 .capacidad.apagada { opacity: .6; }
+.tecnico { color: #666; font-size: .85rem; margin: -2px 0 6px; font-style: italic; }

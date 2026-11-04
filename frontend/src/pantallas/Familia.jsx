@@ -1,7 +1,8 @@
 import { hablar } from '../i18n.js'
 import { INSIGNIAS, estrellasTotales } from '../progreso.js'
 
-// Resumen para la familia: solo en positivo, en su idioma, con voz.
+// Informe sencillo para el docente y la familia (decisión de Delia, 4 nov):
+// solo en positivo, sin términos técnicos, en su idioma y con voz.
 export default function Familia({ jugador, informe, idioma, t, onBorrar }) {
   if (!jugador) return <div className="pantalla"><p>{t('sin_jugadores')}</p></div>
   const fortalezas = informe.capacidades.filter((c) => c.destaca)
@@ -27,9 +28,17 @@ export default function Familia({ jugador, informe, idioma, t, onBorrar }) {
         <p className="grande">{informe.intereses.map((i) => i.emoji).join(' ')}</p>
       </div>
       <div className="tarjeta">
+        <h2>🏫 {t('sugerencias')}</h2>
+        <ul>
+          {informe.sugerencias.map((s) => (
+            <li key={s}>{s}</li>
+          ))}
+        </ul>
+      </div>
+      <div className="tarjeta">
         <h2>🏠 {t('familia_casa')}</h2>
         <ul>
-          {informe.sugerencias.slice(0, 2).map((s) => (
+          {informe.casa.map((s) => (
             <li key={s}>{s}</li>
           ))}
         </ul>

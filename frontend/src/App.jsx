@@ -114,8 +114,8 @@ export default function App() {
             {jugador && (
               <button className={pantalla === 'mapa' ? 'activo' : ''} onClick={() => setPantalla('mapa')} title={t('mapa_juegos')}>🗺️</button>
             )}
-            <button className={pantalla === 'panel' ? 'activo' : ''} onClick={() => setPantalla('panel')} title={t('ver_panel')}>🧑‍🏫</button>
-            <button className={pantalla === 'familia' ? 'activo' : ''} onClick={() => setPantalla('familia')} title={t('ver_familia')}>👨‍👩‍👧</button>
+            <button className={pantalla === 'panel' ? 'activo' : ''} onClick={() => setPantalla('panel')} title={t('ver_panel')}>🧠</button>
+            <button className={pantalla === 'familia' ? 'activo' : ''} onClick={() => setPantalla('familia')} title={t('ver_familia')}>🏫</button>
           </nav>
         )}
       </header>
@@ -153,6 +153,7 @@ export default function App() {
             estado={estado}
             jugador={jugador ?? estado.jugadores[0]}
             informe={jugador ? informe : estado.jugadores[0] && informeSinIA(estado.jugadores[0], estado.idioma)}
+            idioma={estado.idioma}
             t={t}
             elegirJugador={(id) => elegirJugador(id, 'panel')}
             validar={(cap, valor) => actualizarJugador({ ...jugador, validaciones: { ...jugador.validaciones, [cap]: valor } })}

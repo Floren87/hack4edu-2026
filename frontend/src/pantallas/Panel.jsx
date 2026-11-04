@@ -1,9 +1,10 @@
 import { useState } from 'react'
+import { TERMINO_TECNICO } from '../informe.js'
 
-// Panel del profesional. Reglas del Reto 20:
+// Informe técnico para el psicólogo o psicopedagogo (decisión de Delia, 4 nov). Reglas del Reto 20:
 // - sin notas numéricas ni etiquetas; solo fortalezas con su evidencia y su evolución
 // - la IA SUGIERE; el profesional valida cada observación (no hay decisiones automáticas)
-export default function Panel({ estado, jugador, informe, t, elegirJugador, validar, onGenerarIA, cargandoIA }) {
+export default function Panel({ estado, jugador, informe, idioma, t, elegirJugador, validar, onGenerarIA, cargandoIA }) {
   const [abierta, setAbierta] = useState(null)
   const hayAPI = Boolean(import.meta.env.VITE_API_URL)
 
@@ -45,6 +46,7 @@ export default function Panel({ estado, jugador, informe, t, elegirJugador, vali
             {c.destaca ? '⭐ ' : ''}
             {t('cap_' + c.id)}
           </h2>
+          <p className="tecnico">{TERMINO_TECNICO[c.id]?.[idioma === 'en' ? 'en' : 'es']}</p>
           <p>{c.observado ? c.texto : t('no_observado')}</p>
           {c.observado && (
             <>
