@@ -25,8 +25,10 @@ Según la [guía de Web Services](https://render.com/docs/web-services):
 3. Build Command:
 
 ```sh
-npm --prefix backend ci && npm --prefix backend run build && npm --prefix app ci && npm --prefix app run build
+npm --prefix backend ci --include=dev && npm --prefix backend run build && npm --prefix app ci --include=dev && npm --prefix app run build
 ```
+
+`--include=dev` es intencionado: con `NODE_ENV=production`, npm puede omitir TypeScript y las herramientas necesarias para compilar.
 
 4. Start Command:
 
