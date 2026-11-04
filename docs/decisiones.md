@@ -4,6 +4,7 @@ Una línea por decisión, la más reciente arriba. Las IAs del equipo leen este 
 
 | Fecha | Decisión | Quién |
 |---|---|---|
+| 2026-11-04 | **Alcance aprobado en sesión:** backend TypeScript en `feat/backend`, basado en lo último de `develop`. Registro con usuario inventado y contraseña, alumnos con pseudónimos y estado actual. Misma cuenta en modo profesional/niño; salir del niño requiere contraseña comprobada por servidor. Sin offline ni historial complejo. Frontend sin modificar en este paso; integración posterior documentada. SQLite/libSQL local y remoto para despliegue gratuito Render + Turso. | Usuario + Codex |
 | 2026-11-04 | **Ramas:** `main` no se toca hasta tener una versión comprobada. Todo el trabajo entra por PR en `develop`, que ya reúne todas las ramas abiertas (PR #1, #2, #13, #14 y #15, más `feat/ingles-historial-profesional`). Al final, `develop` → `main`. | Floren |
 | 2026-11-04 | **Una sola app:** la oficial es el prototipo de Delia, ahora en `app/`. Se retira el esqueleto `frontend/` (PR #2). GitHub Pages despliega `app/`. | Floren |
 | 2026-11-04 | _Propuesta para revisión_: continuar el prototipo de Delia en una rama independiente, completar ES/EN y valorar FastAPI + SQLite para cuentas profesionales e historial de evaluaciones versionadas. Backend todavía no implementado; alcance y contrato en `docs/backend-profesionales.md`. | Sesión con Codex |

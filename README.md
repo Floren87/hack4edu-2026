@@ -14,9 +14,19 @@ Proyecto del equipo para el **#Hack4Edu 2026** (ProFuturo + UPSA), **Reto 20**. 
 | 👨‍👩‍👧 **Familia** | Resumen sencillo y en positivo, con ideas para casa, descargable e imprimible. |
 
 - **Idiomas:** español, inglés, francés, árabe (de derecha a izquierda) y ucraniano. Textos con voz, usando la síntesis de voz del dispositivo. El inglés está completo; FR, AR y UK cubren los textos del prototipo original.
-- **Sin servidor ni cuentas:** todo se guarda en el navegador (`localStorage`). Nada sale del dispositivo.
+- **Frontend actual:** sigue guardando los datos en `localStorage`. El backend de cuentas y alumnos está implementado en `backend/`, pero aún no está conectado a estas pantallas.
 - **Sin conexión:** es una PWA instalable. En producción, un *service worker* guarda la app en caché.
 - **Informes por reglas locales** (`src/utils/aiPedagogy.ts`): no se llama a ningún servicio de IA externo.
+
+## Backend conectado (integración pendiente)
+
+La rama `feat/backend` añade TypeScript + Fastify + SQLite/libSQL: registro sin identidad real, login, alumnos privados por cuenta y modo niño cuya salida requiere contraseña. Guarda solo el estado actual. No se ha modificado `app/`.
+
+- [Arranque, API y pruebas del backend](backend/README.md).
+- [Cambios que necesita el frontend](docs/integracion-backend.md).
+- [Despliegue gratuito para la demo](docs/despliegue-demo.md).
+
+El flujo conectado será online; la PWA actual deberá desactivarse en el siguiente paso. Hasta integrar la UI, publicar el backend no añade login a las pantallas.
 
 ## Instalación y uso
 **Requisitos:** [Node.js](https://nodejs.org/) **22.12 o posterior** (con npm) y Git. Con Node 18 o 20 el build falla.

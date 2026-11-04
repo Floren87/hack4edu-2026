@@ -20,6 +20,7 @@ Qué está pasando ahora mismo. Cada persona (o su IA) añade una línea al term
 ## Diario
 | Fecha y hora (zona) | Quién | Qué hizo | Qué queda |
 |---|---|---|---|
+| 2026-11-04 (Bogotá) | Codex | Implementa `feat/backend`: TypeScript/Fastify, cuentas, alumnos aislados, estado actual y modo niño protegido por contraseña. API, plan de integración y despliegue gratuito documentados; frontend sin cambios. | Revisar PR; integrar frontend online; desplegar y probar con público. |
 | 2026-11-04 (Madrid) | Floren + Claude | Crea `develop` y fusiona todas las ramas. Deja una sola app (`app/`, la de Delia), borra `frontend/` y restos de AI Studio, añade CI y rehace README, AGENTS, CONTRIBUTING y propuesta. Verificado con Node 22: lint, 3 tests, build y 2 e2e en verde. | Cerrar los PR antiguos (ya están en `develop`), proteger `develop` y empezar las mejoras. |
 | 2026-11-04 (Bogotá) | Codex, sesión local | Parte del prototipo de Delia (`3f1c457`) en `feat/ingles-historial-profesional`; completa textos ES/EN, adapta exportaciones e incorpora propuesta de cuentas e historial. | Revisar PR y aprobar alcance del backend antes de implementarlo. |
 | 2026-11-04 (Madrid) | Floren | Crea el repo: README, AGENTS.md, plantillas y reglas de `main`. | Invitar a Cristina, Delia y Miguel; decidir la idea en la llamada. |
