@@ -1,6 +1,6 @@
 import type { Language } from '../../types';
 import { localizeText as text } from '../../i18n/localize';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { translations } from '../../i18n/translations';
 import { soundManager } from '../../utils/soundEffects';
@@ -52,6 +52,12 @@ export const CreativityGame: React.FC = () => {
   const [completed, setCompleted] = useState(false);
   const [startTime] = useState(Date.now());
   const [originalMovesCount, setOriginalMovesCount] = useState(0);
+  const [repositionCount, setRepositionCount] = useState(0);
+  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
+  const workshopRef = useRef<HTMLDivElement>(null);
+  // Arrastre en curso: dónde empezó el puntero y la pieza, y si ya se ha movido.
+  const dragRef = useRef<{ index: number; pointerId: number; startX: number; startY: number; itemX: number; itemY: number; size: number; moved: boolean } | null>(null);
+  const lastKeyboardMoveRef = useRef(0);
 
   // Add initial item
   useEffect(() => {
@@ -61,16 +67,118 @@ export const CreativityGame: React.FC = () => {
     ]);
   }, []);
 
+  // Tamaño aproximado de una pieza (emoji de 36 px + relleno) para que no se salga de la mesa.
+  const PIECE_SIZE = 56;
+  const DRAG_THRESHOLD = 5;
+  const KEYBOARD_STEP = 10;
+
+  const clampToWorkshop = (x: number, y: number, size = PIECE_SIZE) => {
+    const area = workshopRef.current;
+    const maxX = Math.max(0, (area?.clientWidth ?? 400) - size);
+    const maxY = Math.max(0, (area?.clientHeight ?? 300) - size);
+    return { x: Math.min(Math.max(0, x), maxX), y: Math.min(Math.max(0, y), maxY) };
+  };
+
+  const countReposition = () => {
+    setRepositionCount(prev => prev + 1);
+    setOriginalMovesCount(prev => prev + 1);
+  };
+
+  const moveItem = (index: number, x: number, y: number, size?: number) => {
+    const pos = clampToWorkshop(x, y, size);
+    setPlacedItems(prev => prev.map((item, idx) => (idx === index ? { ...item, ...pos } : item)));
+  };
+
+  const handlePiecePointerDown = (event: React.PointerEvent<HTMLDivElement>, index: number) => {
+    if (event.button !== 0) return;
+    const item = placedItems[index];
+    if (!item) return;
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch {
+      // Algunos navegadores antiguos no permiten capturar el puntero; el arrastre sigue funcionando.
+    }
+    dragRef.current = {
+      index,
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      itemX: item.x,
+      itemY: item.y,
+      size: Math.max(event.currentTarget.offsetWidth, event.currentTarget.offsetHeight),
+      moved: false,
+    };
+    if (selectedItemIndex !== index) soundManager.playPop();
+    setSelectedItemIndex(index);
+  };
+
+  const handlePiecePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
+    if (!drag.moved && Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
+    if (!drag.moved) {
+      drag.moved = true;
+      setDraggingIndex(drag.index);
+    }
+    moveItem(drag.index, drag.itemX + dx, drag.itemY + dy, drag.size);
+  };
+
+  const handlePiecePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    if (drag.moved) {
+      soundManager.playClick();
+      countReposition();
+    }
+    dragRef.current = null;
+    setDraggingIndex(null);
+  };
+
+  const handlePieceKeyDown = (event: React.KeyboardEvent<HTMLDivElement>, index: number) => {
+    const deltas: Record<string, [number, number]> = {
+      ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1],
+    };
+    const delta = deltas[event.key];
+    if (!delta) return;
+    event.preventDefault();
+    const step = event.shiftKey ? KEYBOARD_STEP * 3 : KEYBOARD_STEP;
+    const size = Math.max(event.currentTarget.offsetWidth, event.currentTarget.offsetHeight);
+    setSelectedItemIndex(index);
+    // Se parte de la posición más reciente para que varias pulsaciones rápidas se sumen.
+    setPlacedItems(prev => prev.map((item, idx) => (
+      idx === index ? { ...item, ...clampToWorkshop(item.x + delta[0] * step, item.y + delta[1] * step, size) } : item
+    )));
+    // Una serie seguida de pulsaciones cuenta como una sola recolocación.
+    const now = Date.now();
+    if (now - lastKeyboardMoveRef.current > 800) countReposition();
+    lastKeyboardMoveRef.current = now;
+  };
+
+  // Mantiene todas las piezas dentro de la mesa al abrir el juego y al cambiar el tamaño de la ventana.
+  useEffect(() => {
+    const fitAll = () => setPlacedItems(prev => prev.map(item => ({ ...item, ...clampToWorkshop(item.x, item.y) })));
+    fitAll();
+    window.addEventListener('resize', fitAll);
+    return () => window.removeEventListener('resize', fitAll);
+  }, []);
+
   const handleAddPart = (part: typeof AVAILABLE_PARTS[0]) => {
     soundManager.playPop();
+    const area = workshopRef.current;
+    const width = area?.clientWidth ?? 400;
+    const height = area?.clientHeight ?? 300;
     const newItem: WorkshopItem = {
       id: `${part.id}_${Date.now()}`,
       name: part.name,
       icon: part.icon,
       category: 'part',
       rotation: 0,
-      x: 120 + Math.floor(Math.random() * 160),
-      y: 100 + Math.floor(Math.random() * 120),
+      ...clampToWorkshop(
+        Math.floor(Math.random() * (width - PIECE_SIZE)),
+        Math.floor(Math.random() * (height - PIECE_SIZE)),
+      ),
     };
     setPlacedItems(prev => [...prev, newItem]);
     setSelectedItemIndex(placedItems.length);
@@ -117,10 +225,12 @@ export const CreativityGame: React.FC = () => {
       notesObserved: [
         text(language, "Ensambló un artefacto con {0} piezas no convencionales.", [placedItems.length]),
         purposeObj ? text(language, "Asignó propósito creativo: \"{0}\"", [purposeObj.label]) : text(language, "Exploró combinación libre de piezas."),
-        text(language, "Tiempo dedicado a la experimentación visual: {0}s.", [duration])
+        text(language, "Tiempo dedicado a la experimentación visual: {0}s.", [duration]),
+        ...(repositionCount > 0 ? [text(language, "Recolocó piezas {0} veces para probar combinaciones.", [repositionCount])] : [])
       ],
       metrics: {
         partsCount: placedItems.length,
+        repositionsCount: repositionCount,
         purposeSelected: selectedPurpose || 'libre',
         durationSec: duration,
       }
@@ -171,29 +281,40 @@ export const CreativityGame: React.FC = () => {
         <div className="md:col-span-2 rounded-3xl bg-slate-900/90 border-2 border-dashed border-indigo-700/50 p-4 relative min-h-[380px] flex flex-col justify-between overflow-hidden shadow-inner">
           <div className="absolute top-3 left-4 text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
             <span>{' '}{text(language, "🛠️ Mesa de Inventos")}{' '}</span>
-            <span className="text-[11px] font-normal text-slate-500">{' '}{text(language, "(Toca las piezas para rotar o mover)")}{' '}</span>
+            <span className="text-[11px] font-normal text-slate-500">{' '}{text(language, "(Arrastra las piezas para moverlas; tócalas para girarlas o quitarlas)")}{' '}</span>
           </div>
 
           {/* Interactive Workshop Area */}
-          <div className="relative w-full h-[300px] mt-6 bg-slate-950/60 rounded-2xl border border-slate-800/60 overflow-hidden">
+          <div ref={workshopRef} className="relative w-full h-[300px] mt-6 bg-slate-950/60 rounded-2xl border border-slate-800/60 overflow-hidden">
             {placedItems.map((item, idx) => {
               const isSelected = selectedItemIndex === idx;
+              const isDragging = draggingIndex === idx;
               return (
                 <div
                   key={item.id}
-                  onClick={() => {
-                    soundManager.playPop();
-                    setSelectedItemIndex(idx);
-                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={isSelected}
+                  aria-label={text(language, "Pieza {0}. Arrástrala o usa las flechas para moverla.", [item.name])}
+                  data-piece-id={item.id}
+                  onPointerDown={(event) => handlePiecePointerDown(event, idx)}
+                  onPointerMove={handlePiecePointerMove}
+                  onPointerUp={handlePiecePointerUp}
+                  onPointerCancel={handlePiecePointerUp}
+                  onKeyDown={(event) => handlePieceKeyDown(event, idx)}
+                  onFocus={() => setSelectedItemIndex(idx)}
                   style={{
                     left: `${item.x}px`,
                     top: `${item.y}px`,
                     transform: `rotate(${item.rotation}deg)`,
+                    touchAction: 'none',
                   }}
-                  className={`absolute cursor-pointer select-none transition-all duration-150 p-2 rounded-2xl flex items-center justify-center ${
-                    isSelected 
-                      ? 'ring-4 ring-amber-400 bg-indigo-900/40 scale-110 z-20' 
-                      : 'hover:scale-105 z-10'
+                  className={`absolute select-none p-2 rounded-2xl flex items-center justify-center outline-none focus-visible:ring-4 focus-visible:ring-sky-400 ${
+                    isDragging
+                      ? 'cursor-grabbing ring-4 ring-amber-400 bg-indigo-900/40 scale-125 z-30 shadow-2xl'
+                      : isSelected
+                        ? 'cursor-grab transition-all duration-150 ring-4 ring-amber-400 bg-indigo-900/40 scale-110 z-20'
+                        : 'cursor-grab transition-all duration-150 hover:scale-105 z-10'
                   }`}
                 >
                   <span className="text-4xl filter drop-shadow-lg">{item.icon}</span>
