@@ -1,3 +1,4 @@
+import { localizeText as text } from '../../i18n/localize';
 import React, { useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { useApp } from '../../context/AppContext';
@@ -7,6 +8,7 @@ import { AudioButton } from './AudioButton';
 
 export const BadgeModal: React.FC = () => {
   const { badgeModal, closeBadgeModal } = useApp();
+  const { language } = useApp();
 
   useEffect(() => {
     if (badgeModal) {
@@ -41,25 +43,23 @@ export const BadgeModal: React.FC = () => {
 
         <div className="flex items-center justify-center gap-1.5 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-1">
           <Award size={16} />
-          <span>¡Nueva Insignia Desbloqueada!</span>
+          <span>{' '}{text(language, "¡Nueva Insignia Desbloqueada!")}{' '}</span>
         </div>
 
         <h3 className="text-xl font-black text-white mb-2">
-          {badgeModal.name}
+          {' '}{text(language, badgeModal.name)}{' '}
         </h3>
 
         <p className="text-sm text-slate-300 mb-6 leading-relaxed">
-          {badgeModal.description}
+          {' '}{text(language, badgeModal.description)}{' '}
         </p>
 
         <div className="flex items-center justify-center gap-3">
-          <AudioButton textToSpeak={`${badgeModal.name}. ${badgeModal.description}`} size="lg" />
+          <AudioButton textToSpeak={`${text(language, badgeModal.name)}. ${text(language, badgeModal.description)}`} size="lg" />
           <button
             onClick={closeBadgeModal}
             className="flex-1 py-3 px-6 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 active:scale-95 transition-all"
-          >
-            ¡Genial, a seguir jugando!
-          </button>
+          >{' '}{text(language, "¡Genial, a seguir jugando!")}{' '}</button>
         </div>
       </div>
     </div>

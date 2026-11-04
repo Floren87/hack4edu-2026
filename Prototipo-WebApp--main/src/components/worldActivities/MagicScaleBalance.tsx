@@ -1,3 +1,5 @@
+import type { Language } from '../../types';
+import { localizeText as text } from '../../i18n/localize';
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { soundManager } from '../../utils/soundEffects';
@@ -12,14 +14,16 @@ interface BalanceWeight {
   mass: number;
 }
 
-const AVAILABLE_WEIGHTS: BalanceWeight[] = [
-  { id: 'sun_crystal', name: 'Cristal Solar Grande', icon: '☀️', mass: 4 },
-  { id: 'star_gem', name: 'Estrella Dorada', icon: '⭐', mass: 2 },
-  { id: 'moon_drop', name: 'Gota de Luna', icon: '💧', mass: 1 },
-];
+const getAVAILABLE_WEIGHTS = (language: Language): BalanceWeight[] => ([
+  { id: 'sun_crystal', name: text(language, "Cristal Solar Grande"), icon: '☀️', mass: 4 },
+  { id: 'star_gem', name: text(language, "Estrella Dorada"), icon: '⭐', mass: 2 },
+  { id: 'moon_drop', name: text(language, "Gota de Luna"), icon: '💧', mass: 1 },
+]);
 
 export const MagicScaleBalance: React.FC = () => {
   const { setView, logGameTelemetry, addStars } = useApp();
+  const { language } = useApp();
+  const AVAILABLE_WEIGHTS = getAVAILABLE_WEIGHTS('es');
   
   // Left pan has fixed target mass (e.g. 4)
   const [leftPanItems, setLeftPanItems] = useState<BalanceWeight[]>([AVAILABLE_WEIGHTS[0]]);
@@ -70,9 +74,9 @@ export const MagicScaleBalance: React.FC = () => {
       successRate: isBalanced ? 1 : 0.8,
       perseveranceScore: 0.9,
       notesObserved: [
-        `Equilibró la balanza mágica logrando una masa de ${leftMass} unidades sin usar números escritos.`,
-        'Demostró intuición de conservación de cantidad y pesos relativos mediante ensayo perceptivo.',
-        `Realizó ${adjustmentsCount} ajustes de masa en ${duration}s.`
+        text(language, "Equilibró la balanza mágica logrando una masa de {0} unidades sin usar números escritos.", [leftMass]),
+        text(language, "Demostró intuición de conservación de cantidad y pesos relativos mediante ensayo perceptivo."),
+        text(language, "Realizó {0} ajustes de masa en {1}s.", [adjustmentsCount, duration])
       ],
       metrics: {
         balanced: isBalanced,
@@ -95,26 +99,22 @@ export const MagicScaleBalance: React.FC = () => {
           className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition"
         >
           <ArrowLeft size={16} />
-          <span className="text-xs font-semibold">Volver a Mundos</span>
+          <span className="text-xs font-semibold">{' '}{text(language, "Volver a Mundos")}{' '}</span>
         </button>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-amber-300 bg-amber-950/80 px-2.5 py-1 rounded-full border border-amber-800">
-            🔢 Mundo Contar: Balanza de Cristales Mágicos
-          </span>
-          <AudioButton textToSpeak="Mundo Contar. Coloca cristales en el platillo derecho hasta que la balanza quede perfectamente nivelada y en equilibrio." />
+          <span className="text-xs font-semibold text-amber-300 bg-amber-950/80 px-2.5 py-1 rounded-full border border-amber-800">{' '}{text(language, "🔢 Mundo Contar: Balanza de Cristales Mágicos")}{' '}</span>
+          <AudioButton textToSpeak={text(language, "Mundo Contar. Coloca cristales en el platillo derecho hasta que la balanza quede perfectamente nivelada y en equilibrio.")} />
         </div>
       </div>
 
       {/* Banner */}
       <div className="rounded-3xl bg-gradient-to-r from-amber-950 via-slate-900 to-indigo-950 p-5 border border-amber-800/40 shadow-xl">
         <h1 className="text-2xl font-black text-white flex items-center gap-2">
-          <span>Balanza de Cristales Mágicos</span>
+          <span>{' '}{text(language, "Balanza de Cristales Mágicos")}{' '}</span>
           <Scale className="text-amber-400" size={20} />
         </h1>
-        <p className="text-sm text-amber-200/80 mt-1">
-          Sentido intuitivo de cantidad y conservación de masa sin números abstractos ni pruebas de cálculo escolar.
-        </p>
+        <p className="text-sm text-amber-200/80 mt-1">{' '}{text(language, "Sentido intuitivo de cantidad y conservación de masa sin números abstractos ni pruebas de cálculo escolar.")}{' '}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -123,7 +123,7 @@ export const MagicScaleBalance: React.FC = () => {
         <div className="md:col-span-2 rounded-3xl bg-slate-900/90 border border-slate-800 p-6 flex flex-col justify-between items-center min-h-[380px] shadow-xl relative overflow-hidden">
           
           <div className="text-xs font-bold text-slate-400">
-            {isBalanced ? '⚖️ ¡Equilibrio Perfecto!' : diff < 0 ? '◀ El lado izquierdo pesa más' : '▶ El lado derecho pesa más'}
+            {isBalanced ? text(language, "⚖️ ¡Equilibrio Perfecto!") : diff < 0 ? text(language, "◀ El lado izquierdo pesa más") : text(language, "▶ El lado derecho pesa más")}
           </div>
 
           {/* Scale Graphic Representation */}
@@ -142,7 +142,7 @@ export const MagicScaleBalance: React.FC = () => {
                 <div className="w-0.5 h-20 bg-slate-500" />
                 <div className="w-28 min-h-[50px] rounded-b-2xl bg-slate-800/95 border-2 border-amber-400/80 p-2 flex flex-wrap items-center justify-center gap-1 shadow-lg">
                   {leftPanItems.map((item, i) => (
-                    <span key={i} className="text-2xl" title={item.name}>{item.icon}</span>
+                    <span key={i} className="text-2xl" title={text(language, item.name)}>{item.icon}</span>
                   ))}
                 </div>
               </div>
@@ -156,13 +156,13 @@ export const MagicScaleBalance: React.FC = () => {
                       key={i}
                       onClick={() => handleRemoveRight(i)}
                       className="text-2xl hover:scale-125 transition-transform"
-                      title="Toca para quitar"
+                      title={text(language, "Toca para quitar")}
                     >
                       {item.icon}
                     </button>
                   ))}
                   {rightPanItems.length === 0 && (
-                    <span className="text-[10px] text-slate-500">Vacío</span>
+                    <span className="text-[10px] text-slate-500">{' '}{text(language, "Vacío")}{' '}</span>
                   )}
                 </div>
               </div>
@@ -175,17 +175,13 @@ export const MagicScaleBalance: React.FC = () => {
 
           </div>
 
-          <div className="text-[11px] text-slate-400">
-            Toca los objetos del plato derecho si deseas retirarlos.
-          </div>
+          <div className="text-[11px] text-slate-400">{' '}{text(language, "Toca los objetos del plato derecho si deseas retirarlos.")}{' '}</div>
 
         </div>
 
         {/* Weights Selector */}
         <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 space-y-4">
-          <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
-            Añadir Cristales al Plato Derecho:
-          </span>
+          <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block">{' '}{text(language, "Añadir Cristales al Plato Derecho:")}{' '}</span>
 
           <div className="space-y-2">
             {AVAILABLE_WEIGHTS.map(weight => (
@@ -197,11 +193,11 @@ export const MagicScaleBalance: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{weight.icon}</span>
                   <div>
-                    <span className="text-xs font-bold text-white block">{weight.name}</span>
-                    <span className="text-[10px] text-slate-400">Masa equivalente: {'●'.repeat(weight.mass)}</span>
+                    <span className="text-xs font-bold text-white block">{text(language, weight.name)}</span>
+                    <span className="text-[10px] text-slate-400">{' '}{text(language, "Masa equivalente:")}{' '} {'●'.repeat(weight.mass)}</span>
                   </div>
                 </div>
-                <span className="text-xs font-bold text-cyan-400">+ Colocar</span>
+                <span className="text-xs font-bold text-cyan-400">{' '}{text(language, "+ Colocar")}{' '}</span>
               </button>
             ))}
           </div>
@@ -213,17 +209,15 @@ export const MagicScaleBalance: React.FC = () => {
               className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-black text-xs shadow-lg shadow-amber-400/20 disabled:opacity-40 transition-all active:scale-95 flex items-center justify-center gap-2"
             >
               <Check size={16} />
-              <span>{isBalanced ? '¡Balanza Equilibrada! Guardar (+2 ⭐)' : 'Nivela la balanza para guardar'}</span>
+              <span>{isBalanced ? text(language, "¡Balanza Equilibrada! Guardar (+2 ⭐)") : text(language, "Nivela la balanza para guardar")}</span>
             </button>
           ) : (
             <div className="p-3 rounded-2xl bg-emerald-950/60 border border-emerald-500 text-center space-y-2">
-              <p className="text-xs font-bold text-emerald-200">¡Equilibrio registrado en el informe de habilidades cuantitativas!</p>
+              <p className="text-xs font-bold text-emerald-200">{' '}{text(language, "¡Equilibrio registrado en el informe de habilidades cuantitativas!")}{' '}</p>
               <button
                 onClick={() => setView('worlds_map')}
                 className="w-full py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs"
-              >
-                Volver a Mundos
-              </button>
+              >{' '}{text(language, "Volver a Mundos")}{' '}</button>
             </div>
           )}
 

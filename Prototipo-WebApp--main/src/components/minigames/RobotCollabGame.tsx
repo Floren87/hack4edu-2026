@@ -1,3 +1,4 @@
+import { localizeText as text } from '../../i18n/localize';
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { translations } from '../../i18n/translations';
@@ -13,7 +14,7 @@ export const RobotCollabGame: React.FC = () => {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [bobiEnergy, setBobiEnergy] = useState(25);
   const [bobiMood, setBobiMood] = useState<'tired' | 'curious' | 'nervous' | 'happy'>('tired');
-  const [feedbackMsg, setFeedbackMsg] = useState('Bobi tiene poca energía y camina lento. ¡Comparte baterías de luz!');
+  const [feedbackMsg, setFeedbackMsg] = useState(text('es', "Bobi tiene poca energía y camina lento. ¡Comparte baterías de luz!"));
   const [startTime] = useState(Date.now());
   const [coopActionsCount, setCoopActionsCount] = useState(0);
 
@@ -24,7 +25,7 @@ export const RobotCollabGame: React.FC = () => {
       const next = prev + 35;
       if (next >= 90) {
         setBobiMood('curious');
-        setFeedbackMsg('¡Bobi recuperó su luz! Ahora necesita reparar un engranaje flojo.');
+        setFeedbackMsg(text('es', "¡Bobi recuperó su luz! Ahora necesita reparar un engranaje flojo."));
         setTimeout(() => setStep(2), 1000);
       }
       return next;
@@ -38,11 +39,11 @@ export const RobotCollabGame: React.FC = () => {
     if (isCorrectTool) {
       soundManager.playSparkle();
       setBobiMood('nervous');
-      setFeedbackMsg('¡Buen trabajo en equipo! Pero salieron chispas y Bobi se asustó. Dale calma con un abrazo o choque de manos.');
+      setFeedbackMsg(text('es', "¡Buen trabajo en equipo! Pero salieron chispas y Bobi se asustó. Dale calma con un abrazo o choque de manos."));
       setTimeout(() => setStep(3), 1000);
     } else {
       soundManager.playPop();
-      setFeedbackMsg('Bobi mira esa herramienta con curiosidad pero necesita apretar tuercas con la llave.');
+      setFeedbackMsg(text('es', "Bobi mira esa herramienta con curiosidad pero necesita apretar tuercas con la llave."));
     }
   };
 
@@ -51,7 +52,7 @@ export const RobotCollabGame: React.FC = () => {
     soundManager.playSparkle();
     setBobiMood('happy');
     setCoopActionsCount(prev => prev + 1);
-    setFeedbackMsg('¡Bobi sonríe feliz y su nave vuelve a encenderse gracias a ti!');
+    setFeedbackMsg(text('es', "¡Bobi sonríe feliz y su nave vuelve a encenderse gracias a ti!"));
     
     const duration = Math.round((Date.now() - startTime) / 1000);
     try {
@@ -68,9 +69,9 @@ export const RobotCollabGame: React.FC = () => {
       successRate: 1,
       perseveranceScore: 0.95,
       notesObserved: [
-        'Completó los 3 hitos de ayuda cooperativa con el robot Bobi.',
-        'Atendió a las necesidades energéticas, instrumentales y socioemocionales de su compañero.',
-        'Demostró empatía ante gestos de nerviosismo y sintonía prosocial.'
+        text(language, "Completó los 3 hitos de ayuda cooperativa con el robot Bobi."),
+        text(language, "Atendió a las necesidades energéticas, instrumentales y socioemocionales de su compañero."),
+        text(language, "Demostró empatía ante gestos de nerviosismo y sintonía prosocial.")
       ],
       metrics: {
         cooperativeSteps: 3,
@@ -97,10 +98,8 @@ export const RobotCollabGame: React.FC = () => {
         </button>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-emerald-300 bg-emerald-950/80 px-2.5 py-1 rounded-full border border-emerald-800">
-            🤝 Minijuego 4: Colaboración
-          </span>
-          <AudioButton textToSpeak={`${t.gameRobotTitle}. ${feedbackMsg}`} />
+          <span className="text-xs font-semibold text-emerald-300 bg-emerald-950/80 px-2.5 py-1 rounded-full border border-emerald-800">{' '}{text(language, "🤝 Minijuego 4: Colaboración")}{' '}</span>
+          <AudioButton textToSpeak={`${t.gameRobotTitle}. ${text(language, feedbackMsg)}`} />
         </div>
       </div>
 
@@ -154,10 +153,10 @@ export const RobotCollabGame: React.FC = () => {
                 {bobiMood === 'happy' && '🤖'}
               </div>
               <div className="flex items-center gap-1.5">
-                {bobiMood === 'tired' && <span className="text-xs font-bold text-slate-400">💤 Necesito energía...</span>}
-                {bobiMood === 'curious' && <span className="text-xs font-bold text-cyan-300">⚙️ ¿Apretamos la tuerca?</span>}
-                {bobiMood === 'nervous' && <span className="text-xs font-bold text-amber-300">⚡ ¡Chispas!</span>}
-                {bobiMood === 'happy' && <span className="text-xs font-bold text-emerald-300">✨ ¡Gracias, amigo!</span>}
+                {bobiMood === 'tired' && <span className="text-xs font-bold text-slate-400">{' '}{text(language, "💤 Necesito energía...")}{' '}</span>}
+                {bobiMood === 'curious' && <span className="text-xs font-bold text-cyan-300">{' '}{text(language, "⚙️ ¿Apretamos la tuerca?")}{' '}</span>}
+                {bobiMood === 'nervous' && <span className="text-xs font-bold text-amber-300">{' '}{text(language, "⚡ ¡Chispas!")}{' '}</span>}
+                {bobiMood === 'happy' && <span className="text-xs font-bold text-emerald-300">{' '}{text(language, "✨ ¡Gracias, amigo!")}{' '}</span>}
               </div>
             </div>
           </div>
@@ -174,20 +173,18 @@ export const RobotCollabGame: React.FC = () => {
         {/* Action Controls for child */}
         <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 flex flex-col justify-between space-y-4">
           <div className="space-y-3">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-              Misión de Cooperación:
-            </span>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">{' '}{text(language, "Misión de Cooperación:")}{' '}</span>
 
             {/* Step 1 Actions */}
             {step === 1 && (
               <div className="space-y-3">
-                <p className="text-xs text-slate-300">Toca las orbes de energía para compartirlas con Bobi:</p>
+                <p className="text-xs text-slate-300">{' '}{text(language, "Toca las orbes de energía para compartirlas con Bobi:")}{' '}</p>
                 <button
                   onClick={handleShareEnergy}
                   className="w-full py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all active:scale-95"
                 >
                   <span className="text-lg">⚡</span>
-                  <span>Compartir Batería Solar (+35%)</span>
+                  <span>{' '}{text(language, "Compartir Batería Solar (+35%)")}{' '}</span>
                 </button>
               </div>
             )}
@@ -195,7 +192,7 @@ export const RobotCollabGame: React.FC = () => {
             {/* Step 2 Actions */}
             {step === 2 && (
               <div className="space-y-2">
-                <p className="text-xs text-slate-300">¿Qué herramienta le entregas a Bobi para reparar la tuerca?</p>
+                <p className="text-xs text-slate-300">{' '}{text(language, "¿Qué herramienta le entregas a Bobi para reparar la tuerca?")}{' '}</p>
                 <div className="grid grid-cols-1 gap-2 pt-1">
                   <button
                     onClick={() => handleSelectTool(true)}
@@ -203,8 +200,8 @@ export const RobotCollabGame: React.FC = () => {
                   >
                     <Wrench size={20} className="text-emerald-400" />
                     <div>
-                      <span className="text-xs font-bold text-white block">Llave inglesa de ajuste</span>
-                      <span className="text-[10px] text-slate-400">Para tuercas y tornillos</span>
+                      <span className="text-xs font-bold text-white block">{' '}{text(language, "Llave inglesa de ajuste")}{' '}</span>
+                      <span className="text-[10px] text-slate-400">{' '}{text(language, "Para tuercas y tornillos")}{' '}</span>
                     </div>
                   </button>
                   <button
@@ -213,8 +210,8 @@ export const RobotCollabGame: React.FC = () => {
                   >
                     <span className="text-xl">🖌️</span>
                     <div>
-                      <span className="text-xs font-bold text-slate-300 block">Pincel de acuarelas</span>
-                      <span className="text-[10px] text-slate-400">Para pintar cuadros</span>
+                      <span className="text-xs font-bold text-slate-300 block">{' '}{text(language, "Pincel de acuarelas")}{' '}</span>
+                      <span className="text-[10px] text-slate-400">{' '}{text(language, "Para pintar cuadros")}{' '}</span>
                     </div>
                   </button>
                   <button
@@ -223,8 +220,8 @@ export const RobotCollabGame: React.FC = () => {
                   >
                     <span className="text-xl">💧</span>
                     <div>
-                      <span className="text-xs font-bold text-slate-300 block">Vaso de agua</span>
-                      <span className="text-[10px] text-slate-400">Podría oxidar el motor</span>
+                      <span className="text-xs font-bold text-slate-300 block">{' '}{text(language, "Vaso de agua")}{' '}</span>
+                      <span className="text-[10px] text-slate-400">{' '}{text(language, "Podría oxidar el motor")}{' '}</span>
                     </div>
                   </button>
                 </div>
@@ -234,13 +231,13 @@ export const RobotCollabGame: React.FC = () => {
             {/* Step 3 Actions */}
             {step === 3 && (
               <div className="space-y-3">
-                <p className="text-xs text-slate-300">Bobi está asustado por las chispas. ¿Cómo le transmites calma?</p>
+                <p className="text-xs text-slate-300">{' '}{text(language, "Bobi está asustado por las chispas. ¿Cómo le transmites calma?")}{' '}</p>
                 <button
                   onClick={handleReassureBobi}
                   className="w-full py-3.5 rounded-2xl bg-rose-500 hover:bg-rose-400 text-slate-950 font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-rose-500/20 transition-all active:scale-95"
                 >
                   <Heart size={16} />
-                  <span>Darle una caricia protectora y chocar la mano 🤝</span>
+                  <span>{' '}{text(language, "Darle una caricia protectora y chocar la mano 🤝")}{' '}</span>
                 </button>
               </div>
             )}
@@ -249,23 +246,17 @@ export const RobotCollabGame: React.FC = () => {
             {step === 4 && (
               <div className="p-4 rounded-2xl bg-emerald-950/60 border border-emerald-500/60 text-center space-y-3">
                 <span className="text-3xl">🚀</span>
-                <p className="text-xs font-bold text-emerald-200">
-                  ¡Misión completada! Has demostrado una excelente empatía no verbal y colaboración.
-                </p>
+                <p className="text-xs font-bold text-emerald-200">{' '}{text(language, "¡Misión completada! Has demostrado una excelente empatía no verbal y colaboración.")}{' '}</p>
                 <button
                   onClick={() => setView('child_hub')}
                   className="w-full py-2.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs"
-                >
-                  Volver a la Zona de Juegos
-                </button>
+                >{' '}{text(language, "Volver a la Zona de Juegos")}{' '}</button>
               </div>
             )}
 
           </div>
 
-          <div className="text-[11px] text-slate-500 text-center border-t border-slate-800 pt-3">
-            Se mide la respuesta afectiva y cooperación sin barrera lingüística.
-          </div>
+          <div className="text-[11px] text-slate-500 text-center border-t border-slate-800 pt-3">{' '}{text(language, "Se mide la respuesta afectiva y cooperación sin barrera lingüística.")}{' '}</div>
         </div>
 
       </div>

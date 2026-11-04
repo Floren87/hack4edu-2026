@@ -1,3 +1,5 @@
+import type { Language } from '../../types';
+import { localizeText as text } from '../../i18n/localize';
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { translations } from '../../i18n/translations';
@@ -15,67 +17,68 @@ interface PatternLevel {
   hint: string;
 }
 
-const PATTERN_LEVELS: PatternLevel[] = [
+const getPATTERN_LEVELS = (language: Language): PatternLevel[] => ([
   {
     id: 1,
-    title: 'Secuencia Cíclica de Formas y Colores',
+    title: text(language, "Secuencia Cíclica de Formas y Colores"),
     sequence: [
-      { icon: '🔴', label: 'Círculo Rojo', color: '#ef4444' },
-      { icon: '🔷', label: 'Rombo Azul', color: '#3b82f6' },
-      { icon: '🟩', label: 'Cuadrado Verde', color: '#10b981' },
-      { icon: '🔴', label: 'Círculo Rojo', color: '#ef4444' },
-      { icon: '🔷', label: 'Rombo Azul', color: '#3b82f6' },
-      { icon: '❓', label: '¿Cuál sigue?', color: '#6366f1' },
+      { icon: '🔴', label: text(language, "Círculo Rojo"), color: '#ef4444' },
+      { icon: '🔷', label: text(language, "Rombo Azul"), color: '#3b82f6' },
+      { icon: '🟩', label: text(language, "Cuadrado Verde"), color: '#10b981' },
+      { icon: '🔴', label: text(language, "Círculo Rojo"), color: '#ef4444' },
+      { icon: '🔷', label: text(language, "Rombo Azul"), color: '#3b82f6' },
+      { icon: '❓', label: text(language, "¿Cuál sigue?"), color: '#6366f1' },
     ],
     missingIndex: 5,
     options: [
-      { id: 'opt_1', icon: '🟩', label: 'Cuadrado Verde', isCorrect: true },
-      { id: 'opt_2', icon: '🟡', label: 'Círculo Amarillo', isCorrect: false },
-      { id: 'opt_3', icon: '🔴', label: 'Círculo Rojo', isCorrect: false },
-      { id: 'opt_4', icon: '🔷', label: 'Rombo Azul', isCorrect: false },
+      { id: 'opt_1', icon: '🟩', label: text(language, "Cuadrado Verde"), isCorrect: true },
+      { id: 'opt_2', icon: '🟡', label: text(language, "Círculo Amarillo"), isCorrect: false },
+      { id: 'opt_3', icon: '🔴', label: text(language, "Círculo Rojo"), isCorrect: false },
+      { id: 'opt_4', icon: '🔷', label: text(language, "Rombo Azul"), isCorrect: false },
     ],
-    hint: 'Mira el orden: rojo, azul, verde... y vuelve a empezar: rojo, azul...'
+    hint: text(language, "Mira el orden: rojo, azul, verde... y vuelve a empezar: rojo, azul...")
   },
   {
     id: 2,
-    title: 'Matriz 2x2 de Simbolismo y Cantidad',
+    title: text(language, "Matriz 2x2 de Simbolismo y Cantidad"),
     sequence: [
-      { icon: '⭐', label: 'Estrella solitaria', color: '#fbbf24' },
-      { icon: '⭐⭐', label: 'Dos estrellas', color: '#fbbf24' },
-      { icon: '🌙', label: 'Luna solitaria', color: '#818cf8' },
-      { icon: '❓', label: '¿Qué completa la regla?', color: '#6366f1' },
+      { icon: '⭐', label: text(language, "Estrella solitaria"), color: '#fbbf24' },
+      { icon: '⭐⭐', label: text(language, "Dos estrellas"), color: '#fbbf24' },
+      { icon: '🌙', label: text(language, "Luna solitaria"), color: '#818cf8' },
+      { icon: '❓', label: text(language, "¿Qué completa la regla?"), color: '#6366f1' },
     ],
     missingIndex: 3,
     options: [
-      { id: 'opt_1', icon: '☀️', label: 'Sol', isCorrect: false },
-      { id: 'opt_2', icon: '🌙🌙', label: 'Dos lunas', isCorrect: true },
-      { id: 'opt_3', icon: '⭐', label: 'Una estrella', isCorrect: false },
-      { id: 'opt_4', icon: '🪐', label: 'Planeta', isCorrect: false },
+      { id: 'opt_1', icon: '☀️', label: text(language, "Sol"), isCorrect: false },
+      { id: 'opt_2', icon: '🌙🌙', label: text(language, "Dos lunas"), isCorrect: true },
+      { id: 'opt_3', icon: '⭐', label: text(language, "Una estrella"), isCorrect: false },
+      { id: 'opt_4', icon: '🪐', label: text(language, "Planeta"), isCorrect: false },
     ],
-    hint: 'Si la estrella pasa de 1 a 2, ¿qué le ocurrirá a la luna?'
+    hint: text(language, "Si la estrella pasa de 1 a 2, ¿qué le ocurrirá a la luna?")
   },
   {
     id: 3,
-    title: 'Transformación de Estado: Contorno vs Relleno',
+    title: text(language, "Transformación de Estado: Contorno vs Relleno"),
     sequence: [
-      { icon: '⚪', label: 'Círculo claro', color: '#94a3b8' },
-      { icon: '⚫', label: 'Círculo oscuro lleno', color: '#0f172a' },
-      { icon: '▫️', label: 'Cuadro claro', color: '#94a3b8' },
-      { icon: '❓', label: '¿Cuál es la transformación?', color: '#6366f1' },
+      { icon: '⚪', label: text(language, "Círculo claro"), color: '#94a3b8' },
+      { icon: '⚫', label: text(language, "Círculo oscuro lleno"), color: '#0f172a' },
+      { icon: '▫️', label: text(language, "Cuadro claro"), color: '#94a3b8' },
+      { icon: '❓', label: text(language, "¿Cuál es la transformación?"), color: '#6366f1' },
     ],
     missingIndex: 3,
     options: [
-      { id: 'opt_1', icon: '🔺', label: 'Triángulo rojo', isCorrect: false },
-      { id: 'opt_2', icon: '▪️', label: 'Cuadro oscuro lleno', isCorrect: true },
-      { id: 'opt_3', icon: '⚪', label: 'Círculo blanco', isCorrect: false },
-      { id: 'opt_4', icon: '🔷', label: 'Rombo', isCorrect: false },
+      { id: 'opt_1', icon: '🔺', label: text(language, "Triángulo rojo"), isCorrect: false },
+      { id: 'opt_2', icon: '▪️', label: text(language, "Cuadro oscuro lleno"), isCorrect: true },
+      { id: 'opt_3', icon: '⚪', label: text(language, "Círculo blanco"), isCorrect: false },
+      { id: 'opt_4', icon: '🔷', label: text(language, "Rombo"), isCorrect: false },
     ],
-    hint: 'El círculo claro se convirtió en oscuro. El cuadro claro se convertirá en...'
+    hint: text(language, "El círculo claro se convirtió en oscuro. El cuadro claro se convertirá en...")
   }
-];
+]);
 
 export const LogicPatternsGame: React.FC = () => {
   const { language, setView, logGameTelemetry, addStars } = useApp();
+  const PATTERN_LEVELS = getPATTERN_LEVELS(language);
   const t = translations[language];
 
   const [currentLevelIdx, setCurrentLevelIdx] = useState(0);
@@ -123,9 +126,9 @@ export const LogicPatternsGame: React.FC = () => {
           successRate: 3 / (totalAttempts + 1),
           perseveranceScore: 0.9,
           notesObserved: [
-            'Completó exitosamente los 3 niveles de secuencias y matrices espaciales.',
-            `Resolvió el reto en ${duration} segundos tras ${totalAttempts + 1} elecciones en total.`,
-            'Demostró capacidad de inferencia de patrones visuales sin texto.'
+            text(language, "Completó exitosamente los 3 niveles de secuencias y matrices espaciales."),
+            text(language, "Resolvió el reto en {0} segundos tras {1} elecciones en total.", [duration, totalAttempts + 1]),
+            text(language, "Demostró capacidad de inferencia de patrones visuales sin texto.")
           ],
           metrics: {
             levelsCompleted: 3,
@@ -157,9 +160,7 @@ export const LogicPatternsGame: React.FC = () => {
         </button>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-cyan-300 bg-cyan-950/80 px-2.5 py-1 rounded-full border border-cyan-800">
-            🧩 Minijuego 2: Pensamiento Lógico
-          </span>
+          <span className="text-xs font-semibold text-cyan-300 bg-cyan-950/80 px-2.5 py-1 rounded-full border border-cyan-800">{' '}{text(language, "🧩 Minijuego 2: Pensamiento Lógico")}{' '}</span>
           <AudioButton textToSpeak={`${t.gameLogicTitle}. ${t.gameLogicInstructions}. ${currentLevel.hint}`} />
         </div>
       </div>
@@ -177,7 +178,7 @@ export const LogicPatternsGame: React.FC = () => {
             </p>
           </div>
           <div className="text-right">
-            <span className="text-xs font-bold text-cyan-400 block">Nivel {currentLevelIdx + 1} de {PATTERN_LEVELS.length}</span>
+            <span className="text-xs font-bold text-cyan-400 block">{' '}{text(language, "Nivel")}{' '} {currentLevelIdx + 1} {' '}{text(language, "de")}{' '} {PATTERN_LEVELS.length}</span>
             <div className="flex gap-1 mt-1">
               {PATTERN_LEVELS.map((_, i) => (
                 <div
@@ -198,9 +199,7 @@ export const LogicPatternsGame: React.FC = () => {
           
           {/* Visual Sequence Display */}
           <div className="space-y-3">
-            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider text-center">
-              Observa el patrón y halla la pieza faltante:
-            </div>
+            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider text-center">{' '}{text(language, "Observa el patrón y halla la pieza faltante:")}{' '}</div>
 
             <div className="flex flex-wrap items-center justify-center gap-3 p-6 rounded-2xl bg-slate-950/70 border border-slate-800/80 min-h-[140px]">
               {currentLevel.sequence.map((item, idx) => {
@@ -226,14 +225,12 @@ export const LogicPatternsGame: React.FC = () => {
             <div className="p-3 rounded-2xl bg-amber-950/60 border border-amber-600/40 text-amber-200 text-xs flex items-center justify-between animate-shake">
               <div className="flex items-center gap-2">
                 <span>💡</span>
-                <span>¡Buen intento! Cada prueba te acerca a la regla. Vuelve a mirar la secuencia con calma.</span>
+                <span>{' '}{text(language, "¡Buen intento! Cada prueba te acerca a la regla. Vuelve a mirar la secuencia con calma.")}{' '}</span>
               </div>
               <button
                 onClick={() => setShowHint(true)}
                 className="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold text-[11px] shrink-0"
-              >
-                Ver pista
-              </button>
+              >{' '}{text(language, "Ver pista")}{' '}</button>
             </div>
           )}
 
@@ -246,9 +243,7 @@ export const LogicPatternsGame: React.FC = () => {
 
           {/* Interactive Options */}
           <div className="space-y-3">
-            <div className="text-xs font-bold text-slate-300 uppercase tracking-wider text-center">
-              Elige tu respuesta:
-            </div>
+            <div className="text-xs font-bold text-slate-300 uppercase tracking-wider text-center">{' '}{text(language, "Elige tu respuesta:")}{' '}</div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {currentLevel.options.map(opt => {
                 const isSelected = selectedOptionId === opt.id;
@@ -280,16 +275,12 @@ export const LogicPatternsGame: React.FC = () => {
             🎉
           </div>
           <h2 className="text-2xl font-black text-white">{t.gameLogicSuccess}</h2>
-          <p className="text-sm text-slate-300 max-w-md mx-auto">
-            Has demostrado una gran capacidad para deducir patrones y reglas visuales. ¡Se ha añadido evidencia positiva a tu perfil!
-          </p>
+          <p className="text-sm text-slate-300 max-w-md mx-auto">{' '}{text(language, "Has demostrado una gran capacidad para deducir patrones y reglas visuales. ¡Se ha añadido evidencia positiva a tu perfil!")}{' '}</p>
           <div className="flex justify-center gap-3 pt-2">
             <button
               onClick={() => setView('child_hub')}
               className="py-3 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold text-sm shadow-lg shadow-cyan-500/20"
-            >
-              Volver a la Zona de Juegos
-            </button>
+            >{' '}{text(language, "Volver a la Zona de Juegos")}{' '}</button>
           </div>
         </div>
       )}

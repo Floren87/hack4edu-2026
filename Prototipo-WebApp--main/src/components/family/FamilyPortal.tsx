@@ -1,3 +1,4 @@
+import { localizeText as text } from '../../i18n/localize';
 import React, { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { translations } from '../../i18n/translations';
@@ -21,16 +22,16 @@ export const FamilyPortal: React.FC = () => {
     soundManager.playPop();
     const success = executeBrowserPrint();
     if (!success) {
-      downloadPrintableFamilyReport(activeStudent, report);
-      setPrintFeedback('Descargando resumen para la familia...');
+      downloadPrintableFamilyReport(activeStudent, report, language);
+      setPrintFeedback(text(language, "Descargando resumen para la familia..."));
       setTimeout(() => setPrintFeedback(null), 3500);
     }
   };
 
   const handleDownloadFamily = () => {
     soundManager.playSparkle();
-    downloadPrintableFamilyReport(activeStudent, report);
-    setPrintFeedback('¡Resumen familiar descargado listo para imprimir!');
+    downloadPrintableFamilyReport(activeStudent, report, language);
+    setPrintFeedback(text(language, "¡Resumen familiar descargado listo para imprimir!"));
     setTimeout(() => setPrintFeedback(null), 3500);
   };
 
@@ -43,7 +44,7 @@ export const FamilyPortal: React.FC = () => {
           <span className="text-2xl">{activeStudent.avatar}</span>
           <div>
             <span className="text-xs font-bold text-white block">{activeStudent.nameOrAlias}</span>
-            <span className="text-[10px] text-slate-400">Resumen adaptado para familias</span>
+            <span className="text-[10px] text-slate-400">{' '}{text(language, "Resumen adaptado para familias")}{' '}</span>
           </div>
         </div>
 
@@ -52,30 +53,30 @@ export const FamilyPortal: React.FC = () => {
           <button
             onClick={handlePrintFamily}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-semibold text-white shadow-md transition active:scale-95 cursor-pointer"
-            title="Imprimir resumen familiar"
+            title={text(language, "Imprimir resumen familiar")}
           >
             <Printer size={15} />
-            <span>Imprimir Resumen Familiar</span>
+            <span>{' '}{text(language, "Imprimir Resumen Familiar")}{' '}</span>
           </button>
 
           {/* Download Button */}
           <button
             onClick={handleDownloadFamily}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 transition active:scale-95 cursor-pointer"
-            title="Descargar resumen formateado"
+            title={text(language, "Descargar resumen formateado")}
           >
             <Download size={14} />
-            <span className="hidden sm:inline">Descargar PDF/HTML</span>
+            <span className="hidden sm:inline">{' '}{text(language, "Descargar PDF/HTML")}{' '}</span>
           </button>
 
           {/* Shortcut to Panel Profesional */}
           <button
             onClick={() => setRole('teacher')}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 text-xs font-semibold text-indigo-200 border border-indigo-500/40 transition active:scale-95 cursor-pointer"
-            title="Ir al Panel Profesional institucional"
+            title={text(language, "Ir al Panel Profesional institucional")}
           >
             <GraduationCap size={15} className="text-indigo-400" />
-            <span>Panel Profesional</span>
+            <span>{' '}{text(language, "Panel Profesional")}{' '}</span>
           </button>
         </div>
       </div>
@@ -94,12 +95,10 @@ export const FamilyPortal: React.FC = () => {
               <Heart size={16} />
               <span>{t.familyPortalTitle}</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white">
-              Celebrando los talentos de {activeStudent.nameOrAlias}
+            <h1 className="text-2xl sm:text-3xl font-black text-white">{' '}{text(language, "Celebrando los talentos de")}{' '}{activeStudent.nameOrAlias}
             </h1>
             <p className="text-xs sm:text-sm text-rose-100/90 max-w-xl">
-              {t.familyPortalSubtitle}. Este espacio está diseñado para que la familia conozca sus fortalezas y descubran ideas divertidas para compartir en casa.
-            </p>
+              {t.familyPortalSubtitle}{' '}{text(language, ". Este espacio está diseñado para que la familia conozca sus fortalezas y descubran ideas divertidas para compartir en casa.")}{' '}</p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -125,7 +124,7 @@ export const FamilyPortal: React.FC = () => {
           </span>
           <div className="flex items-center gap-1.5 text-xs text-amber-400 font-bold bg-amber-400/10 px-3 py-1 rounded-full">
             <Star size={14} className="fill-amber-400" />
-            <span>{activeStudent.starsCount || 0} Estrellas Ganadas</span>
+            <span>{activeStudent.starsCount || 0} {' '}{text(language, "Estrellas Ganadas")}{' '}</span>
           </div>
         </div>
 
@@ -138,7 +137,7 @@ export const FamilyPortal: React.FC = () => {
           <div className="p-4 rounded-2xl bg-indigo-950/30 border border-indigo-800/40 space-y-2">
             <span className="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
               <Compass size={14} />
-              <span>Lo que más le divierte explorar:</span>
+              <span>{' '}{text(language, "Lo que más le divierte explorar:")}{' '}</span>
             </span>
             <ul className="text-xs text-slate-300 space-y-1">
               {report.primaryInterests.slice(0, 2).map((item, i) => (
@@ -150,10 +149,10 @@ export const FamilyPortal: React.FC = () => {
           <div className="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-800/40 space-y-2">
             <span className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
               <Heart size={14} />
-              <span>Fortaleza que le hace único/a:</span>
+              <span>{' '}{text(language, "Fortaleza que le hace único/a:")}{' '}</span>
             </span>
             <p className="text-xs text-slate-300">
-              {report.strengths[0]?.title || 'Gran inventiva y perseverancia al probar nuevas ideas.'}
+              {report.strengths[0]?.title || text(language, "Gran inventiva y perseverancia al probar nuevas ideas.")}
             </p>
           </div>
         </div>

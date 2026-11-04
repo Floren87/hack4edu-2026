@@ -1,3 +1,5 @@
+import type { Language } from '../../types';
+import { localizeText as text } from '../../i18n/localize';
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { translations } from '../../i18n/translations';
@@ -17,7 +19,7 @@ interface WorldCardData {
   tag: string;
 }
 
-const WORLDS_DATA: WorldCardData[] = [
+const getWORLDS_DATA = (language: Language): WorldCardData[] => ([
   {
     id: 'build',
     titleKey: 'worldBuildTitle',
@@ -25,8 +27,8 @@ const WORLDS_DATA: WorldCardData[] = [
     icon: '🏗️',
     bgGradient: 'from-amber-950/80 via-slate-900 to-amber-900/40',
     borderColor: 'hover:border-amber-400',
-    activityName: 'Torre de Equilibrio Zen',
-    tag: 'Física y Espacio',
+    activityName: text(language, "Torre de Equilibrio Zen"),
+    tag: text(language, "Física y Espacio"),
   },
   {
     id: 'explore',
@@ -35,8 +37,8 @@ const WORLDS_DATA: WorldCardData[] = [
     icon: '🧭',
     bgGradient: 'from-sky-950/80 via-slate-900 to-sky-900/40',
     borderColor: 'hover:border-sky-400',
-    activityName: 'Constelaciones Ocultas',
-    tag: 'Atención Visual',
+    activityName: text(language, "Constelaciones Ocultas"),
+    tag: text(language, "Atención Visual"),
   },
   {
     id: 'create',
@@ -45,8 +47,8 @@ const WORLDS_DATA: WorldCardData[] = [
     icon: '🎨',
     bgGradient: 'from-fuchsia-950/80 via-slate-900 to-fuchsia-900/40',
     borderColor: 'hover:border-fuchsia-400',
-    activityName: 'Sinfonía Cromática',
-    tag: 'Sensorial & Ritmo',
+    activityName: text(language, "Sinfonía Cromática"),
+    tag: text(language, "Sensorial & Ritmo"),
   },
   {
     id: 'help',
@@ -55,8 +57,8 @@ const WORLDS_DATA: WorldCardData[] = [
     icon: '🤝',
     bgGradient: 'from-rose-950/80 via-slate-900 to-rose-900/40',
     borderColor: 'hover:border-rose-400',
-    activityName: 'Refugio de Criaturas',
-    tag: 'Empatía No Verbal',
+    activityName: text(language, "Refugio de Criaturas"),
+    tag: text(language, "Empatía No Verbal"),
   },
   {
     id: 'organize',
@@ -65,8 +67,8 @@ const WORLDS_DATA: WorldCardData[] = [
     icon: '📦',
     bgGradient: 'from-emerald-950/80 via-slate-900 to-emerald-900/40',
     borderColor: 'hover:border-emerald-400',
-    activityName: 'Clasificación Libre',
-    tag: 'Sistematización',
+    activityName: text(language, "Clasificación Libre"),
+    tag: text(language, "Sistematización"),
   },
   {
     id: 'count',
@@ -75,13 +77,14 @@ const WORLDS_DATA: WorldCardData[] = [
     icon: '🔢',
     bgGradient: 'from-yellow-950/80 via-slate-900 to-yellow-900/40',
     borderColor: 'hover:border-yellow-400',
-    activityName: 'Balanza de Cristales',
-    tag: 'Cantidad Intuitiva',
+    activityName: text(language, "Balanza de Cristales"),
+    tag: text(language, "Cantidad Intuitiva"),
   },
-];
+]);
 
 export const WorldsMap: React.FC = () => {
   const { language, setView, activeStudent } = useApp();
+  const WORLDS_DATA = getWORLDS_DATA(language);
   const t = translations[language];
 
   const handleOpenWorld = (worldId: WorldId) => {
@@ -112,14 +115,13 @@ export const WorldsMap: React.FC = () => {
         <div className="relative z-10">
           <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider mb-1">
             <Globe size={14} />
-            <span>Mapa de Intereses y Curiosidad (R2)</span>
+            <span>{' '}{text(language, "Mapa de Intereses y Curiosidad (R2)")}{' '}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-white">
             {t.worldsMapTitle}
           </h1>
           <p className="text-sm text-indigo-200/90 mt-1 max-w-xl">
-            {t.worldsMapSubtitle}. Al pulsar sobre cualquier mundo iniciarás su actividad visual y sensorial especialmente pensada para la neurodiversidad.
-          </p>
+            {t.worldsMapSubtitle}{' '}{text(language, ". Al pulsar sobre cualquier mundo iniciarás su actividad visual y sensorial especialmente pensada para la neurodiversidad.")}{' '}</p>
         </div>
       </div>
 
@@ -153,11 +155,11 @@ export const WorldsMap: React.FC = () => {
 
               <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between mt-3">
                 <span className="text-[11px] font-semibold text-amber-400 flex items-center gap-1">
-                  <span>🎮 Actividad:</span>
+                  <span>{' '}{text(language, "🎮 Actividad:")}{' '}</span>
                   <span className="text-slate-200">{world.activityName}</span>
                 </span>
                 <span className="text-[10px] text-slate-400">
-                  {visits > 0 ? `Visitado: ${visits}x` : 'Nuevo'}
+                  {visits > 0 ? text(language, 'Visitado: {0}x', [visits]) : text(language, 'Nuevo')}
                 </span>
               </div>
             </button>

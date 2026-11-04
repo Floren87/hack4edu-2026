@@ -1,3 +1,4 @@
+import { localizeText as text } from '../../i18n/localize';
 import React from 'react';
 import { 
   Compass, 
@@ -51,16 +52,15 @@ export const Navbar: React.FC = () => {
           <button 
             onClick={() => setView('child_hub')}
             className="flex items-center gap-2.5 text-left focus:outline-none group"
-            title="Ir a inicio de Talento sin Fronteras"
+            title={text(language, "Ir a inicio de Talento sin Fronteras")}
           >
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-500/20 via-indigo-600/30 to-emerald-500/20 p-0.5 border border-sky-400/30 shadow-md shadow-sky-500/10 group-hover:scale-105 transition-transform flex items-center justify-center">
               <WorldLogo size={34} />
             </div>
             <div className="hidden sm:block">
-              <span className="text-base font-black tracking-tight text-white block leading-none">
-                Talento <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-indigo-400">sin Fronteras</span>
+              <span className="text-base font-black tracking-tight text-white block leading-none">{' '}{text(language, "Talento")}{' '}<span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-indigo-400">{' '}{text(language, "sin Fronteras")}{' '}</span>
               </span>
-              <span className="text-[10px] text-slate-400 font-medium">Inclusión & Potencial</span>
+              <span className="text-[10px] text-slate-400 font-medium">{' '}{text(language, "Inclusión & Potencial")}{' '}</span>
             </div>
           </button>
 
@@ -68,7 +68,7 @@ export const Navbar: React.FC = () => {
           <button
             onClick={() => setView('profile_manager')}
             className="flex items-center gap-2 px-2.5 py-1.5 rounded-full bg-slate-900 border border-slate-700/70 hover:border-indigo-500/60 transition-all group"
-            title="Cambiar de estudiante / perfil"
+            title={text(language, "Cambiar de estudiante / perfil")}
           >
             <span className="text-lg leading-none group-hover:scale-110 transition-transform">{activeStudent.avatar}</span>
             <span className="text-xs font-semibold text-slate-200 max-w-[80px] sm:max-w-[120px] truncate">
@@ -93,7 +93,7 @@ export const Navbar: React.FC = () => {
           >
             <Compass size={14} />
             <span className="hidden md:inline">{t.roleChild}</span>
-            <span className="md:hidden">Juegos</span>
+            <span className="md:hidden">{' '}{text(language, "Juegos")}{' '}</span>
           </button>
 
           <button
@@ -106,7 +106,7 @@ export const Navbar: React.FC = () => {
           >
             <GraduationCap size={14} />
             <span className="hidden md:inline">{t.roleTeacher}</span>
-            <span className="md:hidden">Profesional</span>
+            <span className="md:hidden">{' '}{text(language, "Profesional")}{' '}</span>
           </button>
 
           <button
@@ -119,7 +119,7 @@ export const Navbar: React.FC = () => {
           >
             <HeartHandshake size={14} />
             <span className="hidden md:inline">{t.roleFamily}</span>
-            <span className="md:hidden">Familia</span>
+            <span className="md:hidden">{' '}{text(language, "Familia")}{' '}</span>
           </button>
         </div>
 
@@ -131,9 +131,9 @@ export const Navbar: React.FC = () => {
           {/* Sound Mute Toggle */}
           <button
             onClick={toggleSound}
-            aria-label={soundMuted ? 'Activar sonido' : 'Silenciar sonido'}
+            aria-label={soundMuted ? text(language, "Activar sonido") : text(language, "Silenciar sonido")}
             className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-slate-700 transition"
-            title={soundMuted ? 'Sonido desactivado' : 'Sonido activado'}
+            title={soundMuted ? text(language, "Sonido desactivado") : text(language, "Sonido activado")}
           >
             {soundMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
           </button>
@@ -187,7 +187,7 @@ export const Navbar: React.FC = () => {
           <button
             onClick={() => setView('profile_manager')}
             className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-indigo-400 hover:border-indigo-500/50 transition"
-            title="Gestionar perfiles de estudiantes"
+            title={text(language, "Gestionar perfiles de estudiantes")}
           >
             <Users size={15} />
           </button>
@@ -196,10 +196,10 @@ export const Navbar: React.FC = () => {
           <button
             onClick={openOnboarding}
             className="h-8 px-2.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-1.5 text-xs font-semibold text-slate-300 hover:text-amber-300 hover:border-amber-400/50 transition cursor-pointer"
-            title="Pantalla de inicio / Crear nuevo explorador"
+            title={text(language, "Pantalla de inicio / Crear nuevo explorador")}
           >
             <UserPlus size={13} className="text-amber-400" />
-            <span className="hidden sm:inline">Inicio</span>
+            <span className="hidden sm:inline">{' '}{text(language, "Inicio")}{' '}</span>
           </button>
         </div>
 

@@ -1,3 +1,5 @@
+import type { Language } from '../../types';
+import { localizeText as text } from '../../i18n/localize';
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { translations } from '../../i18n/translations';
@@ -15,51 +17,53 @@ interface StoryCard {
   color: string;
 }
 
-const INITIAL_CARDS: StoryCard[] = [
+const getINITIAL_CARDS = (language: Language): StoryCard[] => ([
   {
     id: 'card_find',
     defaultPos: 1,
     icon: '🐣🍂',
-    title: 'El pequeño pájaro en el suelo',
-    detail: 'Un pajarito solitario ha caído de una rama y busca refugio.',
+    title: text(language, "El pequeño pájaro en el suelo"),
+    detail: text(language, "Un pajarito solitario ha caído de una rama y busca refugio."),
     color: '#f59e0b',
   },
   {
     id: 'card_care',
     defaultPos: 2,
     icon: '🧣💧',
-    title: 'Cuidado y abrigo',
-    detail: 'Le abrigan con una bufanda suave y le dan gotas de agua fresca.',
+    title: text(language, "Cuidado y abrigo"),
+    detail: text(language, "Le abrigan con una bufanda suave y le dan gotas de agua fresca."),
     color: '#06b6d4',
   },
   {
     id: 'card_nest',
     defaultPos: 3,
     icon: '📦🌿',
-    title: 'Construir un nido seguro',
-    detail: 'Preparar un hogar con hojas secas y ramitas protegidas del viento.',
+    title: text(language, "Construir un nido seguro"),
+    detail: text(language, "Preparar un hogar con hojas secas y ramitas protegidas del viento."),
     color: '#10b981',
   },
   {
     id: 'card_fly',
     defaultPos: 4,
     icon: '🕊️🌤️',
-    title: 'Vuelo hacia la libertad',
-    detail: 'El pájaro recupera fuerzas, abre sus alas y vuela cantando feliz.',
+    title: text(language, "Vuelo hacia la libertad"),
+    detail: text(language, "El pájaro recupera fuerzas, abre sus alas y vuela cantando feliz."),
     color: '#8b5cf6',
   },
-];
+]);
 
-const EMOTION_OPTIONS = [
-  { emoji: '🥺', label: 'Triste / Desorientado' },
-  { emoji: '🥰', label: 'Cariñoso / Amable' },
-  { emoji: '💪', label: 'Decidido / Trabajador' },
-  { emoji: '🥳', label: 'Feliz / Aliviado' },
-  { emoji: '😲', label: 'Sorprendido' },
-];
+const getEMOTION_OPTIONS = (language: Language) => ([
+  { emoji: '🥺', label: text(language, "Triste / Desorientado") },
+  { emoji: '🥰', label: text(language, "Cariñoso / Amable") },
+  { emoji: '💪', label: text(language, "Decidido / Trabajador") },
+  { emoji: '🥳', label: text(language, "Feliz / Aliviado") },
+  { emoji: '😲', label: text(language, "Sorprendido") },
+]);
 
 export const StorytellingGame: React.FC = () => {
   const { language, setView, logGameTelemetry, addStars } = useApp();
+  const INITIAL_CARDS = getINITIAL_CARDS('es');
+  const EMOTION_OPTIONS = getEMOTION_OPTIONS(language);
   const t = translations[language];
 
   // Shuffled cards initially to let child order them
@@ -114,9 +118,9 @@ export const StorytellingGame: React.FC = () => {
       successRate: 1,
       perseveranceScore: 0.9,
       notesObserved: [
-        `Construyó una secuencia narrativa con ${swapsCount} reordenaciones meditadas.`,
-        `Asignó ${emotionsAssigned} emociones a los personajes, mostrando empatía narrativa y lectura no verbal.`,
-        'Demostró capacidad de estructura secuencial (inicio, nudo, desenlace).'
+        text(language, "Construyó una secuencia narrativa con {0} reordenaciones meditadas.", [swapsCount]),
+        text(language, "Asignó {0} emociones a los personajes, mostrando empatía narrativa y lectura no verbal.", [emotionsAssigned]),
+        text(language, "Demostró capacidad de estructura secuencial (inicio, nudo, desenlace).")
       ],
       metrics: {
         swapsCount,
@@ -143,9 +147,7 @@ export const StorytellingGame: React.FC = () => {
         </button>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-rose-300 bg-rose-950/80 px-2.5 py-1 rounded-full border border-rose-800">
-            📖 Minijuego 3: Comunicación
-          </span>
+          <span className="text-xs font-semibold text-rose-300 bg-rose-950/80 px-2.5 py-1 rounded-full border border-rose-800">{' '}{text(language, "📖 Minijuego 3: Comunicación")}{' '}</span>
           <AudioButton textToSpeak={`${t.gameStoryTitle}. ${t.gameStoryInstructions}`} />
         </div>
       </div>
@@ -170,8 +172,8 @@ export const StorytellingGame: React.FC = () => {
           
           {/* Instructions Hint */}
           <div className="flex items-center justify-between text-xs font-bold text-slate-400 uppercase tracking-wider px-2">
-            <span>Paso 1: Usa las flechas para ordenar la historia (1 ➔ 4)</span>
-            <span>Paso 2: Toca un emoji para sentir la emoción</span>
+            <span>{' '}{text(language, "Paso 1: Usa las flechas para ordenar la historia (1 ➔ 4)")}{' '}</span>
+            <span>{' '}{text(language, "Paso 2: Toca un emoji para sentir la emoción")}{' '}</span>
           </div>
 
           {/* Cards Grid */}
@@ -194,7 +196,7 @@ export const StorytellingGame: React.FC = () => {
                         onClick={() => handleSwap(idx, idx - 1)}
                         disabled={idx === 0}
                         className="p-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white disabled:opacity-30"
-                        title="Mover a la izquierda"
+                        title={text(language, "Mover a la izquierda")}
                       >
                         ◀
                       </button>
@@ -202,7 +204,7 @@ export const StorytellingGame: React.FC = () => {
                         onClick={() => handleSwap(idx, idx + 1)}
                         disabled={idx === cardsOrder.length - 1}
                         className="p-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white disabled:opacity-30"
-                        title="Mover a la derecha"
+                        title={text(language, "Mover a la derecha")}
                       >
                         ▶
                       </button>
@@ -216,15 +218,15 @@ export const StorytellingGame: React.FC = () => {
 
                   {/* Description */}
                   <div>
-                    <h3 className="text-xs font-bold text-white leading-snug">{card.title}</h3>
-                    <p className="text-[11px] text-slate-400 mt-1">{card.detail}</p>
+                    <h3 className="text-xs font-bold text-white leading-snug">{text(language, card.title)}</h3>
+                    <p className="text-[11px] text-slate-400 mt-1">{text(language, card.detail)}</p>
                   </div>
 
                   {/* Emotion Picker for this card */}
                   <div className="pt-2 border-t border-slate-800/80">
                     <span className="text-[10px] text-slate-500 font-medium block mb-1.5 flex items-center gap-1">
                       <Heart size={10} className="text-rose-400" />
-                      <span>¿Qué emoción siente?</span>
+                      <span>{' '}{text(language, "¿Qué emoción siente?")}{' '}</span>
                     </span>
                     <div className="flex items-center justify-between gap-1">
                       {EMOTION_OPTIONS.map(em => (
@@ -256,7 +258,7 @@ export const StorytellingGame: React.FC = () => {
               className="w-full py-4 rounded-2xl bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 hover:from-rose-400 hover:to-amber-400 text-slate-950 font-black text-sm shadow-xl shadow-rose-500/20 active:scale-95 transition-all flex items-center justify-center gap-2"
             >
               <Check size={18} />
-              <span>Guardar mi Historia Contada</span>
+              <span>{' '}{text(language, "Guardar mi Historia Contada")}{' '}</span>
             </button>
           </div>
 
@@ -268,16 +270,12 @@ export const StorytellingGame: React.FC = () => {
             ✨
           </div>
           <h2 className="text-2xl font-black text-white">{t.gameStoryComplete}</h2>
-          <p className="text-sm text-slate-300 max-w-md mx-auto">
-            Has demostrado una gran capacidad de comprensión social, empatía y estructura secuencial.
-          </p>
+          <p className="text-sm text-slate-300 max-w-md mx-auto">{' '}{text(language, "Has demostrado una gran capacidad de comprensión social, empatía y estructura secuencial.")}{' '}</p>
           <div className="flex justify-center gap-3 pt-2">
             <button
               onClick={() => setView('child_hub')}
               className="py-3 px-6 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-600 text-slate-950 font-bold text-sm"
-            >
-              Volver a la Zona de Juegos
-            </button>
+            >{' '}{text(language, "Volver a la Zona de Juegos")}{' '}</button>
           </div>
         </div>
       )}

@@ -1,3 +1,5 @@
+import { useApp } from '../../context/AppContext';
+import { localizeText as text } from '../../i18n/localize';
 import React from 'react';
 
 interface WorldLogoProps {
@@ -6,6 +8,7 @@ interface WorldLogoProps {
 }
 
 export const WorldLogo: React.FC<WorldLogoProps> = ({ className = '', size = 32 }) => {
+  const { language } = useApp();
   return (
     <svg
       width={size}
@@ -14,7 +17,7 @@ export const WorldLogo: React.FC<WorldLogoProps> = ({ className = '', size = 32 
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={`shrink-0 ${className}`}
-      aria-label="Mundo Talento sin Fronteras"
+      aria-label={text(language, "Mundo Talento sin Fronteras")}
     >
       <defs>
         {/* Planet sphere gradient */}

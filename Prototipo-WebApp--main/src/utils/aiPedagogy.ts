@@ -1,3 +1,4 @@
+import { localizeData } from '../i18n/localize';
 import { 
   ComprehensiveAssessmentReport, 
   GameTelemetry, 
@@ -148,7 +149,7 @@ export function generatePedagogicalAssessment(
 
     if (matchedTelemetry.length > 0) {
       // Activity has been performed
-      const latest = matchedTelemetry[matchedTelemetry.length - 1];
+      const latest = matchedTelemetry.reduce((a, b) => a.timestamp > b.timestamp ? a : b);
       const totalAttempts = matchedTelemetry.reduce((s, m) => s + (m.attemptsCount || 1), 0);
       const totalMoves = matchedTelemetry.reduce((s, m) => s + (m.originalMovesCount || 0), 0);
       const totalDuration = matchedTelemetry.reduce((s, m) => s + (m.durationSeconds || 0), 0);
@@ -407,7 +408,7 @@ export function generatePedagogicalAssessment(
           : '⏳ Pending: This strength has not been observed yet as the student has not completed the creativity game.'
       ],
       classroomSuggestions: [
-        lang === 'es' ? 'Invitar al estudiante a participar en el minijuego "¿Qué inventas?" para recoger las primeras evidencias.' : 'Invite the student to play "¿Qué inventas?" to gather initial baseline evidence.'
+        lang === 'es' ? 'Invitar al estudiante a participar en el minijuego "¿Qué inventas?" para recoger las primeras evidencias.' : 'Invite the student to play "What Do You Invent?" to gather initial baseline evidence.'
       ],
       familyHomeTips: [
         lang === 'es' ? 'Fomentar el dibujo libre sin juzgar el resultado en casa.' : 'Encourage free drawing and imaginative play at home.'
@@ -552,7 +553,7 @@ export function generatePedagogicalAssessment(
           : '⏳ Pending: The student has not yet engaged with cooperative partner challenges.'
       ],
       classroomSuggestions: [
-        lang === 'es' ? 'Proponerle jugar a "Ayuda al Robot Bobi" para evaluar su disposición cooperativa espontánea.' : 'Invite the child to play "Ayuda al Robot Bobi" to observe spontaneous prosocial behavior.'
+        lang === 'es' ? 'Proponerle jugar a "Ayuda al Robot Bobi" para evaluar su disposición cooperativa espontánea.' : 'Invite the child to play "Help Robot Bobi" to observe spontaneous prosocial behavior.'
       ],
       familyHomeTips: [
         lang === 'es' ? 'Fomentar juegos de mesa colaborativos sin perdedores.' : 'Play cooperative board games together.'
@@ -674,7 +675,7 @@ export function generatePedagogicalAssessment(
       : 'Their talent and dedication are a treasure that blossoms every day!'
   };
 
-  return {
+  return localizeData({
     studentId: student.id,
     generatedAt: new Date().toISOString(),
     skillsPercentages,
@@ -694,7 +695,7 @@ export function generatePedagogicalAssessment(
       lang === 'es' ? 'Respetar su tiempo de procesamiento visual sin apresurar respuestas orales frente al grupo.' : 'Respect visual processing time without rushing oral answers in front of the whole group.',
       lang === 'es' ? 'Proporcionar anticipación de las rutinas mediante iconos secuenciales en su pupitre.' : 'Provide predictable daily routines using visual sequence cards on their desk.'
     ]
-  };
+  }, lang);
 }
 
 function totalActivitiesCompletedCount(completed: ActivityStatusItem[]): number {

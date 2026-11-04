@@ -1,3 +1,4 @@
+import { localizeText as text } from '../../i18n/localize';
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { translations } from '../../i18n/translations';
@@ -81,16 +82,16 @@ export const TeacherDashboard: React.FC = () => {
     const success = executeBrowserPrint();
     if (!success) {
       // If browser print is restricted by iframe sandbox, automatically download the printable document
-      downloadPrintableTeacherReport(activeStudent, report);
-      setPrintFeedback('Descargando documento imprimible del Panel Profesional...');
+      downloadPrintableTeacherReport(activeStudent, report, language);
+      setPrintFeedback(text(language, "Descargando documento imprimible del Panel Profesional..."));
       setTimeout(() => setPrintFeedback(null), 3500);
     }
   };
 
   const handleDownloadReport = () => {
     soundManager.playSparkle();
-    downloadPrintableTeacherReport(activeStudent, report);
-    setPrintFeedback('¡Informe del Panel Profesional descargado listo para imprimir!');
+    downloadPrintableTeacherReport(activeStudent, report, language);
+    setPrintFeedback(text(language, "¡Informe del Panel Profesional descargado listo para imprimir!"));
     setTimeout(() => setPrintFeedback(null), 3500);
   };
 
@@ -106,22 +107,18 @@ export const TeacherDashboard: React.FC = () => {
           <div className="text-3xl">{activeStudent.avatar}</div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider block">
-                Panel Profesional • Expediente Activo
-              </span>
+              <span className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider block">{' '}{text(language, "Panel Profesional • Expediente Activo")}{' '}</span>
               <span className="text-[10px] bg-slate-800 text-slate-300 font-bold px-2 py-0.5 rounded-full">
-                {completedCount} de 10 completadas
-              </span>
+                {completedCount}{' '}{text(language, "de 10 completadas")}{' '}</span>
             </div>
             <h2 className="text-base sm:text-lg font-black text-white">{activeStudent.nameOrAlias}</h2>
-            <span className="text-xs text-slate-400">
-              Edad: {activeStudent.age || 9} años • Género: {activeStudent.gender === 'female' ? 'Chica' : activeStudent.gender === 'male' ? 'Chico' : 'Sin especificar'} • {activeStudent.starsCount || 0} ⭐
+            <span className="text-xs text-slate-400">{' '}{text(language, "Edad:")}{' '}{activeStudent.age || 9} {' '}{text(language, "años • Género:")}{' '} {activeStudent.gender === 'female' ? text(language, "Chica") : activeStudent.gender === 'male' ? text(language, "Chico") : text(language, "Sin especificar")} • {activeStudent.starsCount || 0} ⭐
             </span>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs text-slate-400">Cambiar alumno:</span>
+          <span className="text-xs text-slate-400">{' '}{text(language, "Cambiar alumno:")}{' '}</span>
           <select
             value={activeStudent.id}
             onChange={(e) => switchStudent(e.target.value)}
@@ -129,8 +126,7 @@ export const TeacherDashboard: React.FC = () => {
           >
             {students.map(s => (
               <option key={s.id} value={s.id}>
-                {s.avatar} {s.nameOrAlias} ({s.telemetryLog.length} sesiones)
-              </option>
+                {s.avatar} {s.nameOrAlias} ({s.telemetryLog.length}{' '}{text(language, "sesiones)")}{' '}</option>
             ))}
           </select>
 
@@ -138,20 +134,20 @@ export const TeacherDashboard: React.FC = () => {
           <button
             onClick={handlePrint}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white shadow-md transition active:scale-95 cursor-pointer"
-            title="Imprimir informe oficial del Panel Profesional"
+            title={text(language, "Imprimir informe oficial del Panel Profesional")}
           >
             <Printer size={15} />
-            <span>Imprimir Informe</span>
+            <span>{' '}{text(language, "Imprimir Informe")}{' '}</span>
           </button>
 
           {/* Direct Download Printable HTML/PDF button */}
           <button
             onClick={handleDownloadReport}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 transition active:scale-95 cursor-pointer"
-            title="Descargar documento oficial formateado para imprimir"
+            title={text(language, "Descargar documento oficial formateado para imprimir")}
           >
             <Download size={14} />
-            <span className="hidden sm:inline">Descargar PDF/HTML</span>
+            <span className="hidden sm:inline">{' '}{text(language, "Descargar PDF/HTML")}{' '}</span>
           </button>
         </div>
       </div>
@@ -167,15 +163,12 @@ export const TeacherDashboard: React.FC = () => {
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-2 text-indigo-400 text-xs font-bold uppercase tracking-wider">
             <ShieldCheck size={18} />
-            <span>Marco Ético y Metodológico (Cumplimiento Reto 20 - R3, R14, R15)</span>
+            <span>{' '}{text(language, "Marco Ético y Metodológico (Cumplimiento Reto 20 - R3, R14, R15)")}{' '}</span>
           </div>
-          <AudioButton textToSpeak="Panel Profesional. Evaluación pedagógica sin etiquetas. El informe se alimenta exclusivamente de las actividades reales que el estudiante completa. Las que aún no ha jugado figuran como pendientes de realizar. No existen etiquetas clínicas ni juicios automatizados." />
+          <AudioButton textToSpeak={text(language, "Panel Profesional. Evaluación pedagógica sin etiquetas. El informe se alimenta exclusivamente de las actividades reales que el estudiante completa. Las que aún no ha jugado figuran como pendientes de realizar. No existen etiquetas clínicas ni juicios automatizados.")} />
         </div>
         <p className="text-xs text-indigo-200 leading-relaxed">
-          <strong>Sin etiquetas patologizantes (R14):</strong> no existen puntuaciones clínicas de déficit ni cocientes cerrados. 
-          <strong> Alimentación basada en evidencias reales:</strong> Solo las actividades realizadas alimentan las observaciones; las actividades no realizadas se declaran explícitamente como «Pendiente de realizar».
-          <strong> Supervisión humana activa (R15):</strong> El profesional valida o contrasta cada fortaleza antes del guardado institucional.
-        </p>
+          <strong>{' '}{text(language, "Sin etiquetas patologizantes (R14):")}{' '}</strong>{' '}{text(language, "no existen puntuaciones clínicas de déficit ni cocientes cerrados.")}{' '}<strong> {' '}{text(language, "Alimentación basada en evidencias reales:")}{' '}</strong>{' '}{text(language, "Solo las actividades realizadas alimentan las observaciones; las actividades no realizadas se declaran explícitamente como «Pendiente de realizar».")}{' '}<strong> {' '}{text(language, "Supervisión humana activa (R15):")}{' '}</strong>{' '}{text(language, "El profesional valida o contrasta cada fortaleza antes del guardado institucional.")}{' '}</p>
       </div>
 
       {/* ======================================================== */}
@@ -186,11 +179,9 @@ export const TeacherDashboard: React.FC = () => {
           <div>
             <h3 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
               <Layers className="text-indigo-400" size={20} />
-              <span>Registro y Estado de Actividades del Alumno</span>
+              <span>{' '}{text(language, "Registro y Estado de Actividades del Alumno")}{' '}</span>
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">
-              El informe se alimenta progresivamente: solo las actividades jugadas muestran evidencias reales; las no ejecutadas permanecen pendientes.
-            </p>
+            <p className="text-xs text-slate-400 mt-0.5">{' '}{text(language, "El informe se alimenta progresivamente: solo las actividades jugadas muestran evidencias reales; las no ejecutadas permanecen pendientes.")}{' '}</p>
           </div>
 
           {/* Filter Pills */}
@@ -202,9 +193,7 @@ export const TeacherDashboard: React.FC = () => {
                   ? 'bg-indigo-600 text-white'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
-            >
-              Todas (10)
-            </button>
+            >{' '}{text(language, "Todas (10)")}{' '}</button>
             <button
               onClick={() => setActiveTabActivities('completed')}
               className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 ${
@@ -214,7 +203,7 @@ export const TeacherDashboard: React.FC = () => {
               }`}
             >
               <CheckCircle size={13} />
-              <span>Realizadas ({completedCount})</span>
+              <span>{' '}{text(language, "Realizadas (")}{' '}{completedCount})</span>
             </button>
             <button
               onClick={() => setActiveTabActivities('pending')}
@@ -225,7 +214,7 @@ export const TeacherDashboard: React.FC = () => {
               }`}
             >
               <Clock size={13} />
-              <span>Pendientes ({pendingCount})</span>
+              <span>{' '}{text(language, "Pendientes (")}{' '}{pendingCount})</span>
             </button>
           </div>
         </div>
@@ -233,8 +222,8 @@ export const TeacherDashboard: React.FC = () => {
         {/* Progress bar of activities */}
         <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
           <div className="flex justify-between text-xs font-semibold">
-            <span className="text-slate-300">Progreso Global de Actividades del Alumno</span>
-            <span className="text-indigo-400">{completedCount} de 10 completadas ({Math.round((completedCount / 10) * 100)}%)</span>
+            <span className="text-slate-300">{' '}{text(language, "Progreso Global de Actividades del Alumno")}{' '}</span>
+            <span className="text-indigo-400">{completedCount} {' '}{text(language, "de 10 completadas (")}{' '}{Math.round((completedCount / 10) * 100)}%)</span>
           </div>
           <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden flex">
             <div 
@@ -245,12 +234,10 @@ export const TeacherDashboard: React.FC = () => {
           <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
-              {completedCount} realizadas (con evidencias registradas)
-            </span>
+              {completedCount}{' '}{text(language, "realizadas (con evidencias registradas)")}{' '}</span>
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" />
-              {pendingCount} pendientes de realizar
-            </span>
+              {pendingCount}{' '}{text(language, "pendientes de realizar")}{' '}</span>
           </div>
         </div>
 
@@ -286,7 +273,7 @@ export const TeacherDashboard: React.FC = () => {
                               ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/40'
                               : 'bg-amber-950 text-amber-300 border border-amber-500/40'
                           }`}>
-                            {isCompleted ? '✓ Realizada' : '⏳ Pendiente de realizar'}
+                            {isCompleted ? text(language, "✓ Realizada") : text(language, "⏳ Pendiente de realizar")}
                           </span>
                         </div>
                         <p className="text-[11px] text-slate-400">{activity.subtitle}</p>
@@ -297,13 +284,13 @@ export const TeacherDashboard: React.FC = () => {
                   {isCompleted ? (
                     <div className="mt-3 space-y-2 pt-2 border-t border-slate-800/80 text-xs">
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-400">
-                        <span>⏱️ Tiempo: {activity.durationSeconds}s</span>
-                        <span>🔄 Intentos: {activity.attemptsCount}</span>
-                        <span>⭐ Acciones clave: {activity.originalMovesCount}</span>
-                        <span className="text-emerald-400 font-bold">Rendimiento: {activity.scorePercent}%</span>
+                        <span>{' '}{text(language, "⏱️ Tiempo:")}{' '} {activity.durationSeconds}s</span>
+                        <span>{' '}{text(language, "🔄 Intentos:")}{' '} {activity.attemptsCount}</span>
+                        <span>{' '}{text(language, "⭐ Acciones clave:")}{' '} {activity.originalMovesCount}</span>
+                        <span className="text-emerald-400 font-bold">{' '}{text(language, "Rendimiento:")}{' '} {activity.scorePercent}%</span>
                       </div>
                       <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                        <strong className="text-[11px] text-slate-300 block mb-1">Evidencias directas registradas:</strong>
+                        <strong className="text-[11px] text-slate-300 block mb-1">{' '}{text(language, "Evidencias directas registradas:")}{' '}</strong>
                         <ul className="space-y-1 text-[11px] text-slate-300">
                           {activity.notesObserved?.map((note, i) => (
                             <li key={i} className="flex items-start gap-1.5">
@@ -318,11 +305,9 @@ export const TeacherDashboard: React.FC = () => {
                     <div className="mt-3 p-3 rounded-xl bg-amber-950/20 border border-amber-900/30 text-xs text-amber-200/80">
                       <p className="flex items-center gap-1.5 font-semibold text-amber-300 text-[11px]">
                         <Clock size={13} />
-                        <span>Pendiente de realizar</span>
+                        <span>{' '}{text(language, "Pendiente de realizar")}{' '}</span>
                       </p>
-                      <p className="text-[11px] text-slate-400 mt-1">
-                        El estudiante aún no ha abierto ni jugado esta actividad. No se muestran inferencias automáticas para garantizar una evaluación objetiva.
-                      </p>
+                      <p className="text-[11px] text-slate-400 mt-1">{' '}{text(language, "El estudiante aún no ha abierto ni jugado esta actividad. No se muestran inferencias automáticas para garantizar una evaluación objetiva.")}{' '}</p>
                     </div>
                   )}
                 </div>
@@ -339,11 +324,9 @@ export const TeacherDashboard: React.FC = () => {
           <div>
             <h3 className="text-lg font-black text-white flex items-center gap-2">
               <BarChart3 className="text-indigo-400" size={20} />
-              <span>Porcentajes de Habilidades, Intereses y Fortalezas</span>
+              <span>{' '}{text(language, "Porcentajes de Habilidades, Intereses y Fortalezas")}{' '}</span>
             </h3>
-            <p className="text-xs text-slate-400">
-              Métricas calculadas directamente de las acciones del estudiante en la plataforma
-            </p>
+            <p className="text-xs text-slate-400">{' '}{text(language, "Métricas calculadas directamente de las acciones del estudiante en la plataforma")}{' '}</p>
           </div>
         </div>
 
@@ -355,13 +338,9 @@ export const TeacherDashboard: React.FC = () => {
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2">
                   <Brain className="text-indigo-400" size={17} />
-                  <h4 className="text-xs font-black text-white uppercase tracking-wider">
-                    Porcentaje de Habilidades
-                  </h4>
+                  <h4 className="text-xs font-black text-white uppercase tracking-wider">{' '}{text(language, "Porcentaje de Habilidades")}{' '}</h4>
                 </div>
-                <span className="text-[10px] bg-indigo-950 text-indigo-300 border border-indigo-700/40 px-2 py-0.5 rounded-full font-bold">
-                  5 Competencias
-                </span>
+                <span className="text-[10px] bg-indigo-950 text-indigo-300 border border-indigo-700/40 px-2 py-0.5 rounded-full font-bold">{' '}{text(language, "5 Competencias")}{' '}</span>
               </div>
 
               <div className="space-y-3.5 mt-4">
@@ -375,7 +354,7 @@ export const TeacherDashboard: React.FC = () => {
                       <span className={`font-black ${
                         sk.status === 'evaluada' ? 'text-indigo-300' : 'text-amber-400 text-[11px]'
                       }`}>
-                        {sk.status === 'evaluada' ? `${sk.percentage}%` : '0% (Pendiente)'}
+                        {sk.status === 'evaluada' ? `${sk.percentage}%` : text(language, "0% (Pendiente)")}
                       </span>
                     </div>
 
@@ -397,9 +376,7 @@ export const TeacherDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-[10px] text-slate-400 pt-2 border-t border-slate-800/80">
-              * Habilidades no jugadas permanecen en 0% con etiqueta «Pendiente».
-            </div>
+            <div className="text-[10px] text-slate-400 pt-2 border-t border-slate-800/80">{' '}{text(language, "* Habilidades no jugadas permanecen en 0% con etiqueta «Pendiente».")}{' '}</div>
           </div>
 
           {/* Card B: Porcentajes de Intereses (6 mundos) */}
@@ -408,13 +385,9 @@ export const TeacherDashboard: React.FC = () => {
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2">
                   <Compass className="text-amber-400" size={17} />
-                  <h4 className="text-xs font-black text-white uppercase tracking-wider">
-                    Porcentaje de Intereses
-                  </h4>
+                  <h4 className="text-xs font-black text-white uppercase tracking-wider">{' '}{text(language, "Porcentaje de Intereses")}{' '}</h4>
                 </div>
-                <span className="text-[10px] bg-amber-950 text-amber-300 border border-amber-700/40 px-2 py-0.5 rounded-full font-bold">
-                  6 Mundos
-                </span>
+                <span className="text-[10px] bg-amber-950 text-amber-300 border border-amber-700/40 px-2 py-0.5 rounded-full font-bold">{' '}{text(language, "6 Mundos")}{' '}</span>
               </div>
 
               <div className="space-y-3 mt-4">
@@ -450,9 +423,7 @@ export const TeacherDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-[10px] text-slate-400 pt-2 border-t border-slate-800/80">
-              * Refleja las elecciones espontáneas y motivación intrínseca del estudiante.
-            </div>
+            <div className="text-[10px] text-slate-400 pt-2 border-t border-slate-800/80">{' '}{text(language, "* Refleja las elecciones espontáneas y motivación intrínseca del estudiante.")}{' '}</div>
           </div>
 
           {/* Card C: Porcentajes de Fortalezas (Consolidación) */}
@@ -461,20 +432,14 @@ export const TeacherDashboard: React.FC = () => {
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2">
                   <Sparkles className="text-emerald-400" size={17} />
-                  <h4 className="text-xs font-black text-white uppercase tracking-wider">
-                    Porcentaje de Fortalezas
-                  </h4>
+                  <h4 className="text-xs font-black text-white uppercase tracking-wider">{' '}{text(language, "Porcentaje de Fortalezas")}{' '}</h4>
                 </div>
-                <span className="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-700/40 px-2 py-0.5 rounded-full font-bold">
-                  Consolidación
-                </span>
+                <span className="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-700/40 px-2 py-0.5 rounded-full font-bold">{' '}{text(language, "Consolidación")}{' '}</span>
               </div>
 
               {/* Overall Consolidation Gauge */}
               <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 text-center space-y-2 mt-3">
-                <span className="text-[11px] text-slate-400 uppercase font-bold block">
-                  Índice de Consolidación de Fortalezas
-                </span>
+                <span className="text-[11px] text-slate-400 uppercase font-bold block">{' '}{text(language, "Índice de Consolidación de Fortalezas")}{' '}</span>
                 <div className="text-3xl font-black text-emerald-400">
                   {report.strengthsBreakdown.consolidationPercentage}%
                 </div>
@@ -484,9 +449,7 @@ export const TeacherDashboard: React.FC = () => {
                     style={{ width: `${report.strengthsBreakdown.consolidationPercentage}%` }}
                   />
                 </div>
-                <span className="text-[10px] text-slate-400 block">
-                  Basado en evidencias verificables sin etiquetas patologizantes
-                </span>
+                <span className="text-[10px] text-slate-400 block">{' '}{text(language, "Basado en evidencias verificables sin etiquetas patologizantes")}{' '}</span>
               </div>
 
               {/* Breakdown Distribution */}
@@ -494,7 +457,7 @@ export const TeacherDashboard: React.FC = () => {
                 <div className="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
                   <span className="text-emerald-300 font-semibold flex items-center gap-1.5">
                     <span>⭐</span>
-                    <span>Fortalezas que destacan:</span>
+                    <span>{' '}{text(language, "Fortalezas que destacan:")}{' '}</span>
                   </span>
                   <span className="font-black text-white">
                     {report.strengthsBreakdown.highlightedCount} ({report.strengthsBreakdown.highlightedPct}%)
@@ -504,7 +467,7 @@ export const TeacherDashboard: React.FC = () => {
                 <div className="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
                   <span className="text-indigo-300 font-semibold flex items-center gap-1.5">
                     <span>✓</span>
-                    <span>Destrezas sólidas:</span>
+                    <span>{' '}{text(language, "Destrezas sólidas:")}{' '}</span>
                   </span>
                   <span className="font-black text-white">
                     {report.strengthsBreakdown.solidCount} ({report.strengthsBreakdown.solidPct}%)
@@ -514,7 +477,7 @@ export const TeacherDashboard: React.FC = () => {
                 <div className="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
                   <span className="text-amber-300 font-semibold flex items-center gap-1.5">
                     <span>⏳</span>
-                    <span>En observación / pendientes:</span>
+                    <span>{' '}{text(language, "En observación / pendientes:")}{' '}</span>
                   </span>
                   <span className="font-black text-white">
                     {report.strengthsBreakdown.observingCount} ({report.strengthsBreakdown.observingPct}%)
@@ -523,9 +486,7 @@ export const TeacherDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-[10px] text-slate-400 pt-2 border-t border-slate-800/80">
-              * El 100% de los descriptores emplean enfoque positivo (Reto 20 - R3).
-            </div>
+            <div className="text-[10px] text-slate-400 pt-2 border-t border-slate-800/80">{' '}{text(language, "* El 100% de los descriptores emplean enfoque positivo (Reto 20 - R3).")}{' '}</div>
           </div>
 
         </div>
@@ -542,9 +503,7 @@ export const TeacherDashboard: React.FC = () => {
               {report.pedagogicalAnalysis.title}
             </h3>
           </div>
-          <span className="text-xs bg-indigo-950 text-indigo-300 border border-indigo-500/40 font-bold px-3 py-1 rounded-full">
-            Síntesis Institucional
-          </span>
+          <span className="text-xs bg-indigo-950 text-indigo-300 border border-indigo-500/40 font-bold px-3 py-1 rounded-full">{' '}{text(language, "Síntesis Institucional")}{' '}</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
@@ -553,7 +512,7 @@ export const TeacherDashboard: React.FC = () => {
           <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1.5">
             <h5 className="font-black text-indigo-300 uppercase tracking-wide text-[11px] flex items-center gap-1.5">
               <TrendingUp size={14} />
-              <span>Síntesis Evolutiva del Progreso</span>
+              <span>{' '}{text(language, "Síntesis Evolutiva del Progreso")}{' '}</span>
             </h5>
             <p className="text-slate-300 leading-relaxed">
               {report.pedagogicalAnalysis.overallSynthesis}
@@ -564,7 +523,7 @@ export const TeacherDashboard: React.FC = () => {
           <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1.5">
             <h5 className="font-black text-amber-300 uppercase tracking-wide text-[11px] flex items-center gap-1.5">
               <Compass size={14} />
-              <span>Correlación entre Intereses y Habilidades</span>
+              <span>{' '}{text(language, "Correlación entre Intereses y Habilidades")}{' '}</span>
             </h5>
             <p className="text-slate-300 leading-relaxed">
               {report.pedagogicalAnalysis.interestSkillCorrelation}
@@ -575,7 +534,7 @@ export const TeacherDashboard: React.FC = () => {
           <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1.5">
             <h5 className="font-black text-emerald-300 uppercase tracking-wide text-[11px] flex items-center gap-1.5">
               <ShieldCheck size={14} />
-              <span>Evaluación de la Perseverancia y Adaptación</span>
+              <span>{' '}{text(language, "Evaluación de la Perseverancia y Adaptación")}{' '}</span>
             </h5>
             <p className="text-slate-300 leading-relaxed">
               {report.pedagogicalAnalysis.resilienceEvaluation}
@@ -586,7 +545,7 @@ export const TeacherDashboard: React.FC = () => {
           <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1.5">
             <h5 className="font-black text-cyan-300 uppercase tracking-wide text-[11px] flex items-center gap-1.5">
               <Lightbulb size={14} />
-              <span>Orientación para la Diferenciación en el Aula</span>
+              <span>{' '}{text(language, "Orientación para la Diferenciación en el Aula")}{' '}</span>
             </h5>
             <p className="text-slate-300 leading-relaxed">
               {report.pedagogicalAnalysis.classroomDifferentiationAdvice}
@@ -604,11 +563,9 @@ export const TeacherDashboard: React.FC = () => {
           <div>
             <h3 className="text-lg font-black text-white flex items-center gap-2">
               <Brain className="text-indigo-400" size={20} />
-              <span>Perfil de Fortalezas Observadas y Validación Profesional</span>
+              <span>{' '}{text(language, "Perfil de Fortalezas Observadas y Validación Profesional")}{' '}</span>
             </h3>
-            <p className="text-xs text-slate-400">
-              Lenguaje positivo: «destaca en...» o «en fase de observación». Cero términos de déficit.
-            </p>
+            <p className="text-xs text-slate-400">{' '}{text(language, "Lenguaje positivo: «destaca en...» o «en fase de observación». Cero términos de déficit.")}{' '}</p>
           </div>
         </div>
 
@@ -632,10 +589,10 @@ export const TeacherDashboard: React.FC = () => {
                           : 'bg-slate-800 text-slate-400'
                       }`}>
                         {strength.levelDescription === 'destaca' 
-                          ? '⭐ Destaca con brillo propio' 
+                          ? text(language, "⭐ Destaca con brillo propio")
                           : strength.levelDescription === 'destreza_solida'
-                          ? '✓ Destreza sólida observada'
-                          : '⏳ En observación formativa'}
+                          ? text(language, "✓ Destreza sólida observada")
+                          : text(language, "⏳ En observación formativa")}
                       </span>
                     </div>
                     <p className="text-xs text-slate-300 mt-1">{strength.description}</p>
@@ -685,7 +642,7 @@ export const TeacherDashboard: React.FC = () => {
 
                 {/* Classroom Suggestion */}
                 <div className="text-xs text-slate-300 bg-indigo-950/30 p-3 rounded-xl border border-indigo-900/40">
-                  <strong className="text-indigo-300 block mb-0.5">Sugerencia pedagógica asociada:</strong>
+                  <strong className="text-indigo-300 block mb-0.5">{' '}{text(language, "Sugerencia pedagógica asociada:")}{' '}</strong>
                   {strength.classroomSuggestions[0]}
                 </div>
               </div>
@@ -701,11 +658,9 @@ export const TeacherDashboard: React.FC = () => {
         <div className="border-b border-slate-800 pb-3">
           <h3 className="text-base font-black text-white flex items-center gap-2">
             <Lightbulb className="text-amber-400" size={18} />
-            <span>3 Sugerencias Concretas para Orientar y Personalizar el Aula (R13)</span>
+            <span>{' '}{text(language, "3 Sugerencias Concretas para Orientar y Personalizar el Aula (R13)")}{' '}</span>
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Estrategias accionables e inclusivas para aplicar desde el primer día sin necesidad de intérprete
-          </p>
+          <p className="text-xs text-slate-400 mt-0.5">{' '}{text(language, "Estrategias accionables e inclusivas para aplicar desde el primer día sin necesidad de intérprete")}{' '}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -729,7 +684,7 @@ export const TeacherDashboard: React.FC = () => {
       <div className="rounded-3xl bg-slate-900 border border-slate-800 p-6 space-y-3">
         <h3 className="text-base font-black text-white flex items-center gap-2">
           <HeartHandshake className="text-rose-400" size={18} />
-          <span>Ajustes Razonables y Sensoriales Recomendados</span>
+          <span>{' '}{text(language, "Ajustes Razonables y Sensoriales Recomendados")}{' '}</span>
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-slate-300">
           {report.neurodivergentAccommodations.map((acc, i) => (
@@ -748,9 +703,9 @@ export const TeacherDashboard: React.FC = () => {
         <div className="flex items-center justify-between">
           <h3 className="text-base font-black text-white flex items-center gap-2">
             <FileText className="text-emerald-400" size={18} />
-            <span>Validación Humana y Notas del Profesional / Orientador</span>
+            <span>{' '}{text(language, "Validación Humana y Notas del Profesional / Orientador")}{' '}</span>
           </h3>
-          <span className="text-xs text-slate-400">Requisito R15</span>
+          <span className="text-xs text-slate-400">{' '}{text(language, "Requisito R15")}{' '}</span>
         </div>
 
         <textarea
@@ -767,8 +722,8 @@ export const TeacherDashboard: React.FC = () => {
         <div className="flex items-center justify-between pt-2">
           <span className="text-xs text-slate-400">
             {activeStudent.teacherValidation?.validatedAt
-              ? `Última validación guardada: ${new Date(activeStudent.teacherValidation.validatedAt).toLocaleDateString()}`
-              : 'Informe en fase de borrador pedagógico'}
+              ? text(language, "Última validación guardada: {0}", [new Date(activeStudent.teacherValidation.validatedAt).toLocaleDateString()])
+              : text(language, "Informe en fase de borrador pedagógico")}
           </span>
 
           <button
@@ -776,7 +731,7 @@ export const TeacherDashboard: React.FC = () => {
             className="py-3 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black text-xs shadow-lg shadow-emerald-500/20 active:scale-95 transition-all flex items-center gap-2"
           >
             <Save size={15} />
-            <span>{isSaved ? '¡Validación Guardada!' : 'Guardar y Validar Informe'}</span>
+            <span>{isSaved ? text(language, "¡Validación Guardada!") : text(language, "Guardar y Validar Informe")}</span>
           </button>
         </div>
       </div>

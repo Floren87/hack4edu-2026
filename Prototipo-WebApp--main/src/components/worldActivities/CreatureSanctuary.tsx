@@ -1,3 +1,5 @@
+import type { Language } from '../../types';
+import { localizeText as text } from '../../i18n/localize';
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { soundManager } from '../../utils/soundEffects';
@@ -15,49 +17,52 @@ interface Creature {
   correctCareId: string;
 }
 
-const CREATURES: Creature[] = [
+const getCREATURES = (language: Language): Creature[] => ([
   {
     id: 'pip',
-    name: 'Pip, el polluelo cósmico',
+    name: text(language, "Pip, el polluelo cósmico"),
     avatar: '🐥',
-    needDescription: 'Se tapa las orejitas: los sonidos fuertes le abruman.',
+    needDescription: text(language, "Se tapa las orejitas: los sonidos fuertes le abruman."),
     cueIcon: '📢💥',
     solved: false,
     correctCareId: 'headphones',
   },
   {
     id: 'lumi',
-    name: 'Lumi, la medusa de cristal',
+    name: text(language, "Lumi, la medusa de cristal"),
     avatar: '🪼',
-    needDescription: 'Tiembla despacio: la brisa del bosque está muy fría.',
+    needDescription: text(language, "Tiembla despacio: la brisa del bosque está muy fría."),
     cueIcon: '🥶❄️',
     solved: false,
     correctCareId: 'blanket',
   },
   {
     id: 'bramble',
-    name: 'Bramble, el erizo del musgo',
+    name: text(language, "Bramble, el erizo del musgo"),
     avatar: '🦔',
-    needDescription: 'Tiene la lengua seca y busca frutos frescos tras caminar.',
+    needDescription: text(language, "Tiene la lengua seca y busca frutos frescos tras caminar."),
     cueIcon: '☀️🏜️',
     solved: false,
     correctCareId: 'water_berry',
   },
-];
+]);
 
-const CARE_ITEMS = [
-  { id: 'headphones', name: 'Auriculares de Algodón Silencioso', icon: '🎧', desc: 'Protección para ruidos fuertes' },
-  { id: 'blanket', name: 'Manta Suave de Lana Cálida', icon: '🧣', desc: 'Abrigo suave y reconfortante' },
-  { id: 'water_berry', name: 'Frasco de Agua Fresca con Bayas', icon: '🍓💧', desc: 'Hidratación nutritiva' },
-  { id: 'flashlight', name: 'Linterna Brillante', icon: '🔦', desc: 'Luz intensa' },
-];
+const getCARE_ITEMS = (language: Language) => ([
+  { id: 'headphones', name: text(language, "Auriculares de Algodón Silencioso"), icon: '🎧', desc: text(language, "Protección para ruidos fuertes") },
+  { id: 'blanket', name: text(language, "Manta Suave de Lana Cálida"), icon: '🧣', desc: text(language, "Abrigo suave y reconfortante") },
+  { id: 'water_berry', name: text(language, "Frasco de Agua Fresca con Bayas"), icon: '🍓💧', desc: text(language, "Hidratación nutritiva") },
+  { id: 'flashlight', name: text(language, "Linterna Brillante"), icon: '🔦', desc: text(language, "Luz intensa") },
+]);
 
 export const CreatureSanctuary: React.FC = () => {
   const { setView, logGameTelemetry, addStars } = useApp();
+  const { language } = useApp();
+  const CREATURES = getCREATURES('es');
+  const CARE_ITEMS = getCARE_ITEMS(language);
   const [creatures, setCreatures] = useState(CREATURES);
   const [selectedCreatureId, setSelectedCreatureId] = useState<string>('pip');
   const [completed, setCompleted] = useState(false);
-  const [feedback, setFeedback] = useState('Observa cómo se siente cada criatura y dale el cuidado que necesita.');
+  const [feedback, setFeedback] = useState(text('es', "Observa cómo se siente cada criatura y dale el cuidado que necesita."));
   const [startTime] = useState(Date.now());
   const [caredCount, setCaredCount] = useState(0);
 
@@ -65,7 +70,7 @@ export const CreatureSanctuary: React.FC = () => {
 
   const handleApplyCare = (careId: string) => {
     if (activeCreature.solved) {
-      setFeedback('¡Esta criatura ya está tranquila y agradecida!');
+      setFeedback(text('es', "¡Esta criatura ya está tranquila y agradecida!"));
       return;
     }
 
@@ -81,7 +86,7 @@ export const CreatureSanctuary: React.FC = () => {
         return c;
       }));
 
-      setFeedback(`¡Maravilloso! ${activeCreature.name} se siente calmado/a y protegido/a.`);
+      setFeedback(text('es', "¡Maravilloso! {0} se siente calmado/a y protegido/a.", [activeCreature.name]));
 
       // If all solved
       if (nextCount >= 3) {
@@ -102,9 +107,9 @@ export const CreatureSanctuary: React.FC = () => {
           successRate: 1,
           perseveranceScore: 0.95,
           notesObserved: [
-            'Comprendió las señales sensoriales de las 3 criaturas (hipersensibilidad acústica, regulación térmica, hidratación).',
-            'Demostró empatía hacia la neurodiversidad y las necesidades de calma de otros.',
-            `Resolvió el refugio con delicadeza en ${duration}s.`
+            text(language, "Comprendió las señales sensoriales de las 3 criaturas (hipersensibilidad acústica, regulación térmica, hidratación)."),
+            text(language, "Demostró empatía hacia la neurodiversidad y las necesidades de calma de otros."),
+            text(language, "Resolvió el refugio con delicadeza en {0}s.", [duration])
           ],
           metrics: {
             creaturesHelped: 3,
@@ -117,7 +122,7 @@ export const CreatureSanctuary: React.FC = () => {
       }
     } else {
       soundManager.playPop();
-      setFeedback('Ese objeto no es el que más alivia su molestia en este momento. Vuelve a observar su gesto.');
+      setFeedback(text('es', "Ese objeto no es el que más alivia su molestia en este momento. Vuelve a observar su gesto."));
     }
   };
 
@@ -131,26 +136,22 @@ export const CreatureSanctuary: React.FC = () => {
           className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition"
         >
           <ArrowLeft size={16} />
-          <span className="text-xs font-semibold">Volver a Mundos</span>
+          <span className="text-xs font-semibold">{' '}{text(language, "Volver a Mundos")}{' '}</span>
         </button>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-rose-300 bg-rose-950/80 px-2.5 py-1 rounded-full border border-rose-800">
-            🤝 Mundo Ayudar: El Refugio de Criaturas
-          </span>
-          <AudioButton textToSpeak="Mundo Ayudar. En el refugio, cada criatura tiene una necesidad sensorial diferente. Mira sus gestos y ofréceles cuidado amoroso." />
+          <span className="text-xs font-semibold text-rose-300 bg-rose-950/80 px-2.5 py-1 rounded-full border border-rose-800">{' '}{text(language, "🤝 Mundo Ayudar: El Refugio de Criaturas")}{' '}</span>
+          <AudioButton textToSpeak={text(language, "Mundo Ayudar. En el refugio, cada criatura tiene una necesidad sensorial diferente. Mira sus gestos y ofréceles cuidado amoroso.")} />
         </div>
       </div>
 
       {/* Banner */}
       <div className="rounded-3xl bg-gradient-to-r from-rose-950 via-slate-900 to-indigo-950 p-5 border border-rose-800/40 shadow-xl">
         <h1 className="text-2xl font-black text-white flex items-center gap-2">
-          <span>El Refugio de Criaturas</span>
+          <span>{' '}{text(language, "El Refugio de Criaturas")}{' '}</span>
           <Heart className="text-rose-400" size={20} />
         </h1>
-        <p className="text-sm text-rose-200/80 mt-1">
-          Empatía y respeto a las diversas necesidades sensoriales. Cuida de seres amables prestando atención a sus señales corporales.
-        </p>
+        <p className="text-sm text-rose-200/80 mt-1">{' '}{text(language, "Empatía y respeto a las diversas necesidades sensoriales. Cuida de seres amables prestando atención a sus señales corporales.")}{' '}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -174,7 +175,7 @@ export const CreatureSanctuary: React.FC = () => {
                 }`}
               >
                 <span className="text-xl">{c.avatar}</span>
-                <span className="hidden sm:inline">{c.name.split(',')[0]}</span>
+                <span className="hidden sm:inline">{text(language, c.name).split(',')[0]}</span>
                 {c.solved && <span className="text-emerald-400">✓</span>}
               </button>
             ))}
@@ -191,26 +192,23 @@ export const CreatureSanctuary: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-              <h3 className="text-base font-black text-white">{activeCreature.name}</h3>
-              <p className="text-xs text-rose-200/90 max-w-sm mx-auto">{activeCreature.needDescription}</p>
-              <div className="text-xs text-slate-400">
-                Señal corporal visible: <span className="text-base">{activeCreature.cueIcon}</span>
+              <h3 className="text-base font-black text-white">{text(language, activeCreature.name)}</h3>
+              <p className="text-xs text-rose-200/90 max-w-sm mx-auto">{text(language, activeCreature.needDescription)}</p>
+              <div className="text-xs text-slate-400">{' '}{text(language, "Señal corporal visible:")}{' '}<span className="text-base">{activeCreature.cueIcon}</span>
               </div>
             </div>
           </div>
 
           {/* Feedback note */}
           <div className="w-full p-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-center text-xs text-rose-300 font-medium">
-            {feedback}
+            {text(language, feedback)}
           </div>
 
         </div>
 
         {/* Care Items Palette */}
         <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 space-y-4">
-          <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
-            Cofre de Cuidados
-          </span>
+          <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block">{' '}{text(language, "Cofre de Cuidados")}{' '}</span>
 
           <div className="space-y-2">
             {CARE_ITEMS.map(item => (
@@ -221,7 +219,7 @@ export const CreatureSanctuary: React.FC = () => {
               >
                 <span className="text-2xl">{item.icon}</span>
                 <div>
-                  <span className="text-xs font-bold text-white block">{item.name}</span>
+                  <span className="text-xs font-bold text-white block">{text(language, item.name)}</span>
                   <span className="text-[10px] text-slate-400">{item.desc}</span>
                 </div>
               </button>
@@ -230,13 +228,11 @@ export const CreatureSanctuary: React.FC = () => {
 
           {completed && (
             <div className="p-3 rounded-2xl bg-emerald-950/60 border border-emerald-500 text-center space-y-2">
-              <p className="text-xs font-bold text-emerald-200">¡Todas las criaturas están tranquilas y felices!</p>
+              <p className="text-xs font-bold text-emerald-200">{' '}{text(language, "¡Todas las criaturas están tranquilas y felices!")}{' '}</p>
               <button
                 onClick={() => setView('worlds_map')}
                 className="w-full py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs"
-              >
-                Volver al Mapa de Mundos
-              </button>
+              >{' '}{text(language, "Volver al Mapa de Mundos")}{' '}</button>
             </div>
           )}
 

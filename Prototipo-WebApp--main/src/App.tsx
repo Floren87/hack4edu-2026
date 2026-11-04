@@ -1,3 +1,4 @@
+import { localizeText as text } from './i18n/localize';
 import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Navbar } from './components/common/Navbar';
@@ -20,7 +21,8 @@ import { ProfileManager } from './components/profiles/ProfileManager';
 import { WelcomeEntryScreen } from './components/onboarding/WelcomeEntryScreen';
 
 const AppContent: React.FC = () => {
-  const { view, activeGameId, activeWorldId, isOnboarding } = useApp();
+  const { view, activeGameId, activeWorldId, isOnboarding, activeStudent } = useApp();
+  const { language } = useApp();
 
   if (isOnboarding) {
     return <WelcomeEntryScreen />;
@@ -51,7 +53,7 @@ const AppContent: React.FC = () => {
         return <WorldsMap />;
 
       case 'teacher_dashboard':
-        return <TeacherDashboard />;
+        return <TeacherDashboard key={activeStudent.id} />;
 
       case 'family_portal':
         return <FamilyPortal />;
@@ -77,8 +79,8 @@ const AppContent: React.FC = () => {
       {/* Subtle Accessible Footer */}
       <footer className="border-t border-slate-900 py-4 px-4 text-center text-[11px] text-slate-500 print:hidden">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>Talento sin Fronteras • Evaluación sin etiquetas ni barreras de idioma</span>
-          <span className="text-slate-600">Listo para PWA y despliegue estático en GitHub Pages (HTML/CSS/JS)</span>
+          <span>{text(language, "Talento sin Fronteras • Evaluación sin etiquetas ni barreras de idioma")}</span>
+          <span className="text-slate-600">{text(language, "Listo para PWA y despliegue estático en GitHub Pages (HTML/CSS/JS)")}</span>
         </div>
       </footer>
 

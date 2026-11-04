@@ -1,3 +1,5 @@
+import type { Language } from '../../types';
+import { localizeText as text } from '../../i18n/localize';
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { translations } from '../../i18n/translations';
@@ -16,35 +18,37 @@ interface WorkshopItem {
   y: number;
 }
 
-const AVAILABLE_PARTS = [
-  { id: 'part_umbrella', name: 'Paraguas Solar', icon: '☂️', label: 'Paraguas' },
-  { id: 'part_gear', name: 'Engranaje de Oro', icon: '⚙️', label: 'Engranaje' },
-  { id: 'part_crystal', name: 'Cristal Cuántico', icon: '💎', label: 'Cristal' },
-  { id: 'part_spring', name: 'Muelle Saltarín', icon: '🌀', label: 'Muelle' },
-  { id: 'part_bulb', name: 'Bombilla de Ideas', icon: '💡', label: 'Bombilla' },
-  { id: 'part_antenna', name: 'Antena Cósmica', icon: '📡', label: 'Antena' },
-  { id: 'part_wing', name: 'Ala Mecánica', icon: '🪽', label: 'Ala' },
-  { id: 'part_wheel', name: 'Rueda Flotante', icon: '🛞', label: 'Rueda' },
-  { id: 'part_bell', name: 'Campana Sonora', icon: '🔔', label: 'Campana' },
-  { id: 'part_leaf', name: 'Hoja Viva', icon: '🌿', label: 'Hoja' },
-];
+const getAVAILABLE_PARTS = (language: Language) => ([
+  { id: 'part_umbrella', name: text(language, "Paraguas Solar"), icon: '☂️', label: text(language, "Paraguas") },
+  { id: 'part_gear', name: text(language, "Engranaje de Oro"), icon: '⚙️', label: text(language, "Engranaje") },
+  { id: 'part_crystal', name: text(language, "Cristal Cuántico"), icon: '💎', label: text(language, "Cristal") },
+  { id: 'part_spring', name: text(language, "Muelle Saltarín"), icon: '🌀', label: text(language, "Muelle") },
+  { id: 'part_bulb', name: text(language, "Bombilla de Ideas"), icon: '💡', label: text(language, "Bombilla") },
+  { id: 'part_antenna', name: text(language, "Antena Cósmica"), icon: '📡', label: text(language, "Antena") },
+  { id: 'part_wing', name: text(language, "Ala Mecánica"), icon: '🪽', label: text(language, "Ala") },
+  { id: 'part_wheel', name: text(language, "Rueda Flotante"), icon: '🛞', label: text(language, "Rueda") },
+  { id: 'part_bell', name: text(language, "Campana Sonora"), icon: '🔔', label: text(language, "Campana") },
+  { id: 'part_leaf', name: text(language, "Hoja Viva"), icon: '🌿', label: text(language, "Hoja") },
+]);
 
-const INVENTION_PURPOSES = [
-  { id: 'flying', label: '🚀 Transporte volador o espacial', icon: '🚀' },
-  { id: 'nature', label: '🌱 Sanador de plantas y animales', icon: '🌱' },
-  { id: 'friend', label: '🤖 Amigo robot que cuida emociones', icon: '🤖' },
-  { id: 'music', label: '🎶 Música mágica para calmar el ambiente', icon: '🎶' },
-  { id: 'vision', label: '🔍 Lupa para descubrir mundos secretos', icon: '🔍' },
-];
+const getINVENTION_PURPOSES = (language: Language) => ([
+  { id: 'flying', label: text(language, "🚀 Transporte volador o espacial"), icon: '🚀' },
+  { id: 'nature', label: text(language, "🌱 Sanador de plantas y animales"), icon: '🌱' },
+  { id: 'friend', label: text(language, "🤖 Amigo robot que cuida emociones"), icon: '🤖' },
+  { id: 'music', label: text(language, "🎶 Música mágica para calmar el ambiente"), icon: '🎶' },
+  { id: 'vision', label: text(language, "🔍 Lupa para descubrir mundos secretos"), icon: '🔍' },
+]);
 
 export const CreativityGame: React.FC = () => {
   const { language, setView, logGameTelemetry, addStars, activeStudent } = useApp();
+  const AVAILABLE_PARTS = getAVAILABLE_PARTS(language);
+  const INVENTION_PURPOSES = getINVENTION_PURPOSES(language);
   const t = translations[language];
 
   const [placedItems, setPlacedItems] = useState<WorkshopItem[]>([]);
   const [selectedPurpose, setSelectedPurpose] = useState<string | null>(null);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
-  const [inventoName, setInventoName] = useState('Super Invento');
+  const [inventoName, setInventoName] = useState(text(language, "Super Invento"));
   const [completed, setCompleted] = useState(false);
   const [startTime] = useState(Date.now());
   const [originalMovesCount, setOriginalMovesCount] = useState(0);
@@ -52,8 +56,8 @@ export const CreativityGame: React.FC = () => {
   // Add initial item
   useEffect(() => {
     setPlacedItems([
-      { id: 'part_umbrella', name: 'Paraguas', icon: '☂️', category: 'base', rotation: 0, x: 180, y: 140 },
-      { id: 'part_gear', name: 'Engranaje', icon: '⚙️', category: 'motor', rotation: 0, x: 230, y: 190 },
+      { id: 'part_umbrella', name: text(language, "Paraguas"), icon: '☂️', category: 'base', rotation: 0, x: 180, y: 140 },
+      { id: 'part_gear', name: text(language, "Engranaje"), icon: '⚙️', category: 'motor', rotation: 0, x: 230, y: 190 },
     ]);
   }, []);
 
@@ -111,9 +115,9 @@ export const CreativityGame: React.FC = () => {
       successRate: 1,
       perseveranceScore: duration > 45 ? 0.9 : 0.75,
       notesObserved: [
-        `Ensambló un artefacto con ${placedItems.length} piezas no convencionales.`,
-        purposeObj ? `Asignó propósito creativo: "${purposeObj.label}"` : 'Exploró combinación libre de piezas.',
-        `Tiempo dedicado a la experimentación visual: ${duration}s.`
+        text(language, "Ensambló un artefacto con {0} piezas no convencionales.", [placedItems.length]),
+        purposeObj ? text(language, "Asignó propósito creativo: \"{0}\"", [purposeObj.label]) : text(language, "Exploró combinación libre de piezas."),
+        text(language, "Tiempo dedicado a la experimentación visual: {0}s.", [duration])
       ],
       metrics: {
         partsCount: placedItems.length,
@@ -140,9 +144,7 @@ export const CreativityGame: React.FC = () => {
         </button>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-indigo-300 bg-indigo-950/80 px-2.5 py-1 rounded-full border border-indigo-800">
-            🎨 Minijuego 1: Creatividad
-          </span>
+          <span className="text-xs font-semibold text-indigo-300 bg-indigo-950/80 px-2.5 py-1 rounded-full border border-indigo-800">{' '}{text(language, "🎨 Minijuego 1: Creatividad")}{' '}</span>
           <AudioButton textToSpeak={`${t.gameCreativityTitle}. ${t.gameCreativityInstructions}`} />
         </div>
       </div>
@@ -168,8 +170,8 @@ export const CreativityGame: React.FC = () => {
         {/* Left: Workbench Canvas */}
         <div className="md:col-span-2 rounded-3xl bg-slate-900/90 border-2 border-dashed border-indigo-700/50 p-4 relative min-h-[380px] flex flex-col justify-between overflow-hidden shadow-inner">
           <div className="absolute top-3 left-4 text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-            <span>🛠️ Mesa de Inventos</span>
-            <span className="text-[11px] font-normal text-slate-500">(Toca las piezas para rotar o mover)</span>
+            <span>{' '}{text(language, "🛠️ Mesa de Inventos")}{' '}</span>
+            <span className="text-[11px] font-normal text-slate-500">{' '}{text(language, "(Toca las piezas para rotar o mover)")}{' '}</span>
           </div>
 
           {/* Interactive Workshop Area */}
@@ -201,7 +203,7 @@ export const CreativityGame: React.FC = () => {
 
             {placedItems.length === 0 && (
               <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 text-xs">
-                <span>Añade piezas desde la bandeja derecha para armar tu invento.</span>
+                <span>{' '}{text(language, "Añade piezas desde la bandeja derecha para armar tu invento.")}{' '}</span>
               </div>
             )}
           </div>
@@ -215,19 +217,16 @@ export const CreativityGame: React.FC = () => {
                 className="px-3 py-1.5 rounded-xl bg-slate-800 text-xs font-semibold text-slate-200 hover:bg-slate-700 disabled:opacity-40 transition flex items-center gap-1.5"
               >
                 <RefreshCw size={13} />
-                <span>Girar 45°</span>
+                <span>{' '}{text(language, "Girar 45°")}{' '}</span>
               </button>
               <button
                 onClick={handleRemoveSelected}
                 disabled={selectedItemIndex === null}
                 className="px-3 py-1.5 rounded-xl bg-rose-950/50 border border-rose-800/50 text-xs font-semibold text-rose-300 hover:bg-rose-900/50 disabled:opacity-40 transition"
-              >
-                Quitar pieza
-              </button>
+              >{' '}{text(language, "Quitar pieza")}{' '}</button>
             </div>
 
-            <span className="text-xs font-medium text-slate-400">
-              Piezas en tu invento: <strong className="text-amber-400">{placedItems.length}</strong>
+            <span className="text-xs font-medium text-slate-400">{' '}{text(language, "Piezas en tu invento:")}{' '}<strong className="text-amber-400">{placedItems.length}</strong>
             </span>
           </div>
         </div>
@@ -236,8 +235,8 @@ export const CreativityGame: React.FC = () => {
         <div className="space-y-4">
           <div className="rounded-3xl bg-slate-900 border border-slate-800 p-4">
             <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center justify-between">
-              <span>Bandeja de Piezas Mágicas</span>
-              <span className="text-[10px] text-slate-500">Toca para añadir</span>
+              <span>{' '}{text(language, "Bandeja de Piezas Mágicas")}{' '}</span>
+              <span className="text-[10px] text-slate-500">{' '}{text(language, "Toca para añadir")}{' '}</span>
             </h3>
             <div className="grid grid-cols-4 gap-2">
               {AVAILABLE_PARTS.map(part => (
@@ -293,13 +292,11 @@ export const CreativityGame: React.FC = () => {
           ) : (
             <div className="p-4 rounded-2xl bg-emerald-950/70 border border-emerald-500/60 text-center space-y-2">
               <span className="text-2xl block">🎉</span>
-              <p className="text-xs font-bold text-emerald-200">¡Invento registrado en tu pasaporte y en el informe pedagógico!</p>
+              <p className="text-xs font-bold text-emerald-200">{' '}{text(language, "¡Invento registrado en tu pasaporte y en el informe pedagógico!")}{' '}</p>
               <button
                 onClick={() => setView('child_hub')}
                 className="w-full py-2.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs"
-              >
-                Volver a la Zona de Juegos
-              </button>
+              >{' '}{text(language, "Volver a la Zona de Juegos")}{' '}</button>
             </div>
           )}
 

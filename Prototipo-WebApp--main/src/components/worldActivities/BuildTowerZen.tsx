@@ -1,3 +1,5 @@
+import type { Language } from '../../types';
+import { localizeText as text } from '../../i18n/localize';
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { soundManager } from '../../utils/soundEffects';
@@ -14,16 +16,18 @@ interface BlockPiece {
   icon: string;
 }
 
-const AVAILABLE_BLOCKS: BlockPiece[] = [
-  { id: 'b_wide_rock', width: 140, height: 36, color: '#334155', shapeName: 'Piedra Base Ancha', icon: '🪨' },
-  { id: 'b_wood_slab', width: 110, height: 28, color: '#92400e', shapeName: 'Tablón de Roble', icon: '🪵' },
-  { id: 'b_jade_brick', width: 85, height: 32, color: '#065f46', shapeName: 'Bloque de Jade', icon: '🟩' },
-  { id: 'b_crystal_gem', width: 60, height: 30, color: '#0284c7', shapeName: 'Gema Prisma', icon: '💎' },
-  { id: 'b_feather_stone', width: 45, height: 26, color: '#a855f7', shapeName: 'Cúpula Liviana', icon: '🔮' },
-];
+const getAVAILABLE_BLOCKS = (language: Language): BlockPiece[] => ([
+  { id: 'b_wide_rock', width: 140, height: 36, color: '#334155', shapeName: text(language, "Piedra Base Ancha"), icon: '🪨' },
+  { id: 'b_wood_slab', width: 110, height: 28, color: '#92400e', shapeName: text(language, "Tablón de Roble"), icon: '🪵' },
+  { id: 'b_jade_brick', width: 85, height: 32, color: '#065f46', shapeName: text(language, "Bloque de Jade"), icon: '🟩' },
+  { id: 'b_crystal_gem', width: 60, height: 30, color: '#0284c7', shapeName: text(language, "Gema Prisma"), icon: '💎' },
+  { id: 'b_feather_stone', width: 45, height: 26, color: '#a855f7', shapeName: text(language, "Cúpula Liviana"), icon: '🔮' },
+]);
 
 export const BuildTowerZen: React.FC = () => {
   const { setView, logGameTelemetry, addStars } = useApp();
+  const { language } = useApp();
+  const AVAILABLE_BLOCKS = getAVAILABLE_BLOCKS(language);
   const [stackedBlocks, setStackedBlocks] = useState<BlockPiece[]>([]);
   const [towerTilt, setTowerTilt] = useState(0);
   const [completed, setCompleted] = useState(false);
@@ -75,9 +79,9 @@ export const BuildTowerZen: React.FC = () => {
       successRate: 1,
       perseveranceScore: 0.9,
       notesObserved: [
-        `Construyó una torre de ${stackedBlocks.length} niveles con inclinación de ${Math.abs(towerTilt).toFixed(1)}°.`,
-        'Demostró intuición de física espacial y distribución de peso en la base.',
-        `Realizó ${adjustmentsCount} decisiones de colocación táctil.`
+        text(language, "Construyó una torre de {0} niveles con inclinación de {1}°.", [stackedBlocks.length, Math.abs(towerTilt).toFixed(1)]),
+        text(language, "Demostró intuición de física espacial y distribución de peso en la base."),
+        text(language, "Realizó {0} decisiones de colocación táctil.", [adjustmentsCount])
       ],
       metrics: {
         towerHeight: stackedBlocks.length,
@@ -100,26 +104,22 @@ export const BuildTowerZen: React.FC = () => {
           className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition"
         >
           <ArrowLeft size={16} />
-          <span className="text-xs font-semibold">Volver a Mundos</span>
+          <span className="text-xs font-semibold">{' '}{text(language, "Volver a Mundos")}{' '}</span>
         </button>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-amber-300 bg-amber-950/80 px-2.5 py-1 rounded-full border border-amber-800">
-            🏗️ Mundo Construir: Torre de Equilibrio Zen
-          </span>
-          <AudioButton textToSpeak="Mundo Construir. Apila las piedras y maderas sobre el pedestal para crear una torre armónica. Siente el equilibrio y la gravedad." />
+          <span className="text-xs font-semibold text-amber-300 bg-amber-950/80 px-2.5 py-1 rounded-full border border-amber-800">{' '}{text(language, "🏗️ Mundo Construir: Torre de Equilibrio Zen")}{' '}</span>
+          <AudioButton textToSpeak={text(language, "Mundo Construir. Apila las piedras y maderas sobre el pedestal para crear una torre armónica. Siente el equilibrio y la gravedad.")} />
         </div>
       </div>
 
       {/* Intro Banner */}
       <div className="rounded-3xl bg-gradient-to-r from-amber-950 via-slate-900 to-stone-900 p-5 border border-amber-800/40 shadow-xl">
         <h1 className="text-2xl font-black text-white flex items-center gap-2">
-          <span>Torre de Equilibrio Zen</span>
+          <span>{' '}{text(language, "Torre de Equilibrio Zen")}{' '}</span>
           <Layers className="text-amber-400" size={20} />
         </h1>
-        <p className="text-sm text-amber-200/80 mt-1">
-          Actividad táctil y espacial. Apila bloques de diferentes masas y formas buscando la estabilidad natural.
-        </p>
+        <p className="text-sm text-amber-200/80 mt-1">{' '}{text(language, "Actividad táctil y espacial. Apila bloques de diferentes masas y formas buscando la estabilidad natural.")}{' '}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -127,17 +127,14 @@ export const BuildTowerZen: React.FC = () => {
         {/* Tower Physics Arena */}
         <div className="md:col-span-2 rounded-3xl bg-slate-900/90 border border-slate-800 p-6 flex flex-col justify-end items-center min-h-[420px] relative overflow-hidden shadow-inner">
           
-          <div className="absolute top-4 left-4 text-xs font-bold text-slate-400">
-            Equilibrio: {Math.abs(towerTilt) < 8 ? '🟢 Estable y Centrado' : '🟡 Inclinación exploratoria'}
+          <div className="absolute top-4 left-4 text-xs font-bold text-slate-400">{' '}{text(language, "Equilibrio:")}{' '}{Math.abs(towerTilt) < 8 ? text(language, "🟢 Estable y Centrado") : text(language, "🟡 Inclinación exploratoria")}
           </div>
 
           {/* Pedestal Base */}
           <div className="flex flex-col-reverse items-center transition-transform duration-500" style={{ transform: `rotate(${towerTilt}deg)` }}>
             
             {/* The Solid Pedestal */}
-            <div className="w-48 h-8 rounded-xl bg-gradient-to-r from-slate-700 to-slate-800 border-2 border-slate-600 shadow-xl flex items-center justify-center text-[11px] font-bold text-slate-300">
-              Pedestal Firme
-            </div>
+            <div className="w-48 h-8 rounded-xl bg-gradient-to-r from-slate-700 to-slate-800 border-2 border-slate-600 shadow-xl flex items-center justify-center text-[11px] font-bold text-slate-300">{' '}{text(language, "Pedestal Firme")}{' '}</div>
 
             {/* Stacked Blocks */}
             {stackedBlocks.map((block, idx) => (
@@ -158,9 +155,7 @@ export const BuildTowerZen: React.FC = () => {
           </div>
 
           {stackedBlocks.length === 0 && (
-            <div className="absolute inset-0 flex items-center justify-center text-slate-500 text-xs pointer-events-none">
-              Toca las piezas de la derecha para apilarlas aquí.
-            </div>
+            <div className="absolute inset-0 flex items-center justify-center text-slate-500 text-xs pointer-events-none">{' '}{text(language, "Toca las piezas de la derecha para apilarlas aquí.")}{' '}</div>
           )}
 
         </div>
@@ -168,13 +163,11 @@ export const BuildTowerZen: React.FC = () => {
         {/* Pieces tray */}
         <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-              Piezas Disponibles
-            </span>
+            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">{' '}{text(language, "Piezas Disponibles")}{' '}</span>
             <button
               onClick={handleReset}
               className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
-              title="Reiniciar torre"
+              title={text(language, "Reiniciar torre")}
             >
               <RefreshCw size={14} />
             </button>
@@ -191,10 +184,10 @@ export const BuildTowerZen: React.FC = () => {
                   <span className="text-xl">{block.icon}</span>
                   <div>
                     <span className="text-xs font-bold text-white block">{block.shapeName}</span>
-                    <span className="text-[10px] text-slate-400">Ancho: {block.width}px</span>
+                    <span className="text-[10px] text-slate-400">{' '}{text(language, "Ancho:")}{' '} {block.width}px</span>
                   </div>
                 </div>
-                <span className="text-xs font-bold text-amber-400">+ Colocar</span>
+                <span className="text-xs font-bold text-amber-400">{' '}{text(language, "+ Colocar")}{' '}</span>
               </button>
             ))}
           </div>
@@ -206,17 +199,15 @@ export const BuildTowerZen: React.FC = () => {
               className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-black text-xs shadow-lg shadow-amber-500/20 disabled:opacity-40 transition-all active:scale-95 flex items-center justify-center gap-2"
             >
               <Check size={16} />
-              <span>Guardar Estructura Zen (+2 ⭐)</span>
+              <span>{' '}{text(language, "Guardar Estructura Zen (+2 ⭐)")}{' '}</span>
             </button>
           ) : (
             <div className="p-3 rounded-2xl bg-emerald-950/60 border border-emerald-500 text-center space-y-2">
-              <p className="text-xs font-bold text-emerald-200">¡Estructura guardada en el informe de habilidades espaciales!</p>
+              <p className="text-xs font-bold text-emerald-200">{' '}{text(language, "¡Estructura guardada en el informe de habilidades espaciales!")}{' '}</p>
               <button
                 onClick={() => setView('worlds_map')}
                 className="w-full py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs"
-              >
-                Volver al Mapa de Mundos
-              </button>
+              >{' '}{text(language, "Volver al Mapa de Mundos")}{' '}</button>
             </div>
           )}
 

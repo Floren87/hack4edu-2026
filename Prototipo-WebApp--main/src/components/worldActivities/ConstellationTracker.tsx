@@ -1,3 +1,5 @@
+import type { Language } from '../../types';
+import { localizeText as text } from '../../i18n/localize';
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { soundManager } from '../../utils/soundEffects';
@@ -14,43 +16,45 @@ interface Constellation {
   meaning: string;
 }
 
-const INITIAL_CONSTELLATIONS: Constellation[] = [
+const getINITIAL_CONSTELLATIONS = (language: Language): Constellation[] => ([
   {
     id: 'fox',
-    name: 'Zorro Estelar',
+    name: text(language, "Zorro Estelar"),
     icon: '🦊',
     starsCoords: [{ x: 22, y: 30 }, { x: 30, y: 22 }, { x: 38, y: 32 }, { x: 32, y: 44 }],
     discovered: false,
-    meaning: 'Agilidad mental y observación atenta',
+    meaning: text(language, "Agilidad mental y observación atenta"),
   },
   {
     id: 'owl',
-    name: 'Búho Sabio',
+    name: text(language, "Búho Sabio"),
     icon: '🦉',
     starsCoords: [{ x: 68, y: 20 }, { x: 78, y: 24 }, { x: 82, y: 38 }, { x: 70, y: 36 }],
     discovered: false,
-    meaning: 'Capacidad de reflexión profunda',
+    meaning: text(language, "Capacidad de reflexión profunda"),
   },
   {
     id: 'dolphin',
-    name: 'Delfín Cósmico',
+    name: text(language, "Delfín Cósmico"),
     icon: '🐬',
     starsCoords: [{ x: 25, y: 70 }, { x: 35, y: 64 }, { x: 45, y: 72 }, { x: 50, y: 82 }],
     discovered: false,
-    meaning: 'Alegría y espíritu de juego',
+    meaning: text(language, "Alegría y espíritu de juego"),
   },
   {
     id: 'butterfly',
-    name: 'Mariposa de Luz',
+    name: text(language, "Mariposa de Luz"),
     icon: '🦋',
     starsCoords: [{ x: 70, y: 65 }, { x: 80, y: 58 }, { x: 88, y: 70 }, { x: 76, y: 78 }],
     discovered: false,
-    meaning: 'Sensibilidad a la transformación y la belleza',
+    meaning: text(language, "Sensibilidad a la transformación y la belleza"),
   },
-];
+]);
 
 export const ConstellationTracker: React.FC = () => {
   const { setView, logGameTelemetry, addStars } = useApp();
+  const { language } = useApp();
+  const INITIAL_CONSTELLATIONS = getINITIAL_CONSTELLATIONS('es');
   const [constellations, setConstellations] = useState(INITIAL_CONSTELLATIONS);
   const [completed, setCompleted] = useState(false);
   const [startTime] = useState(Date.now());
@@ -88,9 +92,9 @@ export const ConstellationTracker: React.FC = () => {
       successRate: 1,
       perseveranceScore: 0.9,
       notesObserved: [
-        `Descubrió ${discoveredCount} de 4 constelaciones celestes ocultas.`,
-        'Demostró alta discriminación perceptiva de detalles visuales y búsqueda sistemática.',
-        `Tiempo de exploración atenta: ${duration}s.`
+        text(language, "Descubrió {0} de 4 constelaciones celestes ocultas.", [discoveredCount]),
+        text(language, "Demostró alta discriminación perceptiva de detalles visuales y búsqueda sistemática."),
+        text(language, "Tiempo de exploración atenta: {0}s.", [duration])
       ],
       metrics: {
         discoveredCount,
@@ -112,26 +116,22 @@ export const ConstellationTracker: React.FC = () => {
           className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition"
         >
           <ArrowLeft size={16} />
-          <span className="text-xs font-semibold">Volver a Mundos</span>
+          <span className="text-xs font-semibold">{' '}{text(language, "Volver a Mundos")}{' '}</span>
         </button>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-sky-300 bg-sky-950/80 px-2.5 py-1 rounded-full border border-sky-800">
-            🧭 Mundo Explorar: Rastreador de Constelaciones
-          </span>
-          <AudioButton textToSpeak="Mundo Explorar. Mira el cielo nocturno y busca las estrellas secretas. Al tocarlas, revelarás animales cósmicos ocultos." />
+          <span className="text-xs font-semibold text-sky-300 bg-sky-950/80 px-2.5 py-1 rounded-full border border-sky-800">{' '}{text(language, "🧭 Mundo Explorar: Rastreador de Constelaciones")}{' '}</span>
+          <AudioButton textToSpeak={text(language, "Mundo Explorar. Mira el cielo nocturno y busca las estrellas secretas. Al tocarlas, revelarás animales cósmicos ocultos.")} />
         </div>
       </div>
 
       {/* Banner */}
       <div className="rounded-3xl bg-gradient-to-r from-sky-950 via-slate-900 to-indigo-950 p-5 border border-sky-800/40 shadow-xl">
         <h1 className="text-2xl font-black text-white flex items-center gap-2">
-          <span>Constelaciones Ocultas</span>
+          <span>{' '}{text(language, "Constelaciones Ocultas")}{' '}</span>
           <Compass className="text-sky-400" size={20} />
         </h1>
-        <p className="text-sm text-sky-200/80 mt-1">
-          Atención al detalle y curiosidad visual. Explora el firmamento oscuro y activa los grupos de estrellas brillantes.
-        </p>
+        <p className="text-sm text-sky-200/80 mt-1">{' '}{text(language, "Atención al detalle y curiosidad visual. Explora el firmamento oscuro y activa los grupos de estrellas brillantes.")}{' '}</p>
       </div>
 
       {/* Interactive Sky Canvas */}
@@ -161,7 +161,7 @@ export const ConstellationTracker: React.FC = () => {
                       ? 'w-6 h-6 bg-amber-400 border-2 border-white shadow-lg shadow-amber-400/80 scale-125 z-20'
                       : 'w-4 h-4 bg-sky-300/80 hover:bg-amber-300 hover:scale-150 animate-pulse z-10'
                   }`}
-                  title="Toca para despertar la constelación"
+                  title={text(language, "Toca para despertar la constelación")}
                 />
               ))}
 
@@ -176,8 +176,8 @@ export const ConstellationTracker: React.FC = () => {
                 >
                   <span className="text-xl">{c.icon}</span>
                   <div>
-                    <span className="text-xs font-bold text-amber-300 block">{c.name}</span>
-                    <span className="text-[10px] text-slate-300">{c.meaning}</span>
+                    <span className="text-xs font-bold text-amber-300 block">{text(language, c.name)}</span>
+                    <span className="text-[10px] text-slate-300">{text(language, c.meaning)}</span>
                   </div>
                 </div>
               )}
@@ -188,8 +188,7 @@ export const ConstellationTracker: React.FC = () => {
         {/* Status Indicator */}
         <div className="absolute bottom-4 left-4 z-30 flex items-center gap-2 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-700">
           <Eye size={14} className="text-sky-400" />
-          <span className="text-xs font-semibold text-slate-300">
-            Descubiertas: <strong className="text-amber-400">{discoveredCount}</strong> / {constellations.length}
+          <span className="text-xs font-semibold text-slate-300">{' '}{text(language, "Descubiertas:")}{' '}<strong className="text-amber-400">{discoveredCount}</strong> / {constellations.length}
           </span>
         </div>
 
@@ -200,7 +199,7 @@ export const ConstellationTracker: React.FC = () => {
               className="py-2.5 px-5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 text-slate-950 font-black text-xs shadow-lg shadow-sky-500/20 active:scale-95 flex items-center gap-1.5"
             >
               <Check size={16} />
-              <span>Guardar Exploración (+2 ⭐)</span>
+              <span>{' '}{text(language, "Guardar Exploración (+2 ⭐)")}{' '}</span>
             </button>
           </div>
         )}
@@ -209,15 +208,11 @@ export const ConstellationTracker: React.FC = () => {
 
       {completed && (
         <div className="p-4 rounded-3xl bg-emerald-950/60 border border-emerald-500 text-center space-y-2">
-          <p className="text-xs font-bold text-emerald-200">
-            ¡Descubrimiento visual completado! La capacidad de atención al detalle quedó registrada.
-          </p>
+          <p className="text-xs font-bold text-emerald-200">{' '}{text(language, "¡Descubrimiento visual completado! La capacidad de atención al detalle quedó registrada.")}{' '}</p>
           <button
             onClick={() => setView('worlds_map')}
             className="py-2.5 px-6 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs"
-          >
-            Volver al Mapa de Mundos
-          </button>
+          >{' '}{text(language, "Volver al Mapa de Mundos")}{' '}</button>
         </div>
       )}
 

@@ -1,3 +1,4 @@
+import { localizeText as text } from '../../i18n/localize';
 import React from 'react';
 import { useApp, EFFORT_BADGES } from '../../context/AppContext';
 import { translations } from '../../i18n/translations';
@@ -38,7 +39,7 @@ export const ChildHome: React.FC = () => {
       lucide: Lightbulb,
       color: 'from-purple-900/60 to-indigo-950/80',
       border: 'hover:border-purple-400',
-      tag: 'Creatividad',
+      tag: text(language, "Creatividad"),
       starsBonus: '+3 ⭐',
     },
     {
@@ -49,7 +50,7 @@ export const ChildHome: React.FC = () => {
       lucide: Puzzle,
       color: 'from-cyan-900/60 to-blue-950/80',
       border: 'hover:border-cyan-400',
-      tag: 'Pensamiento Lógico',
+      tag: text(language, "Pensamiento Lógico"),
       starsBonus: '+3 ⭐',
     },
     {
@@ -60,7 +61,7 @@ export const ChildHome: React.FC = () => {
       lucide: MessageSquare,
       color: 'from-rose-900/60 to-pink-950/80',
       border: 'hover:border-rose-400',
-      tag: 'Comunicación',
+      tag: text(language, "Comunicación"),
       starsBonus: '+3 ⭐',
     },
     {
@@ -71,7 +72,7 @@ export const ChildHome: React.FC = () => {
       lucide: Users,
       color: 'from-emerald-900/60 to-teal-950/80',
       border: 'hover:border-emerald-400',
-      tag: 'Colaboración',
+      tag: text(language, "Colaboración"),
       starsBonus: '+3 ⭐',
     },
   ];
@@ -86,25 +87,21 @@ export const ChildHome: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="text-3xl sm:text-4xl">{activeStudent.avatar}</span>
               <div>
-                <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">
-                  ¡Hola de nuevo, explorador/a!
-                </span>
+                <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">{' '}{text(language, "¡Hola de nuevo, explorador/a!")}{' '}</span>
                 <h1 className="text-2xl sm:text-3xl font-black text-white">
                   {activeStudent.nameOrAlias}
                 </h1>
               </div>
             </div>
-            <p className="text-xs sm:text-sm text-indigo-200/90 max-w-lg leading-relaxed">
-              Juega a tu ritmo. No hay exámenes ni notas. Cada intento descubre tus talentos únicos.
-            </p>
+            <p className="text-xs sm:text-sm text-indigo-200/90 max-w-lg leading-relaxed">{' '}{text(language, "Juega a tu ritmo. No hay exámenes ni notas. Cada intento descubre tus talentos únicos.")}{' '}</p>
           </div>
 
           <div className="flex items-center gap-3">
-            <AudioButton textToSpeak={`¡Hola de nuevo, ${activeStudent.nameOrAlias}! Juega a tu ritmo. No hay exámenes ni notas. Cada intento descubre tus talentos únicos.`} size="lg" />
+            <AudioButton textToSpeak={text(language, "¡Hola de nuevo, {0}! Juega a tu ritmo. No hay exámenes ni notas. Cada intento descubre tus talentos únicos.", [activeStudent.nameOrAlias])} size="lg" />
             <div className="px-4 py-2.5 rounded-2xl bg-amber-400/10 border border-amber-400/30 flex items-center gap-2 text-amber-300 font-black">
               <Star className="text-amber-400 fill-amber-400" size={20} />
               <span className="text-lg">{activeStudent.starsCount || 0}</span>
-              <span className="text-xs font-medium text-amber-200/80">Estrellas</span>
+              <span className="text-xs font-medium text-amber-200/80">{' '}{text(language, "Estrellas")}{' '}</span>
             </div>
           </div>
         </div>
@@ -118,9 +115,7 @@ export const ChildHome: React.FC = () => {
               <span>{t.navGames}</span>
               <Gamepad2 size={18} className="text-amber-400" />
             </h2>
-            <p className="text-xs text-slate-400">
-              Desafíos de ingenio, secuencias, historias y cooperación
-            </p>
+            <p className="text-xs text-slate-400">{' '}{text(language, "Desafíos de ingenio, secuencias, historias y cooperación")}{' '}</p>
           </div>
         </div>
 
@@ -153,7 +148,7 @@ export const ChildHome: React.FC = () => {
               </div>
 
               <div className="pt-2 flex items-center justify-between text-xs font-bold text-slate-400 group-hover:text-white">
-                <span>Jugar ahora</span>
+                <span>{' '}{text(language, "Jugar ahora")}{' '}</span>
                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </div>
             </button>
@@ -166,21 +161,19 @@ export const ChildHome: React.FC = () => {
         <div className="space-y-2 text-center sm:text-left">
           <div className="flex items-center justify-center sm:justify-start gap-2 text-indigo-400 text-xs font-bold uppercase tracking-wider">
             <MapPin size={16} />
-            <span>Mundos de Curiosidad e Intereses (R2)</span>
+            <span>{' '}{text(language, "Mundos de Curiosidad e Intereses (R2)")}{' '}</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-white">
             {t.worldsMapTitle}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-300 max-w-lg">
-            Visita libremente: <strong>Construir</strong>, <strong>Explorar</strong>, <strong>Crear</strong>, <strong>Ayudar</strong>, <strong>Organizar</strong> o <strong>Contar</strong> con retos táctiles para neurodivergentes.
-          </p>
+          <p className="text-xs sm:text-sm text-slate-300 max-w-lg">{' '}{text(language, "Visita libremente:")}{' '}<strong>{' '}{text(language, "Construir")}{' '}</strong>, <strong>{' '}{text(language, "Explorar")}{' '}</strong>, <strong>{' '}{text(language, "Crear")}{' '}</strong>, <strong>{' '}{text(language, "Ayudar")}{' '}</strong>, <strong>{' '}{text(language, "Organizar")}{' '}</strong> {' '}{text(language, "o")}{' '} <strong>{' '}{text(language, "Contar")}{' '}</strong>{' '}{text(language, "con retos táctiles para neurodivergentes.")}{' '}</p>
         </div>
 
         <button
           onClick={handleOpenWorlds}
           className="py-3.5 px-6 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-indigo-500/20 transition-all active:scale-95 shrink-0 flex items-center gap-2"
         >
-          <span>Abrir Mapa de Mundos</span>
+          <span>{' '}{text(language, "Abrir Mapa de Mundos")}{' '}</span>
           <ArrowRight size={16} />
         </button>
       </div>
@@ -193,8 +186,7 @@ export const ChildHome: React.FC = () => {
             <h3 className="text-base font-black text-white">{t.badges}</h3>
           </div>
           <span className="text-xs font-semibold text-slate-400">
-            {activeStudent.unlockedBadges.length} de {Object.keys(EFFORT_BADGES).length} obtenidas
-          </span>
+            {activeStudent.unlockedBadges.length} {' '}{text(language, "de")}{' '} {Object.keys(EFFORT_BADGES).length}{' '}{text(language, "obtenidas")}{' '}</span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
@@ -210,8 +202,8 @@ export const ChildHome: React.FC = () => {
                 }`}
               >
                 <div className="text-3xl mb-1">{badge.icon}</div>
-                <span className="text-xs font-bold text-white block truncate">{badge.name}</span>
-                <span className="text-[10px] text-slate-400 line-clamp-2 mt-0.5">{badge.description}</span>
+                <span className="text-xs font-bold text-white block truncate">{' '}{text(language, badge.name)}{' '}</span>
+                <span className="text-[10px] text-slate-400 line-clamp-2 mt-0.5">{' '}{text(language, badge.description)}{' '}</span>
               </div>
             );
           })}

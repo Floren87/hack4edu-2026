@@ -1,3 +1,5 @@
+import type { Language } from '../../types';
+import { localizeText as text } from '../../i18n/localize';
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { soundManager } from '../../utils/soundEffects';
@@ -14,16 +16,18 @@ interface Ripple {
   color: string;
 }
 
-const PALETTES = [
-  { id: 'aurora', name: 'Aurora Mágica', colors: ['#06b6d4', '#10b981', '#8b5cf6', '#3b82f6'] },
-  { id: 'sunset', name: 'Atardecer Cálido', colors: ['#f97316', '#ec4899', '#eab308', '#ef4444'] },
-  { id: 'cosmic', name: 'Espacio Infinito', colors: ['#6366f1', '#a855f7', '#38bdf8', '#f43f5e'] },
-];
+const getPALETTES = (language: Language) => ([
+  { id: 'aurora', name: text(language, "Aurora Mágica"), colors: ['#06b6d4', '#10b981', '#8b5cf6', '#3b82f6'] },
+  { id: 'sunset', name: text(language, "Atardecer Cálido"), colors: ['#f97316', '#ec4899', '#eab308', '#ef4444'] },
+  { id: 'cosmic', name: text(language, "Espacio Infinito"), colors: ['#6366f1', '#a855f7', '#38bdf8', '#f43f5e'] },
+]);
 
 const CHIME_FREQS = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25]; // Pentatonic C Major
 
 export const ColorHarmonicsCanvas: React.FC = () => {
   const { setView, logGameTelemetry, addStars } = useApp();
+  const { language } = useApp();
+  const PALETTES = getPALETTES(language);
   const [selectedPaletteIdx, setSelectedPaletteIdx] = useState(0);
   const [ripples, setRipples] = useState<Ripple[]>([]);
   const [ripplesCreatedCount, setRipplesCreatedCount] = useState(0);
@@ -74,9 +78,9 @@ export const ColorHarmonicsCanvas: React.FC = () => {
       successRate: 1,
       perseveranceScore: 0.9,
       notesObserved: [
-        `Creó ${ripplesCreatedCount} ondas cromáticas y armónicas en el lienzo sensorial.`,
-        `Exploró la paleta "${currentPalette.name}" asociando color con estímulo auditivo relajante.`,
-        'Demostró capacidad de autorregulación sensorial y expresión estética libre.'
+        text(language, "Creó {0} ondas cromáticas y armónicas en el lienzo sensorial.", [ripplesCreatedCount]),
+        text(language, "Exploró la paleta \"{0}\" asociando color con estímulo auditivo relajante.", [currentPalette.name]),
+        text(language, "Demostró capacidad de autorregulación sensorial y expresión estética libre.")
       ],
       metrics: {
         ripplesCount: ripplesCreatedCount,
@@ -99,26 +103,22 @@ export const ColorHarmonicsCanvas: React.FC = () => {
           className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition"
         >
           <ArrowLeft size={16} />
-          <span className="text-xs font-semibold">Volver a Mundos</span>
+          <span className="text-xs font-semibold">{' '}{text(language, "Volver a Mundos")}{' '}</span>
         </button>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-fuchsia-300 bg-fuchsia-950/80 px-2.5 py-1 rounded-full border border-fuchsia-800">
-            🎨 Mundo Crear: Sinfonía Cromática Sensorial
-          </span>
-          <AudioButton textToSpeak="Mundo Crear. Toca cualquier punto de la pantalla para crear ondas de luz de colores y campanas musicales. Disfruta del ritmo y la calma." />
+          <span className="text-xs font-semibold text-fuchsia-300 bg-fuchsia-950/80 px-2.5 py-1 rounded-full border border-fuchsia-800">{' '}{text(language, "🎨 Mundo Crear: Sinfonía Cromática Sensorial")}{' '}</span>
+          <AudioButton textToSpeak={text(language, "Mundo Crear. Toca cualquier punto de la pantalla para crear ondas de luz de colores y campanas musicales. Disfruta del ritmo y la calma.")} />
         </div>
       </div>
 
       {/* Banner */}
       <div className="rounded-3xl bg-gradient-to-r from-fuchsia-950 via-slate-900 to-indigo-950 p-5 border border-fuchsia-800/40 shadow-xl">
         <h1 className="text-2xl font-black text-white flex items-center gap-2">
-          <span>Sinfonía Cromática Sensorial</span>
+          <span>{' '}{text(language, "Sinfonía Cromática Sensorial")}{' '}</span>
           <Music className="text-fuchsia-400" size={20} />
         </h1>
-        <p className="text-sm text-fuchsia-200/80 mt-1">
-          Espacio de autorregulación y creación audiovisual sin metas rígidas. Toca para generar ondas sonoras armónicas.
-        </p>
+        <p className="text-sm text-fuchsia-200/80 mt-1">{' '}{text(language, "Espacio de autorregulación y creación audiovisual sin metas rígidas. Toca para generar ondas sonoras armónicas.")}{' '}</p>
       </div>
 
       {/* Main Interactive Stage */}
@@ -130,9 +130,7 @@ export const ColorHarmonicsCanvas: React.FC = () => {
           onClick={handleCanvasClick}
           className="md:col-span-2 rounded-3xl bg-slate-950 border-2 border-fuchsia-900/50 p-6 relative min-h-[380px] overflow-hidden cursor-pointer select-none shadow-2xl"
         >
-          <div className="absolute top-4 left-4 text-xs font-bold text-slate-400 pointer-events-none">
-            Toca o pulsa en cualquier lugar del lienzo 🎵
-          </div>
+          <div className="absolute top-4 left-4 text-xs font-bold text-slate-400 pointer-events-none">{' '}{text(language, "Toca o pulsa en cualquier lugar del lienzo 🎵")}{' '}</div>
 
           {/* Render Ripples */}
           {ripples.map(r => (
@@ -153,21 +151,18 @@ export const ColorHarmonicsCanvas: React.FC = () => {
           {ripples.length === 0 && (
             <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 text-xs pointer-events-none mt-20">
               <span className="text-4xl mb-2">🌊</span>
-              <span>Toca con el dedo o ratón para despertar notas de color</span>
+              <span>{' '}{text(language, "Toca con el dedo o ratón para despertar notas de color")}{' '}</span>
             </div>
           )}
 
-          <div className="absolute bottom-4 left-4 text-xs font-semibold text-fuchsia-300 pointer-events-none bg-slate-900/80 px-3 py-1 rounded-full border border-fuchsia-900">
-            Ondas generadas: {ripplesCreatedCount}
+          <div className="absolute bottom-4 left-4 text-xs font-semibold text-fuchsia-300 pointer-events-none bg-slate-900/80 px-3 py-1 rounded-full border border-fuchsia-900">{' '}{text(language, "Ondas generadas:")}{' '}{ripplesCreatedCount}
           </div>
         </div>
 
         {/* Controls */}
         <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 space-y-4">
           <div>
-            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">
-              Paletas de Color Sensorial
-            </span>
+            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">{' '}{text(language, "Paletas de Color Sensorial")}{' '}</span>
             <div className="space-y-2">
               {PALETTES.map((pal, idx) => (
                 <button
@@ -201,17 +196,15 @@ export const ColorHarmonicsCanvas: React.FC = () => {
                 className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-fuchsia-500 to-purple-600 text-slate-950 font-black text-xs shadow-lg shadow-fuchsia-500/20 disabled:opacity-40 transition-all flex items-center justify-center gap-2"
               >
                 <Check size={16} />
-                <span>Guardar Sinfonía (+2 ⭐)</span>
+                <span>{' '}{text(language, "Guardar Sinfonía (+2 ⭐)")}{' '}</span>
               </button>
             ) : (
               <div className="p-3 rounded-2xl bg-emerald-950/60 border border-emerald-500 text-center space-y-2">
-                <p className="text-xs font-bold text-emerald-200">¡Experiencia cromática guardada en el perfil pedagógico!</p>
+                <p className="text-xs font-bold text-emerald-200">{' '}{text(language, "¡Experiencia cromática guardada en el perfil pedagógico!")}{' '}</p>
                 <button
                   onClick={() => setView('worlds_map')}
                   className="w-full py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs"
-                >
-                  Volver al Mapa de Mundos
-                </button>
+                >{' '}{text(language, "Volver al Mapa de Mundos")}{' '}</button>
               </div>
             )}
           </div>

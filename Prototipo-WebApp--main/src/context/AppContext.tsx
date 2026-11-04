@@ -8,6 +8,8 @@ import {
   WorldId 
 } from '../types';
 import { soundManager } from '../utils/soundEffects';
+import { speechManager } from '../utils/speech';
+import { translations } from '../i18n/translations';
 
 export type ActiveView = 
   | 'child_hub' 
@@ -60,7 +62,7 @@ export const EFFORT_BADGES: Record<string, Badge> = {
 const INITIAL_PROFILES: StudentProfile[] = [
   {
     id: 'student_1',
-    nameOrAlias: 'Amira (Estudiante A)',
+    nameOrAlias: 'Zorro Azul',
     avatar: '🦊',
     preferredLanguage: 'es',
     createdAt: new Date().toISOString(),
@@ -141,7 +143,7 @@ const INITIAL_PROFILES: StudentProfile[] = [
   },
   {
     id: 'student_2',
-    nameOrAlias: 'Mateo (Estudiante B)',
+    nameOrAlias: 'Delfín Verde',
     avatar: '🐬',
     preferredLanguage: 'es',
     createdAt: new Date().toISOString(),
@@ -286,6 +288,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       // Set document dir for Arabic RTL
       document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
       document.documentElement.lang = language;
+      document.title = translations[language].appName;
+      speechManager.stop();
     }
   }, [language]);
 
@@ -341,7 +345,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const found = students.find(s => s.id === studentId);
     if (found) {
       setActiveStudentId(studentId);
-      if (found.preferredLanguage) {
+      if (found.preferredLanguage && role === 'child') {
         setLanguageState(found.preferredLanguage);
       }
       soundManager.playPop();
