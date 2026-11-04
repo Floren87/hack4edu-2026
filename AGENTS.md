@@ -15,21 +15,38 @@ Este fichero lo leen las IAs de los 4 miembros del equipo (Claude Code, Copilot,
 - Frontend: React + Vite, PWA con modo sin conexión (IndexedDB).
 - Backend: FastAPI (Python) + SQLite.
 
-## 🔁 Protocolo al EMPEZAR cada sesión (obligatorio)
-Antes de escribir código o proponer nada, haz esto y enséñale el resultado a la persona:
+## 👥 Equipo (para saber con quién hablas)
+| Persona | Usuario de GitHub | Zona | Fuerte en |
+|---|---|---|---|
+| Floren | `Floren87` | Madrid (UTC+1) | Programación, coordinación del repo |
+| Miguel | `XxMigue03xX` | Colombia (UTC−5) | Programación, backend (FastAPI) |
+| Delia | `deliainclusiveapps` | Ecuador (UTC−5) | Diseño de pantallas, accesibilidad |
+| Cristina | _pendiente_ | Madrid (UTC+1) | Mercado, presentación, vídeo, investigación |
 
-1. **Sincronizar:** `git status` → si hay cambios sin guardar, avisa y no sigas hasta resolverlo. Después `git checkout main && git pull`.
-2. **Ponerse al día:** lee `docs/estado.md` y `docs/decisiones.md`.
-3. **Ver qué hay pendiente** (si `gh` está instalado; si no, pide a la persona que mire la pestaña Issues y Pull requests):
-   - `gh pr list` → PR abiertos. **Si hay alguno de otra persona esperando revisión, propón revisarlo primero**: desbloquear a un compañero es la prioridad.
-   - `gh issue list --assignee @me` y `gh issue list --label tarea --search "no:assignee"` → tareas suyas y tareas libres.
-4. **Resumir y preguntar.** Responde con este formato y espera a que la persona elija:
-   > 📥 He hecho `git pull`. Novedades desde tu última sesión: …
-   > 👀 PR esperando tu revisión: …
-   > 📋 Tus tareas: … · Tareas libres: …
-   > **¿Con qué seguimos ahora?**
+Para saber quién eres: `gh api user -q .login`. Si `gh` no está instalado, pregunta «¿Quién eres del equipo?».
 
-No empieces una tarea sin que la persona la haya elegido.
+## 🧭 Cuando la persona pregunte «¿con qué sigo?» (o empiece la sesión)
+La persona pregunta y **tú recomiendas**. No le devuelvas la pregunta: haz lo siguiente y dale **una pista clara**.
+
+1. **Sincronizar:** `git status`. Si hay cambios sin guardar, avisa y resuélvelo primero. Después `git checkout main && git pull`.
+2. **Ponerte al día:** lee `docs/estado.md`, `docs/decisiones.md` y `docs/propuesta.md`.
+3. **Ver qué hay pendiente** (con `gh`; si no está instalado, pide a la persona que te pegue las listas de Issues y Pull requests):
+   - `gh pr list` → PR abiertos y quién debe revisarlos
+   - `gh issue list --state open` → todas las tareas, con sus responsables
+4. **Elegir lo MÁS URGENTE para esta persona**, en este orden de prioridad:
+   1. 🔴 **Algo que bloquea la entrega** (5 nov, 23:59 hora local): vídeo, presentación, demo que no funciona, formulario.
+   2. 👀 **Un PR de otra persona esperando revisión** que esta persona pueda aprobar: desbloquea a un compañero en minutos.
+   3. ❓ **Una decisión pendiente asignada a esta persona** (por ejemplo, la issue #11): sin ella otros no pueden avanzar.
+   4. 📋 **Sus issues asignadas**, empezando por las del flujo principal de la demo.
+   5. 🆓 **Una issue libre que encaje con lo que se le da bien** (tabla de Equipo).
+   Ten en cuenta la hora de su zona y cuánto falta para la entrega.
+5. **Responder con este formato** (corto):
+   > 📥 He hecho `git pull`. Novedades: …
+   > 👉 **Te recomiendo seguir con:** [tarea + enlace] — **por qué es lo más urgente ahora:** …
+   > 🪜 **Primer paso concreto:** … (por ejemplo: «crea la rama `feat/estilo-visual` y empieza por `frontend/src/estilos.css`»)
+   > 🔀 Otras opciones si prefieres: 1) … 2) …
+
+Si la persona acepta, asígnale la issue (`gh issue edit N --add-assignee @me`), apunta en `docs/estado.md` que está con ella y empieza. Si elige otra, respeta su decisión.
 
 ## 🔚 Protocolo al TERMINAR la sesión
 1. Commit y `git push` de la rama, aunque el trabajo esté a medias (si está a medias, abre el PR como borrador: `gh pr create --draft`).

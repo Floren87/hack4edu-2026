@@ -7,15 +7,15 @@ Proyecto para el **#Hack4Edu 2026** (ProFuturo + UPSA).
 ## Equipo
 | Persona | Ubicación | Rol |
 |---|---|---|
-| Floren | Madrid 🇪🇸 | _por definir_ |
-| Cristina | Madrid 🇪🇸 | _por definir_ |
-| Delia | Ecuador 🇪🇨 | _por definir_ |
-| Miguel | Colombia 🇨🇴 | _por definir_ |
+| Floren (`Floren87`) | Madrid 🇪🇸 | Programación y repo |
+| Cristina | Madrid 🇪🇸 | Mercado, presentación y vídeo |
+| Delia (`deliainclusiveapps`) | Ecuador 🇪🇨 | Diseño y accesibilidad |
+| Miguel (`XxMigue03xX`) | Colombia 🇨🇴 | Programación y backend |
 
 ## Cómo trabajamos
 - Nadie sube directamente a `main`. Cada tarea va en su propia rama y entra con un **Pull Request aprobado por otra persona del equipo**.
 - Las tareas viven en **Issues**. Las decisiones, en [`docs/decisiones.md`](docs/decisiones.md), y quién hace qué, en [`docs/estado.md`](docs/estado.md).
-- Si usas una IA (Claude, Copilot, Cursor, ChatGPT…), haz que lea primero [`AGENTS.md`](AGENTS.md).
+- Si usas una IA (Claude, Copilot, Cursor, ChatGPT…), haz que lea primero [`AGENTS.md`](AGENTS.md) y pregúntale **«¿con qué sigo?»**: te recomendará lo más urgente para ti.
 
 Guía completa: [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
