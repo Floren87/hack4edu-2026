@@ -6,7 +6,9 @@ Este fichero lo leen las IAs de los 4 miembros del equipo (Claude Code, Copilot,
 - Hackathon: #Hack4Edu 2026 (ProFuturo + UPSA). Desarrollo del **3 nov 09:00 al 5 nov 23:59** (hora local).
 - Entregables: presentación de 5 min, vídeo de 3 min y enlace a este repo.
 - Criterios (modalidad innovadora): creatividad 40 %, acabado 20 %, potencial de mercado 20 %, IA para la educación en países desfavorecidos 20 %.
-- El proyecto debe responder a retos oficiales (candidatos: Reto 15 educación en emergencias, Reto 11 recuperar aprendizajes, Reto 20).
+- **Reto elegido: 20** (votación del equipo). Producto: juego intuitivo, visual y por niveles que identifica habilidades, aptitudes, intereses y fortalezas (**no personalidad**) de niños migrantes y refugiados. Es un apoyo para el psicólogo u orientador en su inserción escolar: **no diagnostica ni sustituye sus pruebas**; la IA sugiere y el profesional decide.
+- Niños identificados solo con **pseudónimos**. Nunca nombres reales ni datos de salud en el código, los datos de prueba o los logs.
+- No copiar ítems de tests con derechos (TAMAI, BAS, WISC…). Sí se puede citar en qué competencias se inspiran.
 - Idea y decisiones vigentes: ver `docs/decisiones.md` (manda sobre cualquier otra cosa). Quién hace qué ahora: `docs/estado.md`.
 
 ## Stack (provisional, ver decisiones)
