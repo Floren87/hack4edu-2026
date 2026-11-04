@@ -59,7 +59,7 @@ test('English reports preserve notes, separate student reviews, and export in En
   const familyHtml = await readFile((await (await familyDownload).path())!, 'utf8');
   expect(familyHtml).toContain('<html lang="en">');
   expect(familyHtml).toContain('Ideas for Home');
-  await page.getByRole('button', { name: 'en', exact: true }).hover();
+  await page.getByRole('button', { name: 'en', exact: true }).click();
   await page.getByRole('button', { name: /Español/ }).click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'es');
   await expect(page.getByText('Informe Amigable para la Familia', { exact: true })).toBeVisible();

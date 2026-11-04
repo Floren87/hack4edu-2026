@@ -1,5 +1,5 @@
 import { localizeText as text } from '../../i18n/localize';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { 
   Compass, 
   GraduationCap, 
@@ -41,7 +41,37 @@ export const Navbar: React.FC = () => {
   const handleLangChange = (lang: Language) => {
     soundManager.playPop();
     setLanguage(lang);
+    setLangMenuOpen(false);
   };
+
+  // Menú de idiomas: se abre y se cierra con clic (no con hover, que se cerraba
+  // al cruzar el hueco entre el botón y la lista) y se cierra al pulsar fuera o Esc.
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const langMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!langMenuOpen) return;
+    const closeIfOutside = (event: PointerEvent) => {
+      if (!langMenuRef.current?.contains(event.target as Node)) setLangMenuOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setLangMenuOpen(false);
+    };
+    document.addEventListener('pointerdown', closeIfOutside);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeIfOutside);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [langMenuOpen]);
+
+  const languageOptions: { code: Language; label: string }[] = [
+    { code: 'es', label: '🇪🇸 Español' },
+    { code: 'en', label: '🇬🇧 English' },
+    { code: 'fr', label: '🇫🇷 Français' },
+    { code: 'ar', label: '🇸🇦 العربية' },
+    { code: 'uk', label: '🇺🇦 Українська' },
+  ];
 
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-slate-950/85 border-b border-slate-800/80 transition-all">
@@ -139,48 +169,33 @@ export const Navbar: React.FC = () => {
           </button>
 
           {/* Language Selector Dropdown */}
-          <div className="relative group">
-            <button className="h-8 px-2.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-1 text-xs font-semibold text-slate-300 hover:border-slate-700 transition">
+          <div className="relative" ref={langMenuRef}>
+            <button
+              type="button"
+              onClick={() => setLangMenuOpen(open => !open)}
+              aria-expanded={langMenuOpen}
+              aria-controls="lang-menu"
+              className={`h-8 px-2.5 rounded-xl bg-slate-900 border flex items-center gap-1 text-xs font-semibold text-slate-300 hover:border-slate-700 transition ${langMenuOpen ? 'border-indigo-500/60' : 'border-slate-800'}`}
+            >
               <Globe2 size={13} className="text-indigo-400" />
               <span className="uppercase">{language}</span>
             </button>
-            <div className="absolute right-0 mt-1 w-36 py-1 bg-slate-900 border border-slate-800 rounded-xl shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all z-50">
-              <button
-                onClick={() => handleLangChange('es')}
-                className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between ${language === 'es' ? 'bg-indigo-600/20 text-indigo-300 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
-              >
-                <span>🇪🇸 Español</span>
-                {language === 'es' && <span>✓</span>}
-              </button>
-              <button
-                onClick={() => handleLangChange('en')}
-                className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between ${language === 'en' ? 'bg-indigo-600/20 text-indigo-300 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
-              >
-                <span>🇬🇧 English</span>
-                {language === 'en' && <span>✓</span>}
-              </button>
-              <button
-                onClick={() => handleLangChange('fr')}
-                className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between ${language === 'fr' ? 'bg-indigo-600/20 text-indigo-300 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
-              >
-                <span>🇫🇷 Français</span>
-                {language === 'fr' && <span>✓</span>}
-              </button>
-              <button
-                onClick={() => handleLangChange('ar')}
-                className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between ${language === 'ar' ? 'bg-indigo-600/20 text-indigo-300 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
-              >
-                <span>🇸🇦 العربية</span>
-                {language === 'ar' && <span>✓</span>}
-              </button>
-              <button
-                onClick={() => handleLangChange('uk')}
-                className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between ${language === 'uk' ? 'bg-indigo-600/20 text-indigo-300 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
-              >
-                <span>🇺🇦 Українська</span>
-                {language === 'uk' && <span>✓</span>}
-              </button>
-            </div>
+            {langMenuOpen && (
+              <div id="lang-menu" className="absolute right-0 mt-1 w-36 py-1 bg-slate-900 border border-slate-800 rounded-xl shadow-xl z-50">
+                {languageOptions.map(({ code, label }) => (
+                  <button
+                    key={code}
+                    type="button"
+                    aria-pressed={language === code}
+                    onClick={() => handleLangChange(code)}
+                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between ${language === code ? 'bg-indigo-600/20 text-indigo-300 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
+                  >
+                    <span>{label}</span>
+                    {language === code && <span>✓</span>}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Profile Switcher Icon */}
