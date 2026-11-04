@@ -14,6 +14,7 @@ Este fichero lo leen las IAs de los 4 miembros del equipo (Claude Code, Copilot,
 ## Stack
 - **App (`app/`):** React 19 + TypeScript + Vite + Tailwind, Online, sin service worker de caché. Datos de alumnos en el backend, informes con reglas locales (`src/utils/aiPedagogy.ts`). Necesita **Node 22.12+**. Instalación y comandos: `README.md`.
 - **Backend (`backend/`):** TypeScript + Fastify + SQLite/libSQL. Cuentas con usuario inventado, sesión profesional/niño y estado actual de alumnos. API y frontend integrados; contrato en `backend/README.md`, plan en `docs/integracion-backend.md`, despliegue en `docs/despliegue-demo.md`. Sin sincronización offline ni historial de evaluaciones.
+- **Traspaso de `feat/backend`:** antes de integrar con el equipo, leer `docs/traspaso-floren.md` (cambios acumulados, pruebas y pendientes) y `docs/i18n.md` (catálogos completos ES/EN/FR/AR/UK). La integración y el merge quedan a Floren; los commits de esta rama no implican su aprobación.
 
 ## 🌿 Ramas
 - `main`: versión entregable. **No se toca** hasta que `develop` esté comprobada; entonces se fusiona `develop` → `main` con un PR.

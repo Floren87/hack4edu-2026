@@ -1,6 +1,6 @@
 # Integración realizada en feat/backend
 
-Implementada en esta rama, sin PR ni push durante esta sesión por instrucción del usuario.
+Implementada en esta rama. El usuario autoriza subir los commits a `feat/backend`; la integración con el equipo y el PR quedan para Floren y el cierre del día. Contexto acumulado en [traspaso-floren.md](traspaso-floren.md).
 
 - Login/registro inicial; recuperación de sesión y modo en servidor.
 - Contexto único `AppContext` para sesión y estado: se evita un AuthContext adicional para mantener KISS.
@@ -11,7 +11,7 @@ Implementada en esta rama, sin PR ni push durante esta sesión por instrucción 
 - Progreso agrupado y serializado en memoria; interfaz de guardando/guardado/error. 409 exige recargar estado remoto; no hay fusión ni cola offline. Cambio de modo y logout esperan a guardar.
 - Crea/modifica alumno y guarda notas solo tras respuesta de servidor. Notas sin guardar en el formulario requieren pulsar Guardar antes de navegar.
 - Worker anterior retirado y caché `talento-sf-v1` eliminada. No se registra un worker nuevo.
-- Traducciones completas de controles nuevos en ES/EN/FR/AR/UK. Juegos e informes conservan su cobertura anterior.
+- Traducciones completas de controles, juegos, mensajes y ambos informes en ES/EN/FR/AR/UK. Catálogos y reglas de mantenimiento en [i18n.md](i18n.md); observaciones canónicas y fechas por idioma, sin traducir pseudónimos ni notas libres.
 - Pruebas E2E lanzan backend real temporal y frontend aislado en 3101/3100. Instalar dependencias de ambos antes de ejecutarlas.
 
 ## Límites deliberados
@@ -74,7 +74,7 @@ Una cuenta profesional con usuario inventado y contraseña, alumnos con pseudón
 5. Cerrar sesión y entrar con otra cuenta no muestra perfiles ni notas de la anterior.
 6. Cortar conexión y provocar un 409 muestran estados recuperables y no un falso «Guardado».
 7. DevTools confirma ausencia de service worker controlando el recorrido y de respuestas `/api` cacheadas.
-8. ES/EN, móvil y navegador de escritorio. La misma URL HTTPS sirve UI y API en producción.
+8. ES/EN/FR/AR/UK, móvil y navegador de escritorio, con cambios de idioma durante una partida e informes descargados. La misma URL HTTPS sirve UI y API en producción.
 
 ## Demo pública
 
