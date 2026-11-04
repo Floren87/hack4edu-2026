@@ -29,6 +29,14 @@ const getAVAILABLE_PARTS = (language: Language) => ([
   { id: 'part_wheel', name: text(language, "Rueda Flotante"), icon: '🛞', label: text(language, "Rueda") },
   { id: 'part_bell', name: text(language, "Campana Sonora"), icon: '🔔', label: text(language, "Campana") },
   { id: 'part_leaf', name: text(language, "Hoja Viva"), icon: '🌿', label: text(language, "Hoja") },
+  { id: 'part_rain', name: text(language, "Nube de Lluvia"), icon: '🌧️', label: text(language, "Nube") },
+  { id: 'part_sun', name: text(language, "Sol Brillante"), icon: '☀️', label: text(language, "Sol") },
+  { id: 'part_wave', name: text(language, "Ola de Agua"), icon: '🌊', label: text(language, "Agua") },
+  { id: 'part_stone', name: text(language, "Piedra Fuerte"), icon: '🪨', label: text(language, "Piedra") },
+  { id: 'part_fish', name: text(language, "Pez Nadador"), icon: '🐟', label: text(language, "Pez") },
+  { id: 'part_bee', name: text(language, "Abeja Trabajadora"), icon: '🐝', label: text(language, "Abeja") },
+  { id: 'part_bucket', name: text(language, "Cubo Grande"), icon: '🪣', label: text(language, "Cubo") },
+  { id: 'part_rope', name: text(language, "Cuerda Larga"), icon: '🪢', label: text(language, "Cuerda") },
 ]);
 
 const getINVENTION_PURPOSES = (language: Language) => ([
