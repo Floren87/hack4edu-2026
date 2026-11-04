@@ -4,6 +4,8 @@ Una línea por decisión, la más reciente arriba. Las IAs del equipo leen este 
 
 | Fecha | Decisión | Quién |
 |---|---|---|
+| 2026-11-04 | **Ramas:** `main` no se toca hasta tener una versión comprobada. Todo el trabajo entra por PR en `develop`, que ya reúne todas las ramas abiertas (PR #1, #2, #13, #14 y #15, más `feat/ingles-historial-profesional`). Al final, `develop` → `main`. | Floren |
+| 2026-11-04 | **Una sola app:** la oficial es el prototipo de Delia, ahora en `app/`. Se retira el esqueleto `frontend/` (PR #2). GitHub Pages despliega `app/`. | Floren |
 | 2026-11-04 | _Propuesta para revisión_: continuar el prototipo de Delia en una rama independiente, completar ES/EN y valorar FastAPI + SQLite para cuentas profesionales e historial de evaluaciones versionadas. Backend todavía no implementado; alcance y contrato en `docs/backend-profesionales.md`. | Sesión con Codex |
 | 2026-11-04 | **Rutas e idiomas del vídeo:** Sudán → Chad (Amira; árabe y francés; África), Venezuela → Colombia (español; América Latina) y Ucrania → España (ucraniano; entrevista E1). | Floren (Delia lo deja a criterio del equipo) |
 | 2026-11-04 | **Dos informes:** uno técnico para el psicólogo o psicopedagogo y otro sencillo para el docente y la familia. | Delia |

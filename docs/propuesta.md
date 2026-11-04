@@ -1,6 +1,6 @@
-# Propuesta de producto · v1 (para revisar en equipo)
+# Propuesta de producto · v2
 
-> **TalentoSinFronteras** (nombre de trabajo): un juego visual, sin necesidad de leer ni de hablar el idioma del país, que ayuda al psicólogo, orientador o docente a **descubrir las fortalezas e intereses de niños y niñas que llegan desplazados a otro país**: creatividad, lógica, comunicación, colaboración y resolución de problemas. Los talentos que no salen en las notas.
+> **Talento sin Fronteras**: un juego visual, sin necesidad de leer ni de hablar el idioma del país, que ayuda al psicólogo, orientador o docente a **descubrir las fortalezas e intereses de niños y niñas que llegan desplazados a otro país**: creatividad, lógica, comunicación, colaboración y resolución de problemas. Los talentos que no salen en las notas.
 
 ## 1. Para quién
 | Persona | Qué necesita | Qué recibe |
@@ -78,42 +78,31 @@ Diseño propio: **no se copia ningún ítem de tests con derechos**. Los marcos 
 3. **Originalidad en «¿Qué inventas?»:** valora qué ideas son poco habituales.
 4. **Sin conexión:** si no hay internet, el informe se genera con plantillas y reglas en el propio móvil y se marca «generado sin IA». La app nunca deja de funcionar.
 
+> **Estado actual (app en `app/`):** los informes se generan **solo con reglas locales** (`app/src/utils/aiPedagogy.ts`); todavía no se llama a ningún modelo de IA. Los puntos 1-3 son la mejora prevista.
+
 ## 6. Lo que NO hace (IA ética)
 - ❌ No diagnostica ni da un CI ni etiquetas clínicas. No sustituye los tests profesionales.
 - ❌ No decide curso, grupo ni ubicación: lo decide el profesional.
 - ❌ No usa cámara, reconocimiento facial ni grabación de voz del niño.
 - ✅ Pseudónimo («Zorro Azul 🦊») elegido por el niño; los datos se quedan **en el dispositivo**; el profesional puede borrarlos con un botón.
-- ✅ Consentimiento de la familia en la primera pantalla (con voz y en su idioma).
+- ⏳ Consentimiento de la familia en la primera pantalla (con voz y en su idioma). **Pendiente:** la app aún no lo tiene.
 - ✅ Cada frase del informe se puede comprobar con su evidencia; la IA explica sus límites («basado en 10 minutos de juego; contrástalo con tu observación»).
 
 ## 7. Arquitectura y alcance para el hackathon
-- **Frontend:** React + Vite como PWA (funciona sin conexión). Datos en el navegador (IndexedDB/localStorage). Publicado en **GitHub Pages**, que es el destino del QR.
-- **Backend mínimo:** FastAPI con **un solo endpoint**, `POST /api/informe`, que llama a Claude con las evidencias agregadas. Se despliega en un servicio gratuito. La clave de la API solo está en el servidor, nunca en el repo.
-- **Idiomas:** ficheros JSON de textos (`es`, `en`, `fr`, `ar`, `uk`); audio con la síntesis de voz del navegador.
+- **App (`app/`):** el prototipo de Delia en React 19 + TypeScript + Vite + Tailwind, como PWA que funciona sin conexión. Datos en el navegador (`localStorage`). Publicada en **GitHub Pages**, que es el destino del QR. Instalación: `README.md`.
+- **Idiomas:** ES, EN, FR, AR (de derecha a izquierda) y UK en `app/src/i18n/`; audio con la síntesis de voz del navegador. El inglés está completo; el resto cubre los textos del prototipo original.
+- **IA:** de momento, reglas locales interpretables. La IA real (un endpoint que reciba solo evidencias agregadas y anónimas, con la clave en el servidor) es una mejora. La IA es un **complemento, no una dependencia**: las reglas funcionan siempre.
+- **Backend:** ninguno. La propuesta de cuentas profesionales e historial con FastAPI + SQLite está en `backend-profesionales.md`, sin implementar.
 
-**Stack:** es el que propuso Miguel en el borrador de TalentoSinFronteras: React + Vite, FastAPI, SQLite, reglas interpretables y PWA con almacenamiento local. Diferencias para el hackathon:
-- El progreso se guarda **en el dispositivo** (localStorage). Así funciona sin conexión, sin servidor y sin datos de menores fuera del móvil.
-- La sincronización con **FastAPI + SQLite** (el profesional consulta el panel desde su ordenador) queda como mejora posterior.
-- La IA es un **complemento, no una dependencia**, como pedía el borrador: las reglas funcionan siempre, y la IA (cuando hay conexión) redacta el informe. Hace falta para el 20 % del criterio «IA en países desfavorecidos».
+| Prioridad | Qué entra | Estado |
+|---|---|---|
+| **Imprescindible** (demo de punta a punta) | Pseudónimo + avatar → mapa de mundos (intereses) → 4 minijuegos con niveles, estrellas e insignias → panel del profesional con evidencias y validación → resumen para la familia · Modo sin IA · ES + EN | ✅ En `app/` |
+| **Si da tiempo** | Consentimiento de la familia · IA real en el informe · completar FR, AR y UK · publicar en GitHub Pages con QR | ⏳ |
+| **Después del hackathon** | Cuentas e historial con FastAPI + SQLite (panel desde otro dispositivo), panel por centro, más niveles generados con IA, estudios de validez con psicólogos | — |
 
-| Prioridad | Qué entra |
-|---|---|
-| **Imprescindible** (demo de punta a punta) | Consentimiento → ¿quién juega? + avatar → intereses → mapa de juegos con niveles y estrellas → Patrones (10 niveles) → ¿Qué inventas? (4 objetos) → resultado con insignias → panel del profesional con evolución y validación → resumen para la familia · Modo sin IA · ES + EN (+ FR parcial) ✅ hecho en el PR #2 |
-| **Si da tiempo** | Cuenta la historia · Ayuda al robot · IA real en el informe · árabe con escritura de derecha a izquierda |
-| **Después del hackathon** | Sincronización con FastAPI + SQLite (panel desde otro dispositivo), panel por centro, más niveles generados con IA, estudios de validez con psicólogos |
-
-## 8. Reparto y calendario propuestos (hora de Madrid)
-| Cuándo | Floren | Miguel | Cristina | Delia |
-|---|---|---|---|---|
-| Hoy hasta las 15:00 | Esqueleto de la app + despliegue | Revisar esta propuesta, montar el backend | Investigación de mercado | Pantallas |
-| Llamada de 15:00 a 19:00 | Validar propuesta y diseño | | Guion del vídeo | Diseño final |
-| Hoy, noche | Minijuegos | Panel del profesional + IA | Presentación | Ilustraciones y textos |
-| Mañana | Pulir y probar | Pulir y probar | **Grabar vídeo** | Textos en otros idiomas |
-| **Mañana, 23:59** | **ENTREGA** | | | |
-
-## 9. Respuestas de Delia (4 nov)
+## 8. Respuestas de Delia (4 nov)
 1. **Edad:** un solo rango, **desde los 7 años** (7-14), entre otras cosas por las políticas de Google Play. ⚠️ Al ser menores de 13, si se publica en Google Play aplica su política de familias (sin anuncios inadecuados y con datos mínimos), que ya cumplimos.
 2. **Capacidades:** las 5 del reto. Otras, en futuras actualizaciones.
-3. **Informes:** uno **técnico para el psicólogo o psicopedagogo** y otro **sencillo para el docente y la familia** → hecho en el PR #2.
+3. **Informes:** uno **técnico para el psicólogo o psicopedagogo** y otro **sencillo para el docente y la familia** → hecho: informe técnico en el panel profesional y resumen en el espacio familiar.
 4. **Rutas del vídeo:** Sudán → Chad (Amira; árabe y francés), Venezuela → Colombia (español) y Ucrania → España (ucraniano).
 5. **Estilo visual:** los bocetos ya están adaptados a los minijuegos.

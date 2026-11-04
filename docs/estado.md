@@ -11,16 +11,15 @@ Qué está pasando ahora mismo. Cada persona (o su IA) añade una línea al term
 | Miguel | Cómo trabajar con pseudónimos | En curso |
 | Floren | Repo, reglas y coordinación de las IAs | En curso |
 
-## Plan del 4 de noviembre (hora de Madrid)
-| Hora | Objetivo |
-|---|---|
-| hasta 15:00 | Repo publicado con los 4 colaboradores; mockup de Figma de Delia en `docs/diseno/`; esqueleto de la app desplegado en GitHub Pages |
-| 15:00–19:00 | Llamada de todo el equipo (9:00–13:00 Bogotá/Quito): rango de edad, niveles del juego, reparto de PR. Cris se une desde las 16:00 |
-| noche | Primer nivel jugable, guion del vídeo |
-| 5 nov, 23:59 | Entrega: vídeo de 3 min + presentación de 5 min + enlace al repo |
+## Próximos pasos (hasta el 5 nov, 23:59)
+1. Mejoras en ramas desde `develop`, con PR contra `develop`.
+2. Comprobar `develop` (lint, tests, e2e y prueba en el móvil).
+3. PR `develop` → `main`, que publica la app en GitHub Pages; QR para el vídeo.
+4. Entrega: vídeo de 3 min + presentación de 5 min + enlace al repo.
 
 ## Diario
 | Fecha y hora (zona) | Quién | Qué hizo | Qué queda |
 |---|---|---|---|
+| 2026-11-04 (Madrid) | Floren + Claude | Crea `develop` y fusiona todas las ramas. Deja una sola app (`app/`, la de Delia), borra `frontend/` y restos de AI Studio, añade CI y rehace README, AGENTS, CONTRIBUTING y propuesta. Verificado con Node 22: lint, 3 tests, build y 2 e2e en verde. | Cerrar los PR antiguos (ya están en `develop`), proteger `develop` y empezar las mejoras. |
 | 2026-11-04 (Bogotá) | Codex, sesión local | Parte del prototipo de Delia (`3f1c457`) en `feat/ingles-historial-profesional`; completa textos ES/EN, adapta exportaciones e incorpora propuesta de cuentas e historial. | Revisar PR y aprobar alcance del backend antes de implementarlo. |
 | 2026-11-04 (Madrid) | Floren | Crea el repo: README, AGENTS.md, plantillas y reglas de `main`. | Invitar a Cristina, Delia y Miguel; decidir la idea en la llamada. |
