@@ -22,4 +22,5 @@ Qué está pasando ahora mismo. Cada persona (o su IA) añade una línea al term
 ## Diario
 | Fecha y hora (zona) | Quién | Qué hizo | Qué queda |
 |---|---|---|---|
+| 2026-11-04 (Bogotá) | Codex, sesión local | Parte del prototipo de Delia (`3f1c457`) en `feat/ingles-historial-profesional`; completa textos ES/EN, adapta exportaciones e incorpora propuesta de cuentas e historial. | Revisar PR y aprobar alcance del backend antes de implementarlo. |
 | 2026-11-04 (Madrid) | Floren | Crea el repo: README, AGENTS.md, plantillas y reglas de `main`. | Invitar a Cristina, Delia y Miguel; decidir la idea en la llamada. |
