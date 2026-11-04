@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "tsc --noEmit",
     "test:e2e": "playwright test",
-    "test": "node --import tsx --test tests/reports.test.ts"
+    "test": "node --import tsx --test tests/reports.test.ts tests/i18n.test.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",

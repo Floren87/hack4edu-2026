@@ -3,6 +3,7 @@ import type { Badge, GameTelemetry, Language, StudentProfile, UserRole, WorldId 
 import { soundManager } from '../utils/soundEffects';
 import { speechManager } from '../utils/speech';
 import { translations } from '../i18n/translations';
+import { localizeEvidence, languages, direction } from '../i18n/localize';
 import { api, ApiError, setCsrfToken } from '../utils/api';
 export type ActiveView = 'child_hub' | 'worlds_map' | 'minigame' | 'world_activity' | 'teacher_dashboard' | 'family_portal' | 'passport' | 'profile_manager';
 export const EFFORT_BADGES: Record<string, Badge> = {
@@ -27,7 +28,7 @@ function useModel() {
  const [saveStatus, setSaveStatus] = useState<'saved' | 'pending' | 'saving' | 'error'>('saved');
  const [language, setLanguage] = useState<Language>(() => {
   const saved = localStorage.getItem('talento_sf_lang_v1');
-  return ['es','en','fr','ar','uk'].includes(saved ?? '') ? saved as Language : 'es';
+  return languages.includes(saved as Language) ? saved as Language : 'es';
  });
  const [students, setStudents] = useState<StudentProfile[]>([]);
  const data = useRef<StudentProfile[]>([]);
@@ -85,7 +86,7 @@ function useModel() {
   window.addEventListener('beforeunload', unload);
   return () => { generation.current++; channel.current?.close(); if(timer.current) clearTimeout(timer.current); window.removeEventListener('session-invalid',sync); window.removeEventListener('focus',focus); window.removeEventListener('beforeunload',unload); };
  }, []);
- useEffect(() => { localStorage.setItem('talento_sf_lang_v1', language); document.documentElement.lang = language; document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr'; document.title = translations[language].appName; speechManager.stop(); }, [language]);
+ useEffect(() => { localStorage.setItem('talento_sf_lang_v1', language); document.documentElement.lang = language; document.documentElement.dir = direction(language); document.title = translations[language].appName; speechManager.stop(); }, [language]);
  function code(e: unknown) { return e instanceof ApiError ? e.code : 'NETWORK'; }
  async function action<T>(work: () => Promise<T>): Promise<T> {
   setBusy(true); setError('');
@@ -156,7 +157,8 @@ function useModel() {
  }
  function switchStudent(id:string) { if(sessionRef.current?.mode!=='professional')return; if(pending.current.size||running.current){setError('PENDING');return;} select(id);setBadgeModal(null); }
  function logGameTelemetry(event: Omit<GameTelemetry,'timestamp'>) { mutate(s=>{
-  const record={...event,timestamp:new Date().toISOString()}; const telemetryLog=[record,...s.telemetryLog]; const badges=[...s.unlockedBadges];
+  // Persist authored observations canonically, so the report language can change later.
+  const record={...event,notesObserved:event.notesObserved.map(note=>localizeEvidence('es',note)),timestamp:new Date().toISOString()}; const telemetryLog=[record,...s.telemetryLog]; const badges=[...s.unlockedBadges];
   const award=(id:string,condition:boolean)=>{if(condition&&!badges.includes(id)){badges.push(id);setBadgeModal(EFFORT_BADGES[id]);}};
   award('perseverance',event.perseveranceScore>=.7); award('explorer',new Set(telemetryLog.map(t=>t.gameId)).size>=3); award('creative',event.originalMovesCount>=3); award('empathy',event.category==='collaboration');award('constant',telemetryLog.length>=5);
   return {...s,telemetryLog,unlockedBadges:badges};

@@ -27,7 +27,7 @@ const getAVAILABLE_BLOCKS = (language: Language): BlockPiece[] => ([
 export const BuildTowerZen: React.FC = () => {
   const { setView, logGameTelemetry, addStars } = useApp();
   const { language } = useApp();
-  const AVAILABLE_BLOCKS = getAVAILABLE_BLOCKS(language);
+  const AVAILABLE_BLOCKS = getAVAILABLE_BLOCKS('es');
   const [stackedBlocks, setStackedBlocks] = useState<BlockPiece[]>([]);
   const [towerTilt, setTowerTilt] = useState(0);
   const [completed, setCompleted] = useState(false);
@@ -148,7 +148,7 @@ export const BuildTowerZen: React.FC = () => {
                 className="rounded-xl border border-white/20 shadow-md flex items-center justify-center text-xs font-bold text-white transition-all my-0.5 hover:scale-105 select-none"
               >
                 <span className="mr-1">{block.icon}</span>
-                <span className="text-[10px] opacity-90">{block.shapeName}</span>
+                <span className="text-[10px] opacity-90">{text(language, block.shapeName)}</span>
               </div>
             ))}
 
@@ -183,7 +183,7 @@ export const BuildTowerZen: React.FC = () => {
                 <div className="flex items-center gap-2.5">
                   <span className="text-xl">{block.icon}</span>
                   <div>
-                    <span className="text-xs font-bold text-white block">{block.shapeName}</span>
+                    <span className="text-xs font-bold text-white block">{text(language, block.shapeName)}</span>
                     <span className="text-[10px] text-slate-400">{' '}{text(language, "Ancho:")}{' '} {block.width}px</span>
                   </div>
                 </div>

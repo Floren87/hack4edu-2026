@@ -164,6 +164,7 @@ export const CreatureSanctuary: React.FC = () => {
             {creatures.map(c => (
               <button
                 key={c.id}
+                aria-label={text(language, c.name)}
                 onClick={() => {
                   soundManager.playPop();
                   setSelectedCreatureId(c.id);
@@ -175,7 +176,7 @@ export const CreatureSanctuary: React.FC = () => {
                 }`}
               >
                 <span className="text-xl">{c.avatar}</span>
-                <span className="hidden sm:inline">{text(language, c.name).split(',')[0]}</span>
+                <span className="hidden sm:inline">{text(language, c.name).split(/[,،]/)[0]}</span>
                 {c.solved && <span className="text-emerald-400">✓</span>}
               </button>
             ))}

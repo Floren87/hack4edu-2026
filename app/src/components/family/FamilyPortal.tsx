@@ -23,7 +23,7 @@ export const FamilyPortal: React.FC = () => {
     const success = executeBrowserPrint();
     if (!success) {
       downloadPrintableFamilyReport(activeStudent, report, language);
-      setPrintFeedback(text(language, "Descargando resumen para la familia..."));
+      setPrintFeedback("Descargando resumen para la familia...");
       setTimeout(() => setPrintFeedback(null), 3500);
     }
   };
@@ -31,7 +31,7 @@ export const FamilyPortal: React.FC = () => {
   const handleDownloadFamily = () => {
     soundManager.playSparkle();
     downloadPrintableFamilyReport(activeStudent, report, language);
-    setPrintFeedback(text(language, "¡Resumen familiar descargado listo para imprimir!"));
+    setPrintFeedback("¡Resumen familiar descargado listo para imprimir!");
     setTimeout(() => setPrintFeedback(null), 3500);
   };
 
@@ -83,7 +83,7 @@ export const FamilyPortal: React.FC = () => {
 
       {printFeedback && (
         <div className="p-3 rounded-2xl bg-rose-950/80 border border-rose-500 text-rose-200 text-xs text-center font-medium animate-in fade-in">
-          {printFeedback}
+          {text(language, printFeedback)}
         </div>
       )}
 

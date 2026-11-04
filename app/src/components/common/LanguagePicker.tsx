@@ -4,14 +4,7 @@ import { useApp } from '../../context/AppContext';
 import { ui } from '../../i18n/account';
 import { soundManager } from '../../utils/soundEffects';
 import type { Language } from '../../types';
-
-export const LANGUAGES: { id: Language; name: string; flag: string }[] = [
-  { id: 'es', name: 'Español', flag: '🇪🇸' },
-  { id: 'en', name: 'English', flag: '🇬🇧' },
-  { id: 'fr', name: 'Français', flag: '🇫🇷' },
-  { id: 'ar', name: 'العربية', flag: '🇸🇦' },
-  { id: 'uk', name: 'Українська', flag: '🇺🇦' },
-];
+import { LANGUAGES } from '../../i18n/languages';
 
 interface Props {
   variant?: 'menu' | 'inline';

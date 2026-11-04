@@ -1,4 +1,4 @@
-import { localizeText as text } from '../../i18n/localize';
+import { localizeText as text, formatDate } from '../../i18n/localize';
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { translations } from '../../i18n/translations';
@@ -83,7 +83,7 @@ export const TeacherDashboard: React.FC = () => {
     if (!success) {
       // If browser print is restricted by iframe sandbox, automatically download the printable document
       downloadPrintableTeacherReport(activeStudent, report, language);
-      setPrintFeedback(text(language, "Descargando documento imprimible del Panel Profesional..."));
+      setPrintFeedback("Descargando documento imprimible del Panel Profesional...");
       setTimeout(() => setPrintFeedback(null), 3500);
     }
   };
@@ -91,7 +91,7 @@ export const TeacherDashboard: React.FC = () => {
   const handleDownloadReport = () => {
     soundManager.playSparkle();
     downloadPrintableTeacherReport(activeStudent, report, language);
-    setPrintFeedback(text(language, "¡Informe del Panel Profesional descargado listo para imprimir!"));
+    setPrintFeedback("¡Informe del Panel Profesional descargado listo para imprimir!");
     setTimeout(() => setPrintFeedback(null), 3500);
   };
 
@@ -154,7 +154,7 @@ export const TeacherDashboard: React.FC = () => {
 
       {printFeedback && (
         <div className="p-3 rounded-2xl bg-indigo-950/80 border border-indigo-500 text-indigo-200 text-xs text-center font-medium animate-in fade-in">
-          {printFeedback}
+          {text(language, printFeedback)}
         </div>
       )}
 
@@ -722,7 +722,7 @@ export const TeacherDashboard: React.FC = () => {
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
           <span className="text-xs text-slate-400">
             {activeStudent.teacherValidation?.validatedAt
-              ? text(language, "Última validación guardada: {0}", [new Date(activeStudent.teacherValidation.validatedAt).toLocaleDateString()])
+              ? text(language, "Última validación guardada: {0}", [formatDate(language, activeStudent.teacherValidation.validatedAt)])
               : text(language, "Informe en fase de borrador pedagógico")}
           </span>
 
