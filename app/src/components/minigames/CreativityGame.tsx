@@ -5,7 +5,7 @@ import { useApp } from '../../context/AppContext';
 import { translations } from '../../i18n/translations';
 import { soundManager } from '../../utils/soundEffects';
 import { AudioButton } from '../common/AudioButton';
-import { ArrowLeft, Check, Palette, RefreshCw, Star } from 'lucide-react';
+import { ArrowLeft, Check, Palette, RefreshCw, Star, Trash2, Undo2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface WorkshopItem {
@@ -61,10 +61,13 @@ export const CreativityGame: React.FC = () => {
   const [startTime] = useState(Date.now());
   const [originalMovesCount, setOriginalMovesCount] = useState(0);
   const [repositionCount, setRepositionCount] = useState(0);
+  // Historial para «Deshacer»: cómo estaba la mesa antes de cada acción (máximo 30 pasos).
+  const [history, setHistory] = useState<WorkshopItem[][]>([]);
+  const [undoCount, setUndoCount] = useState(0);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const workshopRef = useRef<HTMLDivElement>(null);
   // Arrastre en curso: dónde empezó el puntero y la pieza, y si ya se ha movido.
-  const dragRef = useRef<{ index: number; pointerId: number; startX: number; startY: number; itemX: number; itemY: number; size: number; moved: boolean } | null>(null);
+  const dragRef = useRef<{ index: number; pointerId: number; startX: number; startY: number; itemX: number; itemY: number; size: number; moved: boolean; before: WorkshopItem[] } | null>(null);
   const lastKeyboardMoveRef = useRef(0);
 
   // Add initial item
@@ -85,6 +88,20 @@ export const CreativityGame: React.FC = () => {
     const maxX = Math.max(0, (area?.clientWidth ?? 400) - size);
     const maxY = Math.max(0, (area?.clientHeight ?? 300) - size);
     return { x: Math.min(Math.max(0, x), maxX), y: Math.min(Math.max(0, y), maxY) };
+  };
+
+  const MAX_HISTORY = 30;
+  const saveHistory = (snapshot: WorkshopItem[] = placedItems) => {
+    setHistory(prev => [...prev, snapshot].slice(-MAX_HISTORY));
+  };
+
+  const handleUndo = () => {
+    if (history.length === 0) return;
+    soundManager.playClick();
+    setPlacedItems(history[history.length - 1]);
+    setHistory(prev => prev.slice(0, -1));
+    setSelectedItemIndex(null);
+    setUndoCount(prev => prev + 1);
   };
 
   const countReposition = () => {
@@ -115,6 +132,7 @@ export const CreativityGame: React.FC = () => {
       itemY: item.y,
       size: Math.max(event.currentTarget.offsetWidth, event.currentTarget.offsetHeight),
       moved: false,
+      before: placedItems,
     };
     if (selectedItemIndex !== index) soundManager.playPop();
     setSelectedItemIndex(index);
@@ -138,6 +156,7 @@ export const CreativityGame: React.FC = () => {
     if (!drag || drag.pointerId !== event.pointerId) return;
     if (drag.moved) {
       soundManager.playClick();
+      saveHistory(drag.before);
       countReposition();
     }
     dragRef.current = null;
@@ -153,15 +172,19 @@ export const CreativityGame: React.FC = () => {
     event.preventDefault();
     const step = event.shiftKey ? KEYBOARD_STEP * 3 : KEYBOARD_STEP;
     const size = Math.max(event.currentTarget.offsetWidth, event.currentTarget.offsetHeight);
+    const now = Date.now();
+    const startsNewSeries = now - lastKeyboardMoveRef.current > 800;
+    lastKeyboardMoveRef.current = now;
+    // Una serie seguida de pulsaciones cuenta como una sola recolocación y un solo paso de «Deshacer».
+    if (startsNewSeries) {
+      saveHistory();
+      countReposition();
+    }
     setSelectedItemIndex(index);
     // Se parte de la posición más reciente para que varias pulsaciones rápidas se sumen.
     setPlacedItems(prev => prev.map((item, idx) => (
       idx === index ? { ...item, ...clampToWorkshop(item.x + delta[0] * step, item.y + delta[1] * step, size) } : item
     )));
-    // Una serie seguida de pulsaciones cuenta como una sola recolocación.
-    const now = Date.now();
-    if (now - lastKeyboardMoveRef.current > 800) countReposition();
-    lastKeyboardMoveRef.current = now;
   };
 
   // Mantiene todas las piezas dentro de la mesa al abrir el juego y al cambiar el tamaño de la ventana.
@@ -188,6 +211,7 @@ export const CreativityGame: React.FC = () => {
         Math.floor(Math.random() * (height - PIECE_SIZE)),
       ),
     };
+    saveHistory();
     setPlacedItems(prev => [...prev, newItem]);
     setSelectedItemIndex(placedItems.length);
     setOriginalMovesCount(prev => prev + 1);
@@ -196,6 +220,7 @@ export const CreativityGame: React.FC = () => {
   const handleRotateSelected = () => {
     if (selectedItemIndex === null || !placedItems[selectedItemIndex]) return;
     soundManager.playClick();
+    saveHistory();
     setPlacedItems(prev => prev.map((item, idx) => {
       if (idx !== selectedItemIndex) return item;
       return { ...item, rotation: (item.rotation + 45) % 360 };
@@ -203,12 +228,33 @@ export const CreativityGame: React.FC = () => {
     setOriginalMovesCount(prev => prev + 1);
   };
 
-  const handleRemoveSelected = () => {
-    if (selectedItemIndex === null) return;
+  // Quita la pieza seleccionada. Si no hay ninguna, quita la última que se puso;
+  // al volver a pulsar, la anterior, y así sucesivamente.
+  const hasSelection = selectedItemIndex !== null && !!placedItems[selectedItemIndex];
+  const handleRemovePiece = () => {
+    if (placedItems.length === 0) return;
+    const indexToRemove = hasSelection ? selectedItemIndex! : placedItems.length - 1;
     soundManager.playPop();
-    setPlacedItems(prev => prev.filter((_, idx) => idx !== selectedItemIndex));
+    saveHistory();
+    setPlacedItems(prev => prev.filter((_, idx) => idx !== indexToRemove));
     setSelectedItemIndex(null);
   };
+
+  // Ctrl+Z (o Cmd+Z) también deshace, salvo cuando se escribe en un campo de texto.
+  const undoRef = useRef(handleUndo);
+  undoRef.current = handleUndo;
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+      if ((event.ctrlKey || event.metaKey) && !event.shiftKey && event.key.toLowerCase() === 'z') {
+        event.preventDefault();
+        undoRef.current();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
 
   const handleSaveInvention = () => {
     soundManager.playSparkle();
@@ -234,11 +280,13 @@ export const CreativityGame: React.FC = () => {
         text(language, "Ensambló un artefacto con {0} piezas no convencionales.", [placedItems.length]),
         purposeObj ? text(language, "Asignó propósito creativo: \"{0}\"", [purposeObj.label]) : text(language, "Exploró combinación libre de piezas."),
         text(language, "Tiempo dedicado a la experimentación visual: {0}s.", [duration]),
-        ...(repositionCount > 0 ? [text(language, "Recolocó piezas {0} veces para probar combinaciones.", [repositionCount])] : [])
+        ...(repositionCount > 0 ? [text(language, "Recolocó piezas {0} veces para probar combinaciones.", [repositionCount])] : []),
+        ...(undoCount > 0 ? [text(language, "Revisó y corrigió su invento {0} veces con «Deshacer».", [undoCount])] : [])
       ],
       metrics: {
         partsCount: placedItems.length,
         repositionsCount: repositionCount,
+        undoCount,
         purposeSelected: selectedPurpose || 'libre',
         durationSec: duration,
       }
@@ -293,7 +341,7 @@ export const CreativityGame: React.FC = () => {
           </div>
 
           {/* Interactive Workshop Area */}
-          <div ref={workshopRef} className="relative w-full h-[300px] mt-6 bg-slate-950/60 rounded-2xl border border-slate-800/60 overflow-hidden">
+          <div ref={workshopRef} onPointerDown={(event) => { if (event.target === event.currentTarget) setSelectedItemIndex(null); }} className="relative w-full h-[300px] mt-6 bg-slate-950/60 rounded-2xl border border-slate-800/60 overflow-hidden">
             {placedItems.map((item, idx) => {
               const isSelected = selectedItemIndex === idx;
               const isDragging = draggingIndex === idx;
@@ -338,8 +386,17 @@ export const CreativityGame: React.FC = () => {
           </div>
 
           {/* Controls for Selected Item */}
-          <div className="flex items-center justify-between pt-3 border-t border-slate-800">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-800">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={handleUndo}
+                disabled={history.length === 0}
+                title={text(language, "Deshacer la última acción")}
+                className="px-3 py-1.5 rounded-xl bg-sky-950/60 border border-sky-800/60 text-xs font-semibold text-sky-200 hover:bg-sky-900/60 disabled:opacity-40 transition flex items-center gap-1.5"
+              >
+                <Undo2 size={13} />
+                <span>{' '}{text(language, "Deshacer")}{' '}</span>
+              </button>
               <button
                 onClick={handleRotateSelected}
                 disabled={selectedItemIndex === null}
@@ -349,10 +406,14 @@ export const CreativityGame: React.FC = () => {
                 <span>{' '}{text(language, "Girar 45°")}{' '}</span>
               </button>
               <button
-                onClick={handleRemoveSelected}
-                disabled={selectedItemIndex === null}
-                className="px-3 py-1.5 rounded-xl bg-rose-950/50 border border-rose-800/50 text-xs font-semibold text-rose-300 hover:bg-rose-900/50 disabled:opacity-40 transition"
-              >{' '}{text(language, "Quitar pieza")}{' '}</button>
+                onClick={handleRemovePiece}
+                disabled={placedItems.length === 0}
+                title={hasSelection ? text(language, "Quitar la pieza seleccionada") : text(language, "Quitar la última pieza que pusiste")}
+                className="px-3 py-1.5 rounded-xl bg-rose-950/50 border border-rose-800/50 text-xs font-semibold text-rose-300 hover:bg-rose-900/50 disabled:opacity-40 transition flex items-center gap-1.5"
+              >
+                <Trash2 size={13} />
+                <span>{' '}{hasSelection ? text(language, "Quitar pieza") : text(language, "Quitar la última")}{' '}</span>
+              </button>
             </div>
 
             <span className="text-xs font-medium text-slate-400">{' '}{text(language, "Piezas en tu invento:")}{' '}<strong className="text-amber-400">{placedItems.length}</strong>

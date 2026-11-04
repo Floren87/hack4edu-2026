@@ -608,5 +608,11 @@
   "Una abeja mensajera que lleva noticias": "A messenger bee that carries news",
   "Un pez que puede volar": "A fish that can fly",
   "Un pez linterna para ver en el fondo del mar": "A lantern fish to see at the bottom of the sea",
-  "Una máquina que planta árboles": "A machine that plants trees"
+  "Una máquina que planta árboles": "A machine that plants trees",
+  "Deshacer": "Undo",
+  "Deshacer la última acción": "Undo last action",
+  "Quitar la pieza seleccionada": "Remove the selected piece",
+  "Quitar la última pieza que pusiste": "Remove the last piece you added",
+  "Quitar la última": "Remove last",
+  "Revisó y corrigió su invento {0} veces con «Deshacer».": "Reviewed and corrected the invention {0} times with “Undo”."
 }
