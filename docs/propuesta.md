@@ -11,6 +11,12 @@
 
 Contexto: en las escuelas se les ubica por edad («nadie comprueba el nivel», ver `investigacion/entrevistas.md`), y los tests profesionales (TAMAI, MP-R…) son de pago y dependen del idioma (ver `investigacion/tests-de-referencia.md`). **No competimos con ellos: somos el paso previo.**
 
+## 1 bis. No es un test de un solo uso: es un juego para volver
+El niño puede **repetir y subir de nivel** cuando quiera: cada juego tiene niveles que se desbloquean, estrellas que se mejoran repitiendo e insignias que premian el **esfuerzo** (💪 perseverante, 🧭 explorador, 📅 constante), no ser el mejor. Varios niños pueden compartir el mismo móvil o tablet.
+- **Para el niño:** practica y mejora sus habilidades, y ve su propio progreso.
+- **Para el profesional:** ve la **evolución** a lo largo de los días, no una foto de un día. Más partidas significan más evidencias y menos riesgo de etiquetar (refuerza R14 y R15). Los intereses también se observan en lo que el niño **elige jugar** una y otra vez.
+- **Sin trampas de diseño:** no hay rankings entre niños, ni rachas que castiguen, ni anuncios, ni compras.
+
 ## 2. Comprobación del Reto 20 frase a frase
 Texto oficial: *«…identificar habilidades, intereses y fortalezas que muchas veces no aparecen en las evaluaciones tradicionales, especialmente en estudiantes de contextos vulnerables. Mediante actividades, retos prácticos, juegos o IA, la herramienta podrá detectar capacidades como creatividad, pensamiento lógico, comunicación, colaboración o resolución de problemas y ofrecer al docente información para orientar y personalizar el aprendizaje, evitando etiquetas o decisiones automatizadas sobre el alumnado.»*
 
@@ -85,11 +91,16 @@ Diseño propio: **no se copia ningún ítem de tests con derechos**. Los marcos 
 - **Backend mínimo:** FastAPI con **un solo endpoint**, `POST /api/informe`, que llama a Claude con las evidencias agregadas. Se despliega en un servicio gratuito. La clave de la API solo está en el servidor, nunca en el repo.
 - **Idiomas:** ficheros JSON de textos (`es`, `en`, `fr`, `ar`, `uk`); audio con la síntesis de voz del navegador.
 
+**Stack:** es el que propuso Miguel en el borrador de TalentoSinFronteras: React + Vite, FastAPI, SQLite, reglas interpretables y PWA con almacenamiento local. Diferencias para el hackathon:
+- El progreso se guarda **en el dispositivo** (localStorage). Así funciona sin conexión, sin servidor y sin datos de menores fuera del móvil.
+- La sincronización con **FastAPI + SQLite** (el profesional consulta el panel desde su ordenador) queda como mejora posterior.
+- La IA es un **complemento, no una dependencia**, como pedía el borrador: las reglas funcionan siempre, y la IA (cuando hay conexión) redacta el informe. Hace falta para el 20 % del criterio «IA en países desfavorecidos».
+
 | Prioridad | Qué entra |
 |---|---|
-| **Imprescindible** (demo de punta a punta) | Consentimiento + avatar → Mapa de mundos → Patrones → ¿Qué inventas? → Panel del profesional con validación → Resumen para la familia · Modo sin IA · ES + otro idioma |
+| **Imprescindible** (demo de punta a punta) | Consentimiento → ¿quién juega? + avatar → intereses → mapa de juegos con niveles y estrellas → Patrones (10 niveles) → ¿Qué inventas? (4 objetos) → resultado con insignias → panel del profesional con evolución y validación → resumen para la familia · Modo sin IA · ES + EN (+ FR parcial) ✅ hecho en el PR #2 |
 | **Si da tiempo** | Cuenta la historia · Ayuda al robot · IA real en el informe · árabe con escritura de derecha a izquierda |
-| **Después del hackathon** | Varios niños por profesional y sincronización, panel por centro, estudios de validez con psicólogos |
+| **Después del hackathon** | Sincronización con FastAPI + SQLite (panel desde otro dispositivo), panel por centro, más niveles generados con IA, estudios de validez con psicólogos |
 
 ## 8. Reparto y calendario propuestos (hora de Madrid)
 | Cuándo | Floren | Miguel | Cristina | Delia |
