@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="atmoGlow" cx="256" cy="256" r="230" gradientUnits="userSpaceOnUse">
+      <stop offset="65%" stop-color="#38bdf8" stop-opacity="0" />
+      <stop offset="90%" stop-color="#60a5fa" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#818cf8" stop-opacity="0.6" />
+    </radialGradient>
+    <linearGradient id="globeOcean" x1="80" y1="60" x2="430" y2="450" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="35%" stop-color="#2563eb" />
+      <stop offset="80%" stop-color="#1d4ed8" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="landGreen" x1="120" y1="100" x2="400" y2="400" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4ade80" />
+      <stop offset="60%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+    <linearGradient id="bridgeOrbit" x1="50" y1="400" x2="460" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="40%" stop-color="#ec4899" />
+      <stop offset="80%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    <filter id="globeShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#000000" flood-opacity="0.45" />
+    </filter>
+  </defs>
+
+  <!-- Background rounded card -->
+  <rect width="512" height="512" rx="128" fill="#090d16" />
+
+  <!-- Outer atmospheric halo -->
+  <circle cx="256" cy="256" r="215" fill="url(#atmoGlow)" />
+
+  <!-- The Planet Globe -->
+  <g filter="url(#globeShadow)">
+    <circle cx="256" cy="256" r="185" fill="url(#globeOcean)" />
+
+    <!-- Latitudinal & longitudinal curves -->
+    <ellipse cx="256" cy="256" rx="185" ry="85" stroke="#ffffff" stroke-opacity="0.12" stroke-width="3" fill="none" />
+    <ellipse cx="256" cy="256" rx="85" ry="185" stroke="#ffffff" stroke-opacity="0.12" stroke-width="3" fill="none" />
+    <line x1="71" y1="256" x2="441" y2="256" stroke="#ffffff" stroke-opacity="0.16" stroke-width="3" />
+
+    <!-- Continents with warm organic shapes -->
+    <g fill="url(#landGreen)">
+      <!-- Eurasia & Africa -->
+      <path d="M210 130 C240 120 280 115 300 135 C320 155 310 190 275 200 C250 205 240 235 260 260 C280 285 300 295 280 330 C260 360 225 380 215 350 C205 320 215 285 195 275 C175 265 155 220 175 185 C185 165 195 155 210 130 Z" />
+      <!-- Americas -->
+      <path d="M120 180 C140 160 170 170 160 205 C150 240 130 260 140 295 C150 330 180 360 170 380 C160 395 140 375 130 350 C110 310 100 230 120 180 Z" />
+      <!-- Oceania & Islands -->
+      <ellipse cx="350" cy="300" rx="30" ry="20" />
+      <circle cx="380" cy="245" r="16" />
+      <circle cx="330" cy="350" r="12" />
+    </g>
+
+    <!-- Warm sunlight overlay on top-left of the planet -->
+    <circle cx="256" cy="256" r="185" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="4" />
+  </g>
+
+  <!-- Solidary Colorful Orbit / Bridge without borders -->
+  <path d="M60 350 C120 440 340 470 455 210" stroke="url(#bridgeOrbit)" stroke-width="26" stroke-linecap="round" fill="none" />
+  <path d="M80 335 C140 415 350 440 460 200" stroke="#ffffff" stroke-opacity="0.4" stroke-width="6" stroke-linecap="round" fill="none" />
+
+  <!-- Node on orbit representing traveler/child -->
+  <circle cx="448" cy="216" r="22" fill="#fbbf24" stroke="#ffffff" stroke-width="5" />
+</svg>
