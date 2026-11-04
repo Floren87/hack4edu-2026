@@ -111,9 +111,9 @@ Diseño propio: **no se copia ningún ítem de tests con derechos**. Los marcos 
 | Mañana | Pulir y probar | Pulir y probar | **Grabar vídeo** | Textos en otros idiomas |
 | **Mañana, 23:59** | **ENTREGA** | | | |
 
-## 9. Preguntas para Cristina y Delia
-1. ¿Rango de edad 7-14 años? ¿O lo separamos en dos versiones (7-10 y 11-14)?
-2. Además de las 5 capacidades del reto, ¿queréis medir algo más? (Por ejemplo, perseverancia o curiosidad.)
-3. ¿Quién usa el panel: el psicólogo, el orientador o el docente? ¿Hay que adaptar el lenguaje del informe para cada uno?
-4. ¿Qué idiomas y rutas contamos en el vídeo? (Por ejemplo: Ucrania → España, Venezuela → Colombia, Sudán → Chad.)
-5. ¿Os encaja el estilo visual de los bocetos con estos 5 minijuegos?
+## 9. Respuestas de Delia (4 nov)
+1. **Edad:** un solo rango, **desde los 7 años** (7-14), entre otras cosas por las políticas de Google Play. ⚠️ Al ser menores de 13, si se publica en Google Play aplica su política de familias (sin anuncios inadecuados y con datos mínimos), que ya cumplimos.
+2. **Capacidades:** las 5 del reto. Otras, en futuras actualizaciones.
+3. **Informes:** uno **técnico para el psicólogo o psicopedagogo** y otro **sencillo para el docente y la familia** → hecho en el PR #2.
+4. **Rutas del vídeo:** Sudán → Chad (Amira; árabe y francés), Venezuela → Colombia (español) y Ucrania → España (ucraniano).
+5. **Estilo visual:** los bocetos ya están adaptados a los minijuegos.

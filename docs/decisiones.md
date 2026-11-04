@@ -4,9 +4,13 @@ Una línea por decisión, la más reciente arriba. Las IAs del equipo leen este 
 
 | Fecha | Decisión | Quién |
 |---|---|---|
+| 2026-11-04 | **Rutas e idiomas del vídeo:** Sudán → Chad (Amira; árabe y francés; África), Venezuela → Colombia (español; América Latina) y Ucrania → España (ucraniano; entrevista E1). | Floren (Delia lo deja a criterio del equipo) |
+| 2026-11-04 | **Dos informes:** uno técnico para el psicólogo o psicopedagogo y otro sencillo para el docente y la familia. | Delia |
+| 2026-11-04 | Se miden las **5 capacidades del reto** (más intereses y perseverancia). Otras capacidades, en futuras actualizaciones. | Delia |
+| 2026-11-04 | **Rango de edad: un solo rango, desde los 7 años** (7-14), entre otras cosas por las políticas de Google Play. | Delia |
+| 2026-11-04 | El estilo visual de los bocetos ya está adaptado a los minijuegos. | Delia |
 | 2026-11-04 | _Propuesta_: prototipo **solo frontend** (React + Vite, PWA, datos en el navegador), publicado en GitHub Pages. Así el QR funciona sin servidor, sin conexión y sin guardar datos de menores en ningún sitio. FastAPI queda para después del hackathon. | Floren |
 | 2026-11-04 | El **vídeo de 3 min** enseña la herramienta desde la mirada del **niño, la familia y el educador**, contando el contexto por el camino, y termina con un **QR al prototipo**. Las bases piden además la presentación de 5 min: se reutiliza el guion y las capturas del vídeo. | Cristina |
-| 2026-11-04 | _Pendiente_: fijar el rango de edad del juego (propuesta: 7-14 años; los de 4-5 se adaptan solos, ver `docs/investigacion/entrevistas.md`). | Equipo |
 | 2026-11-04 | _Pendiente_: ¿incluimos el mapa de currículos de Puente como módulo extra (Retos 15 y 11) o solo Reto 20? | Equipo |
 | 2026-11-03 | Usuarios identificados con **pseudónimos**: nada de nombres reales de menores. Miguel concreta cómo. | Equipo |
 | 2026-11-03 | Es una herramienta **de apoyo al psicólogo/orientador** en la inserción y adaptación del niño. Se basa en los instrumentos que ya se usan, **sin reemplazarlos**. Mide **habilidades, aptitudes, intereses y fortalezas, no personalidad**. | Equipo |
