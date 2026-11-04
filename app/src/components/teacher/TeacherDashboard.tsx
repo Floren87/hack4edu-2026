@@ -168,7 +168,7 @@ export const TeacherDashboard: React.FC = () => {
           <AudioButton textToSpeak={text(language, "Panel Profesional. Evaluación pedagógica sin etiquetas. El informe se alimenta exclusivamente de las actividades reales que el estudiante completa. Las que aún no ha jugado figuran como pendientes de realizar. No existen etiquetas clínicas ni juicios automatizados.")} />
         </div>
         <p className="text-xs text-indigo-200 leading-relaxed">
-          <strong>{' '}{text(language, "Sin etiquetas patologizantes (R14):")}{' '}</strong>{' '}{text(language, "no existen puntuaciones clínicas de déficit ni cocientes cerrados.")}{' '}<strong> {' '}{text(language, "Alimentación basada en evidencias reales:")}{' '}</strong>{' '}{text(language, "Solo las actividades realizadas alimentan las observaciones; las actividades no realizadas se declaran explícitamente como «Pendiente de realizar».")}{' '}<strong> {' '}{text(language, "Supervisión humana activa (R15):")}{' '}</strong>{' '}{text(language, "El profesional valida o contrasta cada fortaleza antes del guardado institucional.")}{' '}</p>
+          <strong>{' '}{text(language, "Sin etiquetas patologizantes:")}{' '}</strong>{' '}{text(language, "no existen puntuaciones clínicas de déficit ni cocientes cerrados.")}{' '}<strong> {' '}{text(language, "Alimentación basada en evidencias reales:")}{' '}</strong>{' '}{text(language, "Solo las actividades realizadas alimentan las observaciones; las actividades no realizadas se declaran explícitamente como «Pendiente de realizar».")}{' '}<strong> {' '}{text(language, "Supervisión humana activa:")}{' '}</strong>{' '}{text(language, "El profesional valida o contrasta cada fortaleza antes del guardado institucional.")}{' '}</p>
       </div>
 
       {/* ======================================================== */}
@@ -486,7 +486,7 @@ export const TeacherDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-[10px] text-slate-400 pt-2 border-t border-slate-800/80">{' '}{text(language, "* El 100% de los descriptores emplean enfoque positivo (Reto 20 - R3).")}{' '}</div>
+            <div className="text-[10px] text-slate-400 pt-2 border-t border-slate-800/80">{' '}{text(language, "* El 100% de los descriptores emplean enfoque positivo.")}{' '}</div>
           </div>
 
         </div>
@@ -658,7 +658,7 @@ export const TeacherDashboard: React.FC = () => {
         <div className="border-b border-slate-800 pb-3">
           <h3 className="text-base font-black text-white flex items-center gap-2">
             <Lightbulb className="text-amber-400" size={18} />
-            <span>{' '}{text(language, "3 Sugerencias Concretas para Orientar y Personalizar el Aula (R13)")}{' '}</span>
+            <span>{' '}{text(language, "3 Sugerencias Concretas para Orientar y Personalizar el Aula")}{' '}</span>
           </h3>
           <p className="text-xs text-slate-400 mt-0.5">{' '}{text(language, "Estrategias accionables e inclusivas para aplicar desde el primer día sin necesidad de intérprete")}{' '}</p>
         </div>
@@ -705,7 +705,6 @@ export const TeacherDashboard: React.FC = () => {
             <FileText className="text-emerald-400" size={18} />
             <span>{' '}{text(language, "Validación Humana y Notas del Profesional / Orientador")}{' '}</span>
           </h3>
-          <span className="text-xs text-slate-400">{' '}{text(language, "Requisito R15")}{' '}</span>
         </div>
 
         <textarea
