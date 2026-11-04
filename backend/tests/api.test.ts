@@ -131,3 +131,19 @@ test('same-origin static hosting serves the SPA but never an API fallback', asyn
     assert.equal(unknown.json().error, 'NOT_FOUND');
   } finally { await t.close(); await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }); }
 });
+
+
+test('metadata CRUD is professional-only, versioned and isolated',async()=>{
+ const t=await setup();
+ try {
+  const a=await t.account('metadata-test');const b=await t.account('metadata-other');
+  const id=(await t.send('POST','/students',{nameOrAlias:'Zorro Azul',avatar:'🦊'},a)).json().student.id;
+  const input={nameOrAlias:'Lince Verde',avatar:'🐾',preferredLanguage:'en',age:10,version:0};
+  assert.equal((await t.send('PUT','/students/'+id,input,b)).statusCode,404);
+  assert.equal((await t.send('PUT','/students/'+id,input,a)).statusCode,200);
+  assert.equal((await t.send('GET','/students/'+id,undefined,a)).json().student.nameOrAlias,'Lince Verde');
+  assert.equal((await t.send('PUT','/students/'+id,input,a)).statusCode,409);
+  await t.send('POST','/mode/child',{studentId:id},a);
+  assert.equal((await t.send('PUT','/students/'+id,{...input,version:1},a)).statusCode,403);
+ } finally {await t.close();}
+});

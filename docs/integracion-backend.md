@@ -1,6 +1,28 @@
-# Integración del frontend · siguiente paso
+# Integración realizada en feat/backend
 
-Estado: **diseño pendiente de implementar**. Esta rama no cambia ningún archivo de `app/`. Backend operativo y contrato en `backend/README.md`. La UI actual continúa siendo una demo local; sus botones de roles todavía no utilizan la sesión del servidor.
+Implementada en esta rama, sin PR ni push durante esta sesión por instrucción del usuario.
+
+- Login/registro inicial; recuperación de sesión y modo en servidor.
+- Contexto único `AppContext` para sesión y estado: se evita un AuthContext adicional para mantener KISS.
+- `api.ts`: cookies, CSRF, errores comunes y ausencia de caché.
+- CRUD de alumnos y paneles/exportación solo en profesional. Ruta adicional `PUT /api/students/:id` para metadatos con control de versión.
+- Niño: solo juegos, alumno fijo, sin navegación profesional/familiar. Contraseña para salir; bloqueo aplicado también en API.
+- BroadcastChannel sincroniza cambios de sesión/modo entre pestañas del mismo origen; al volver a una pestaña se consulta la sesión antes de aceptar cambios de modo. No se guardan expedientes ni tokens en localStorage.
+- Progreso agrupado y serializado en memoria; interfaz de guardando/guardado/error. 409 exige recargar estado remoto; no hay fusión ni cola offline. Cambio de modo y logout esperan a guardar.
+- Crea/modifica alumno y guarda notas solo tras respuesta de servidor. Notas sin guardar en el formulario requieren pulsar Guardar antes de navegar.
+- Worker anterior retirado y caché `talento-sf-v1` eliminada. No se registra un worker nuevo.
+- Traducciones completas de controles nuevos en ES/EN/FR/AR/UK. Juegos e informes conservan su cobertura anterior.
+- Pruebas E2E lanzan backend real temporal y frontend aislado en 3101/3100. Instalar dependencias de ambos antes de ejecutarlas.
+
+## Límites deliberados
+
+Una partida no confirmada permanece solo en memoria y puede perderse al cerrar/recargar; la UI avisa. Un cambio de sesión en otra pestaña descarta el estado local para retirar los expedientes anteriores. Evitar jugar simultáneamente con el mismo alumno desde varios dispositivos; el servidor rechaza escrituras obsoletas con 409. No hay recuperación de contraseña ni sincronización offline.
+
+## Plan original de referencia
+
+# Plan de integración
+
+El siguiente apartado conserva el plan que guio la integración; el resumen de arriba describe la implementación vigente.
 
 ## Alcance aprobado
 

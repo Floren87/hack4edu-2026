@@ -14,38 +14,42 @@ Proyecto del equipo para el **#Hack4Edu 2026** (ProFuturo + UPSA), **Reto 20**. 
 | 👨‍👩‍👧 **Familia** | Resumen sencillo y en positivo, con ideas para casa, descargable e imprimible. |
 
 - **Idiomas:** español, inglés, francés, árabe (de derecha a izquierda) y ucraniano. Textos con voz, usando la síntesis de voz del dispositivo. El inglés está completo; FR, AR y UK cubren los textos del prototipo original.
-- **Frontend actual:** sigue guardando los datos en `localStorage`. El backend de cuentas y alumnos está implementado en `backend/`, pero aún no está conectado a estas pantallas.
-- **Sin conexión:** es una PWA instalable. En producción, un *service worker* guarda la app en caché.
-- **Informes por reglas locales** (`src/utils/aiPedagogy.ts`): no se llama a ningún servicio de IA externo.
+- **Acceso:** login como primera pantalla. Cuenta con usuario inventado y contraseña; sin email ni datos reales.
+- **Profesional:** alta, edición y borrado de alumnos con pseudónimos; consulta/exportación de resultados y última revisión.
+- **Niño:** solo juegos del alumno seleccionado. No hay paneles, familia ni selector de alumnos. Volver al adulto requiere contraseña comprobada por el servidor.
+- **Conectado:** estado guardado en SQLite/libSQL; no se utiliza localStorage para expedientes ni service worker para cachear la aplicación.
+- **Idiomas:** las pantallas nuevas de acceso y gestión están traducidas a ES/EN/FR/AR/UK; los juegos mantienen las traducciones existentes.
+- **Informes:** siguen generándose con reglas locales sobre los datos del alumno; no hay IA externa ni histórico de evaluaciones.
 
-## Backend conectado (integración pendiente)
-
-La rama `feat/backend` añade TypeScript + Fastify + SQLite/libSQL: registro sin identidad real, login, alumnos privados por cuenta y modo niño cuya salida requiere contraseña. Guarda solo el estado actual. No se ha modificado `app/`.
-
-- [Arranque, API y pruebas del backend](backend/README.md).
-- [Cambios que necesita el frontend](docs/integracion-backend.md).
-- [Despliegue gratuito para la demo](docs/despliegue-demo.md).
-
-El flujo conectado será online; la PWA actual deberá desactivarse en el siguiente paso. Hasta integrar la UI, publicar el backend no añade login a las pantallas.
+[API y configuración](backend/README.md) · [Integración realizada](docs/integracion-backend.md) · [Despliegue gratuito](docs/despliegue-demo.md)
 
 ## Instalación y uso
 **Requisitos:** [Node.js](https://nodejs.org/) **22.12 o posterior** (con npm) y Git. Con Node 18 o 20 el build falla.
 
-```bash
-git clone https://github.com/Floren87/hack4edu-2026.git
-cd hack4edu-2026/app
-npm ci                 # instala exactamente las versiones del package-lock.json
-npm run dev            # arranca en http://localhost:3000
+Desde la raíz del repositorio, abrir dos terminales:
+
+Terminal 1 — API:
+
+```powershell
+cd backend
+npm ci
+Copy-Item .env.example .env # solo la primera vez; no sobrescribir una configuración existente
+npm run dev
 ```
 
-Abre la dirección que muestra Vite en el navegador. No hacen falta claves de API, `.env` ni backend. Para probarla desde el móvil en la misma red wifi, usa la IP del ordenador (Vite la muestra como `Network`).
+Terminal 2 — interfaz:
 
-### Recorrido de prueba
-1. Elige el idioma en la pantalla de bienvenida.
-2. Crea un pseudónimo y un avatar, o entra con uno de los perfiles de muestra (son ficticios).
-3. Juega los retos y visita los mundos.
-4. Abre el **panel profesional** para ver evidencias y sugerencias, validarlas y descargar el informe técnico.
-5. Abre el **espacio familiar** y descarga el resumen. Las descargas son HTML imprimibles: el PDF se obtiene con «Imprimir / Guardar PDF» del navegador.
+```powershell
+cd app
+npm ci
+npm run dev
+```
+
+Abrir **http://localhost:3000/**. Vite redirige `/api` al backend en 127.0.0.1:3001. Usar localhost, no alternar con 127.0.0.1: el origen debe coincidir con `APP_ORIGIN`. Sin backend se muestra error de conexión, nunca datos de muestra.
+
+Crear una cuenta y un alumno con pseudónimos. Pulsar «Comenzar juego» para entregar el dispositivo al niño y «Volver al adulto» para introducir la contraseña. Las sesiones vigentes recuperan su modo al recargar. Se necesita conexión; una partida sin confirmar muestra «Cambios sin guardar» y permite reintentar o descartar/cargar el estado del servidor.
+
+No hay recuperación de contraseña en esta demo. Las descargas son HTML imprimible; para obtener PDF usar «Imprimir / Guardar PDF» del navegador.
 
 ### Comandos
 Todos se ejecutan dentro de `app/`:
@@ -55,9 +59,9 @@ Todos se ejecutan dentro de `app/`:
 | `npm run dev` | Servidor de desarrollo (puerto 3000) |
 | `npm run lint` | Comprobación de tipos con TypeScript |
 | `npm test` | Tests de reglas, traducción de evidencias y exportaciones seguras |
-| `npm run test:e2e` | Recorrido completo en el navegador con Playwright. La primera vez, ejecuta `npx playwright install chromium` (en Windows usa Edge). Necesita el puerto 3000 libre: si ya hay un servidor ahí, lo reutiliza. |
+| `npm run test:e2e` | Recorridos con API real y base temporal, en puertos 3100/3101 libres. En Windows usa Edge; en Linux instalar Chromium con `npx playwright install chromium`. Instalar antes las dependencias de `backend/`. |
 | `npm run build` | Versión de producción en `app/dist/` |
-| `npm run preview` | Sirve el build para probarlo (aquí funciona el modo sin conexión) |
+| `npm run preview` | Sirve el build estático; para el flujo conectado en producción usar el servidor backend y seguir la guía de despliegue |
 
 ### Problemas habituales
 - **`Cannot find native binding` o `styleText` al hacer el build:** tu Node es antiguo, o `node_modules` se instaló con otra versión. Actualiza a Node 22+, borra `node_modules` y vuelve a ejecutar `npm ci`.

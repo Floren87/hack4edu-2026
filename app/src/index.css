@@ -44,3 +44,9 @@
     color: #334155 !important;
   }
 }
+
+.account-field { display: block; width: 100%; margin-top: .35rem; border: 1px solid #64748b; border-radius: .75rem; padding: .6rem .8rem; color: #f8fafc; background: #020617; }
+.account-button { border-radius: .75rem; background: #4f46e5; color: white; padding: .6rem 1rem; font-weight: 700; }
+button:disabled { cursor: not-allowed; opacity: .5; }
+
+.account-field.account-language { width: auto; max-width: 10rem; flex-shrink: 0; margin-top: 0; }

@@ -54,7 +54,7 @@ Render proporciona `PORT`: no fijarlo a 3001. Si la URL pública no está dispon
 7. Desplegar y comprobar `https://NOMBRE.onrender.com/api/health` → `{ "ok": true }`.
 8. Abrir la URL raíz: debe servir la aplicación. Probar cuentas con los pasos de integración antes de distribuirla.
 
-**Estado de esta rama:** el backend y el servidor de archivos están listos, pero la UI existente todavía no llama a la API. Publicar esta rama muestra el prototipo actual; **no añade login a sus pantallas**. Para que el público use cuentas y guardado remoto hay que completar primero `docs/integracion-backend.md` y desplegar esa versión.
+**Estado de esta rama:** frontend integrado con la API. Publicar esta versión habilita login, CRUD de alumnos, resultados y modo niño. Antes de compartir el QR, comprobar el recorrido completo contra la base remota; esta sesión solo verifica el entorno local.
 
 ## 3. Comprobación antes del QR
 
@@ -63,7 +63,7 @@ Render proporciona `PORT`: no fijarlo a 3001. Si la URL pública no está dispon
 - Activar modo niño, recargar, intentar volver con contraseña incorrecta y después con la correcta.
 - Probar otra cuenta en ventana privada: no ve alumnos de la primera.
 - Reiniciar/redeploy del servicio y verificar que el estado persiste en Turso.
-- Verificar que no hay service worker cacheando `/api`; la integración debe desactivar el worker actual. `Cache-Control: no-store` por sí solo no evita que código de un worker haga `cache.put`.
+- Verificar que no hay service worker cacheando `/api`; la aplicación retira el worker antiguo al arrancar. `Cache-Control: no-store` por sí solo no evita que código de un worker haga `cache.put`.
 - Probar en móvil con datos, no solo desde la wifi del equipo.
 - Generar el QR con la URL raíz del servicio integrado, no `/api/health` ni el enlace antiguo de Pages.
 

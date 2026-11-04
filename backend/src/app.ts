@@ -126,6 +126,14 @@ export async function buildApp(options: Options) {
     const s = await session(request);
     return studentView(await studentRow(request.params.id, s), s);
   });
+  app.put<{ Params: { id: string } }>('/api/students/:id', async request => {
+    const s = await session(request, true);
+    const input = newStudent.extend({version: progress.shape.version}).parse(request.body);
+    const row = await studentRow(request.params.id,s);
+    const profile = JSON.parse(String(row.profile)) as Profile;
+    const {version,...metadata} = input;
+    return save(row,{...profile,...metadata},version);
+  });
   app.put<{ Params: { id: string } }>('/api/students/:id/progress', async request => {
     const s = await session(request);
     const input = progress.parse(request.body);

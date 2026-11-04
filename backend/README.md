@@ -1,6 +1,6 @@
 # Backend · demo conectada
 
-Implementado en `feat/backend`, desde `develop`. El frontend **no está modificado ni integrado** en esta rama. La propuesta antigua de FastAPI e historial versionado queda sustituida por este alcance aprobado: TypeScript, una cuenta profesional, alumnos con pseudónimo, estado actual y modo niño protegido por contraseña.
+Implementado en `feat/backend`, desde `develop`. El frontend está integrado: login inicial, CRUD de alumnos en modo profesional y juegos aislados en modo niño. La propuesta antigua de FastAPI e historial versionado queda sustituida por este alcance aprobado: TypeScript, una cuenta profesional, alumnos con pseudónimo, estado actual y modo niño protegido por contraseña.
 
 ## Arranque
 
@@ -67,6 +67,7 @@ Tras login, conservar `csrfToken` en memoria y enviar `credentials: 'include'` e
 | `GET /students` | `{ students: [{ student, version, updatedAt }] }` | Profesional |
 | `POST /students` | `{ nameOrAlias, avatar, preferredLanguage?, age? }` → 201 `{ student, version: 0, updatedAt }` | Profesional |
 | `GET /students/:id` | `{ student, version, updatedAt }` | Profesional propietario, o niño activo |
+| `PUT /students/:id` | Metadatos del alta + `version` → `{ version: anterior+1 }` | Profesional |
 | `PUT /students/:id/progress` | Estado de juego completo + `version` → `{ version: anterior+1 }` | Profesional propietario, o niño activo |
 | `PUT /students/:id/review` | `{ version, agreements, teacherNotes }` → `{ version: anterior+1 }` | Profesional |
 | `DELETE /students/:id` | `{ deleted: true }`; elimina también sesiones que estén jugando con él | Profesional |

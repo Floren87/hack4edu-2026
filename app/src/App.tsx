@@ -18,17 +18,24 @@ import { MagicScaleBalance } from './components/worldActivities/MagicScaleBalanc
 import { TeacherDashboard } from './components/teacher/TeacherDashboard';
 import { FamilyPortal } from './components/family/FamilyPortal';
 import { ProfileManager } from './components/profiles/ProfileManager';
-import { WelcomeEntryScreen } from './components/onboarding/WelcomeEntryScreen';
+import { LoginScreen } from './components/auth/LoginScreen';
+import { ui, errorText } from './i18n/account';
 
 const AppContent: React.FC = () => {
-  const { view, activeGameId, activeWorldId, isOnboarding, activeStudent } = useApp();
+  const { view, activeGameId, activeWorldId, activeStudent, session, loading, connectionError, refresh, error, setError, saveStatus, flush } = useApp();
   const { language } = useApp();
 
-  if (isOnboarding) {
-    return <WelcomeEntryScreen />;
-  }
+  const t = ui(language);
+  const notice = error && <div role="alert" className="fixed bottom-4 inset-x-4 z-[60] bg-rose-950 border border-rose-500 p-4 rounded-2xl text-white print:hidden">{errorText(error,language)} <button onClick={()=>setError('')}>×</button></div>;
+  if (loading) return <main className="min-h-screen bg-slate-950 text-white grid place-items-center" role="status">{t.loading}</main>;
+  if (connectionError) return <main className="min-h-screen bg-slate-950 text-white grid place-items-center"><div><p>{t.error}</p><button className="account-button" onClick={()=>void refresh()}>{t.retry}</button></div></main>;
+  if (!session) return <><LoginScreen/>{notice}</>;
+  const child = session.mode === 'child';
+
 
   const renderCurrentView = () => {
+    if (child && !['child_hub','worlds_map','minigame','world_activity'].includes(view)) return activeStudent ? <ChildHome/> : null;
+    if (!child && (['child_hub','worlds_map','minigame','world_activity'].includes(view) || !activeStudent)) return <ProfileManager/>;
     switch (view) {
       case 'child_hub':
         return <ChildHome />;
@@ -70,6 +77,10 @@ const AppContent: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
       {/* Top Navbar */}
       <Navbar />
+      <div className="max-w-5xl mx-auto px-4 py-2 text-xs print:hidden" role="status">{saveStatus==='saving'?t.saving:saveStatus==='pending'?t.pending:saveStatus==='saved'?t.saved:t.pending}
+        {(saveStatus==='error'||error==='VERSION_CONFLICT')&&<><button className="underline mx-3" disabled={error==='VERSION_CONFLICT'} onClick={()=>void flush().catch(()=>{})}>{t.retry}</button><button className="underline" onClick={()=>{if(confirm(t.discard))void refresh();}}>{t.reload}</button></>}
+      </div>
+      {notice}
 
       {/* Main View Container */}
       <main className="flex-1 py-4 sm:py-6 px-3 sm:px-4">
@@ -80,7 +91,7 @@ const AppContent: React.FC = () => {
       <footer className="border-t border-slate-900 py-4 px-4 text-center text-[11px] text-slate-500 print:hidden">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>{text(language, "Talento sin Fronteras • Evaluación sin etiquetas ni barreras de idioma")}</span>
-          <span className="text-slate-600">{text(language, "Listo para PWA y despliegue estático en GitHub Pages (HTML/CSS/JS)")}</span>
+
         </div>
       </footer>
 

@@ -12,8 +12,8 @@ Este fichero lo leen las IAs de los 4 miembros del equipo (Claude Code, Copilot,
 - Idea y decisiones vigentes: ver `docs/decisiones.md` (manda sobre cualquier otra cosa). Quién hace qué ahora: `docs/estado.md`.
 
 ## Stack
-- **App (`app/`):** React 19 + TypeScript + Vite + Tailwind, PWA sin conexión. Datos en el navegador (`localStorage`), informes con reglas locales (`src/utils/aiPedagogy.ts`). Necesita **Node 22.12+**. Instalación y comandos: `README.md`.
-- **Backend (`backend/`):** TypeScript + Fastify + SQLite/libSQL. Cuentas con usuario inventado, sesión profesional/niño y estado actual de alumnos. API implementada, frontend pendiente de integrar; contrato en `backend/README.md`, plan en `docs/integracion-backend.md`, despliegue en `docs/despliegue-demo.md`. Sin sincronización offline ni historial de evaluaciones.
+- **App (`app/`):** React 19 + TypeScript + Vite + Tailwind, Online, sin service worker de caché. Datos de alumnos en el backend, informes con reglas locales (`src/utils/aiPedagogy.ts`). Necesita **Node 22.12+**. Instalación y comandos: `README.md`.
+- **Backend (`backend/`):** TypeScript + Fastify + SQLite/libSQL. Cuentas con usuario inventado, sesión profesional/niño y estado actual de alumnos. API y frontend integrados; contrato en `backend/README.md`, plan en `docs/integracion-backend.md`, despliegue en `docs/despliegue-demo.md`. Sin sincronización offline ni historial de evaluaciones.
 
 ## 🌿 Ramas
 - `main`: versión entregable. **No se toca** hasta que `develop` esté comprobada; entonces se fusiona `develop` → `main` con un PR.
