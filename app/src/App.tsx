@@ -77,7 +77,7 @@ const AppContent: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
       {/* Top Navbar */}
       <Navbar />
-      <div className="max-w-5xl mx-auto px-4 py-2 text-xs print:hidden" role="status">{saveStatus==='saving'?t.saving:saveStatus==='pending'?t.pending:saveStatus==='saved'?t.saved:t.pending}
+      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-end gap-2 px-3 pt-3 text-[11px] text-slate-400 sm:px-6 print:hidden" role="status"><span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${saveStatus==='saved'?'bg-emerald-400':saveStatus==='error'?'bg-rose-400':'bg-amber-400'}`} />{saveStatus==='saving'?t.saving:saveStatus==='pending'?t.pending:saveStatus==='saved'?t.saved:t.pending}
         {(saveStatus==='error'||error==='VERSION_CONFLICT')&&<><button className="underline mx-3" disabled={error==='VERSION_CONFLICT'} onClick={()=>void flush().catch(()=>{})}>{t.retry}</button><button className="underline" onClick={()=>{if(confirm(t.discard))void refresh();}}>{t.reload}</button></>}
       </div>
       {notice}

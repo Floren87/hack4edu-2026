@@ -99,14 +99,14 @@ export const TeacherDashboard: React.FC = () => {
   const pendingCount = report.pendingActivities.length;
 
   return (
-    <div className="max-w-5xl mx-auto p-4 sm:p-6 space-y-8 print:p-0 print:space-y-4">
+    <div className="min-w-0 max-w-5xl mx-auto p-4 sm:p-6 space-y-8 print:p-0 print:space-y-4 [overflow-wrap:anywhere]">
 
       {/* Student Selector Bar & Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-4 rounded-3xl print:hidden">
-        <div className="flex items-center gap-3">
-          <div className="text-3xl">{activeStudent.avatar}</div>
-          <div>
-            <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="shrink-0 text-3xl">{activeStudent.avatar}</div>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider block">{' '}{text(language, "Panel Profesional • Expediente Activo")}{' '}</span>
               <span className="text-[10px] bg-slate-800 text-slate-300 font-bold px-2 py-0.5 rounded-full">
                 {completedCount}{' '}{text(language, "de 10 completadas")}{' '}</span>
@@ -117,12 +117,12 @@ export const TeacherDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
           <span className="text-xs text-slate-400">{' '}{text(language, "Cambiar alumno:")}{' '}</span>
           <select
             value={activeStudent.id}
             onChange={(e) => switchStudent(e.target.value)}
-            className="bg-slate-950 border border-slate-700 text-xs text-slate-200 rounded-xl px-3 py-2 font-medium focus:outline-none focus:border-indigo-500"
+            className="min-w-0 max-w-full bg-slate-950 border border-slate-700 text-xs text-slate-200 rounded-xl px-3 py-2 font-medium focus:outline-none focus:border-indigo-500"
           >
             {students.map(s => (
               <option key={s.id} value={s.id}>
@@ -578,8 +578,8 @@ export const TeacherDashboard: React.FC = () => {
                 className="rounded-3xl bg-slate-900 border border-slate-800 p-6 space-y-4 shadow-lg hover:border-indigo-600/50 transition-all"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                  <div>
-                    <div className="flex items-center gap-2">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
                       <h4 className="text-base font-black text-white">{strength.title}</h4>
                       <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                         strength.levelDescription === 'destaca'
@@ -599,7 +599,7 @@ export const TeacherDashboard: React.FC = () => {
                   </div>
 
                   {/* Validation toggle (R15) */}
-                  <div className="flex items-center gap-1.5 shrink-0 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 print:hidden">
+                  <div className="grid w-full max-w-full grid-cols-2 items-stretch gap-1.5 shrink-0 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 sm:flex sm:w-auto sm:flex-wrap print:hidden">
                     <button
                       onClick={() => handleToggleAgreement(strength.id, true)}
                       className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
@@ -719,7 +719,7 @@ export const TeacherDashboard: React.FC = () => {
           className="w-full rounded-2xl bg-slate-950 border border-slate-700 p-4 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
         />
 
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
           <span className="text-xs text-slate-400">
             {activeStudent.teacherValidation?.validatedAt
               ? text(language, "Última validación guardada: {0}", [new Date(activeStudent.teacherValidation.validatedAt).toLocaleDateString()])

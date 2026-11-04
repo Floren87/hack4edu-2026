@@ -4,6 +4,7 @@ Una línea por decisión, la más reciente arriba. Las IAs del equipo leen este 
 
 | Fecha | Decisión | Quién |
 |---|---|---|
+| 2026-11-04 | Mantener fidelidad visual al prototipo de Delia en las nuevas pantallas conectadas: selector de idiomas, avatares, tarjetas y degradados. La navegación profesional refleja la vista activa; se conserva el aislamiento del modo niño y el login inicial. | Usuario + Codex |
 | 2026-11-04 | Usuario autoriza integrar frontend en feat/backend sin PR: login inicial, CRUD y resultados solo en profesional, niño solo juegos y salida con contraseña. Sin offline. Usuario gestiona GitHub y reconciliación de ramas. | Usuario + Codex |
 | 2026-11-04 | **Alcance aprobado en sesión:** backend TypeScript en `feat/backend`, basado en lo último de `develop`. Registro con usuario inventado y contraseña, alumnos con pseudónimos y estado actual. Misma cuenta en modo profesional/niño; salir del niño requiere contraseña comprobada por servidor. Sin offline ni historial complejo. Frontend sin modificar en este paso; integración posterior documentada. SQLite/libSQL local y remoto para despliegue gratuito Render + Turso. | Usuario + Codex |
 | 2026-11-04 | **Ramas:** `main` no se toca hasta tener una versión comprobada. Todo el trabajo entra por PR en `develop`, que ya reúne todas las ramas abiertas (PR #1, #2, #13, #14 y #15, más `feat/ingles-historial-profesional`). Al final, `develop` → `main`. | Floren |
