@@ -14,7 +14,7 @@ Proyecto para el **#Hack4Edu 2026** (ProFuturo + UPSA).
 
 ## Cómo trabajamos
 - Nadie sube directamente a `main`. Cada tarea va en su propia rama y entra con un **Pull Request aprobado por otra persona del equipo**.
-- Las tareas viven en **Issues**. Las decisiones, en [`docs/decisiones.md`](docs/decisiones.md).
+- Las tareas viven en **Issues**. Las decisiones, en [`docs/decisiones.md`](docs/decisiones.md), y quién hace qué, en [`docs/estado.md`](docs/estado.md).
 - Si usas una IA (Claude, Copilot, Cursor, ChatGPT…), haz que lea primero [`AGENTS.md`](AGENTS.md).
 
 Guía completa: [`CONTRIBUTING.md`](CONTRIBUTING.md).

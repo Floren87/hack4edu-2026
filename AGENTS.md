@@ -7,11 +7,32 @@ Este fichero lo leen las IAs de los 4 miembros del equipo (Claude Code, Copilot,
 - Entregables: presentación de 5 min, vídeo de 3 min y enlace a este repo.
 - Criterios (modalidad innovadora): creatividad 40 %, acabado 20 %, potencial de mercado 20 %, IA para la educación en países desfavorecidos 20 %.
 - El proyecto debe responder a retos oficiales (candidatos: Reto 15 educación en emergencias, Reto 11 recuperar aprendizajes, Reto 20).
-- Idea y decisiones vigentes: ver `docs/decisiones.md` (manda sobre cualquier otra cosa).
+- Idea y decisiones vigentes: ver `docs/decisiones.md` (manda sobre cualquier otra cosa). Quién hace qué ahora: `docs/estado.md`.
 
 ## Stack (provisional, ver decisiones)
 - Frontend: React + Vite, PWA con modo sin conexión (IndexedDB).
 - Backend: FastAPI (Python) + SQLite.
+
+## 🔁 Protocolo al EMPEZAR cada sesión (obligatorio)
+Antes de escribir código o proponer nada, haz esto y enséñale el resultado a la persona:
+
+1. **Sincronizar:** `git status` → si hay cambios sin guardar, avisa y no sigas hasta resolverlo. Después `git checkout main && git pull`.
+2. **Ponerse al día:** lee `docs/estado.md` y `docs/decisiones.md`.
+3. **Ver qué hay pendiente** (si `gh` está instalado; si no, pide a la persona que mire la pestaña Issues y Pull requests):
+   - `gh pr list` → PR abiertos. **Si hay alguno de otra persona esperando revisión, propón revisarlo primero**: desbloquear a un compañero es la prioridad.
+   - `gh issue list --assignee @me` y `gh issue list --label tarea --search "no:assignee"` → tareas suyas y tareas libres.
+4. **Resumir y preguntar.** Responde con este formato y espera a que la persona elija:
+   > 📥 He hecho `git pull`. Novedades desde tu última sesión: …
+   > 👀 PR esperando tu revisión: …
+   > 📋 Tus tareas: … · Tareas libres: …
+   > **¿Con qué seguimos ahora?**
+
+No empieces una tarea sin que la persona la haya elegido.
+
+## 🔚 Protocolo al TERMINAR la sesión
+1. Commit y `git push` de la rama, aunque el trabajo esté a medias (si está a medias, abre el PR como borrador: `gh pr create --draft`).
+2. Actualiza `docs/estado.md` con una línea: quién, qué hizo, qué queda pendiente.
+3. Recuerda a la persona pedir revisión a alguien de la otra zona horaria.
 
 ## Reglas para la IA
 1. **Nunca hagas commit ni push a `main`.** Trabaja en una rama `tipo/descripcion-corta` (`feat/`, `fix/`, `docs/`) y abre un Pull Request.
