@@ -350,8 +350,9 @@ export const CreativityGame: React.FC = () => {
       {/* Main Game Stage */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        {/* Left: Workbench Canvas */}
-        <div className="md:col-span-2 rounded-3xl bg-slate-900/90 border-2 border-dashed border-indigo-700/50 p-4 relative min-h-[380px] flex flex-col justify-between overflow-hidden shadow-inner">
+        {/* Left: Workbench Canvas + child comment underneath */}
+        <div className="md:col-span-2 space-y-4">
+        <div className="rounded-3xl bg-slate-900/90 border-2 border-dashed border-indigo-700/50 p-4 relative min-h-[380px] flex flex-col justify-between overflow-hidden shadow-inner">
           <div className="absolute top-3 left-4 text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
             <span>{' '}{text(language, "🛠️ Mesa de Inventos")}{' '}</span>
             <span className="text-[11px] font-normal text-slate-500">{' '}{text(language, "(Arrastra las piezas para moverlas; tócalas para girarlas o quitarlas)")}{' '}</span>
@@ -438,6 +439,50 @@ export const CreativityGame: React.FC = () => {
           </div>
         </div>
 
+          {/* Optional child comment (only for the report, not stored in the profile) */}
+          {!completed && (
+            <div className="rounded-3xl bg-slate-900 border border-slate-800 p-4 space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <label htmlFor="child-comment" className="text-xs font-bold text-amber-300 uppercase tracking-wider">
+                  {text(language, "✏️ Cuéntanos tu invento (si quieres)")}
+                </label>
+                <AudioButton textToSpeak={text(language, "Cuéntanos tu invento, si quieres. Puedes escribir o elegir una carita.")} />
+              </div>
+              <div className="flex flex-wrap gap-1.5" role="group" aria-label={text(language, "¿Cómo te sientes con tu invento?")}>
+                {COMMENT_EMOJIS.map(({ emoji, label }) => (
+                  <button
+                    key={emoji}
+                    type="button"
+                    onClick={() => toggleCommentEmoji(emoji)}
+                    aria-pressed={commentEmojis.includes(emoji)}
+                    title={text(language, label)}
+                    aria-label={text(language, label)}
+                    className={`w-10 h-10 rounded-xl text-xl transition ${
+                      commentEmojis.includes(emoji)
+                        ? 'bg-amber-500/25 border-2 border-amber-400 scale-110'
+                        : 'bg-slate-800/70 border border-slate-700/50 hover:bg-slate-800'
+                    }`}
+                  >{emoji}</button>
+                ))}
+              </div>
+              <textarea
+                id="child-comment"
+                dir="auto"
+                value={childComment}
+                onChange={(event) => setChildComment(event.target.value.slice(0, CHILD_COMMENT_MAX_LENGTH))}
+                maxLength={CHILD_COMMENT_MAX_LENGTH}
+                rows={3}
+                placeholder={text(language, "Mi invento sirve para…")}
+                className="w-full rounded-xl bg-slate-950/70 border border-slate-700/60 p-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400 resize-none"
+              />
+              <div className="flex items-center justify-between text-[10px] text-slate-500">
+                <span>{text(language, "No escribas tu nombre ni dónde vives.")}</span>
+                <span>{childComment.length}/{CHILD_COMMENT_MAX_LENGTH}</span>
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Right: Available Parts Picker & Purpose */}
         <div className="space-y-4">
           <div className="rounded-3xl bg-slate-900 border border-slate-800 p-4">
@@ -485,49 +530,6 @@ export const CreativityGame: React.FC = () => {
               ))}
             </div>
           </div>
-
-          {/* Optional child comment (only for the report, not stored in the profile) */}
-          {!completed && (
-            <div className="rounded-3xl bg-slate-900 border border-slate-800 p-4 space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <label htmlFor="child-comment" className="text-xs font-bold text-amber-300 uppercase tracking-wider">
-                  {text(language, "✏️ Cuéntanos tu invento (si quieres)")}
-                </label>
-                <AudioButton textToSpeak={text(language, "Cuéntanos tu invento, si quieres. Puedes escribir o elegir una carita.")} />
-              </div>
-              <div className="flex flex-wrap gap-1.5" role="group" aria-label={text(language, "¿Cómo te sientes con tu invento?")}>
-                {COMMENT_EMOJIS.map(({ emoji, label }) => (
-                  <button
-                    key={emoji}
-                    type="button"
-                    onClick={() => toggleCommentEmoji(emoji)}
-                    aria-pressed={commentEmojis.includes(emoji)}
-                    title={text(language, label)}
-                    aria-label={text(language, label)}
-                    className={`w-10 h-10 rounded-xl text-xl transition ${
-                      commentEmojis.includes(emoji)
-                        ? 'bg-amber-500/25 border-2 border-amber-400 scale-110'
-                        : 'bg-slate-800/70 border border-slate-700/50 hover:bg-slate-800'
-                    }`}
-                  >{emoji}</button>
-                ))}
-              </div>
-              <textarea
-                id="child-comment"
-                dir="auto"
-                value={childComment}
-                onChange={(event) => setChildComment(event.target.value.slice(0, CHILD_COMMENT_MAX_LENGTH))}
-                maxLength={CHILD_COMMENT_MAX_LENGTH}
-                rows={3}
-                placeholder={text(language, "Mi invento sirve para…")}
-                className="w-full rounded-xl bg-slate-950/70 border border-slate-700/60 p-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400 resize-none"
-              />
-              <div className="flex items-center justify-between text-[10px] text-slate-500">
-                <span>{text(language, "No escribas tu nombre ni dónde vives.")}</span>
-                <span>{childComment.length}/{CHILD_COMMENT_MAX_LENGTH}</span>
-              </div>
-            </div>
-          )}
 
           {/* Complete Button */}
           {!completed ? (
