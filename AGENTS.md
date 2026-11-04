@@ -48,8 +48,15 @@ La persona pregunta y **tú recomiendas**. No le devuelvas la pregunta: haz lo s
 
 Si la persona acepta, asígnale la issue (`gh issue edit N --add-assignee @me`), apunta en `docs/estado.md` que está con ella y empieza. Si elige otra, respeta su decisión.
 
+## ⬆️ Antes de SUBIR algo (`git push` o abrir un PR)
+Mientras trabajabas, otro compañero puede haber cambiado `main`. Antes de subir:
+1. `git pull origin main` **en tu rama**: trae lo último de `main` a tu trabajo.
+2. Si hay **conflictos**, explícale a la persona qué choca y resuélvelo con ella; no borres el trabajo de otros.
+3. Comprueba que todo sigue funcionando (por ejemplo, `npm run build` en `frontend/`).
+4. Ahora sí: `git push` y, si no existe, abre el PR.
+
 ## 🔚 Protocolo al TERMINAR la sesión
-1. Commit y `git push` de la rama, aunque el trabajo esté a medias (si está a medias, abre el PR como borrador: `gh pr create --draft`).
+1. Sigue los pasos de «Antes de SUBIR algo» y haz `git push` de la rama, aunque el trabajo esté a medias (si está a medias, abre el PR como borrador: `gh pr create --draft`).
 2. Actualiza `docs/estado.md` con una línea: quién, qué hizo, qué queda pendiente.
 3. Recuerda a la persona pedir revisión a alguien de la otra zona horaria.
 
