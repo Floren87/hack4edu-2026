@@ -163,7 +163,7 @@ export const TeacherDashboard: React.FC = () => {
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-2 text-indigo-400 text-xs font-bold uppercase tracking-wider">
             <ShieldCheck size={18} />
-            <span>{' '}{text(language, "Marco Ético y Metodológico (Cumplimiento Reto 20 - R3, R14, R15)")}{' '}</span>
+            <span>{' '}{text(language, "Marco Ético y Metodológico")}{' '}</span>
           </div>
           <AudioButton textToSpeak={text(language, "Panel Profesional. Evaluación pedagógica sin etiquetas. El informe se alimenta exclusivamente de las actividades reales que el estudiante completa. Las que aún no ha jugado figuran como pendientes de realizar. No existen etiquetas clínicas ni juicios automatizados.")} />
         </div>
