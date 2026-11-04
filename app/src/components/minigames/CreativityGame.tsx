@@ -279,13 +279,13 @@ export const CreativityGame: React.FC = () => {
         
         {/* Left: Workbench Canvas */}
         <div className="md:col-span-2 rounded-3xl bg-slate-900/90 border-2 border-dashed border-indigo-700/50 p-4 relative min-h-[380px] flex flex-col justify-between overflow-hidden shadow-inner">
-          <div className="absolute top-3 left-4 text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
             <span>{' '}{text(language, "🛠️ Mesa de Inventos")}{' '}</span>
             <span className="text-[11px] font-normal text-slate-500">{' '}{text(language, "(Arrastra las piezas para moverlas; tócalas para girarlas o quitarlas)")}{' '}</span>
           </div>
 
           {/* Interactive Workshop Area */}
-          <div ref={workshopRef} className="relative w-full h-[300px] mt-6 bg-slate-950/60 rounded-2xl border border-slate-800/60 overflow-hidden">
+          <div ref={workshopRef} className="relative w-full h-[300px] mt-3 bg-slate-950/60 rounded-2xl border border-slate-800/60 overflow-hidden">
             {placedItems.map((item, idx) => {
               const isSelected = selectedItemIndex === idx;
               const isDragging = draggingIndex === idx;
