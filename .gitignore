@@ -11,3 +11,6 @@ __pycache__/
 .idea/
 playwright-report/
 test-results/
+*.db-*
+backend/.env.*
+!backend/.env.example
