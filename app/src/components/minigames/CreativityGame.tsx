@@ -7,6 +7,7 @@ import { soundManager } from '../../utils/soundEffects';
 import { AudioButton } from '../common/AudioButton';
 import { ArrowLeft, Check, Palette, RefreshCw, Star, Trash2, Undo2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { addChildComment, CHILD_COMMENT_MAX_LENGTH, COMMENT_EMOJIS } from '../../utils/childComments';
 
 interface WorkshopItem {
   id: string;
@@ -64,6 +65,9 @@ export const CreativityGame: React.FC = () => {
   // Historial para «Deshacer»: cómo estaba la mesa antes de cada acción (máximo 30 pasos).
   const [history, setHistory] = useState<WorkshopItem[][]>([]);
   const [undoCount, setUndoCount] = useState(0);
+  // Comentario opcional del niño: solo va al informe, nunca al perfil ni a la telemetría.
+  const [childComment, setChildComment] = useState('');
+  const [commentEmojis, setCommentEmojis] = useState<string[]>([]);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const workshopRef = useRef<HTMLDivElement>(null);
   // Arrastre en curso: dónde empezó el puntero y la pieza, y si ya se ha movido.
@@ -256,10 +260,23 @@ export const CreativityGame: React.FC = () => {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
+  const toggleCommentEmoji = (emoji: string) => {
+    soundManager.playClick();
+    setCommentEmojis(prev => (prev.includes(emoji) ? prev.filter(e => e !== emoji) : [...prev, emoji]));
+  };
+
   const handleSaveInvention = () => {
     soundManager.playSparkle();
     const duration = Math.round((Date.now() - startTime) / 1000);
     const purposeObj = INVENTION_PURPOSES.find(p => p.id === selectedPurpose);
+
+    addChildComment(activeStudent.id, {
+      createdAt: Date.now(),
+      pieces: placedItems.map(item => item.icon),
+      purpose: purposeObj ? purposeObj.label : null,
+      emojis: commentEmojis,
+      text: childComment,
+    });
 
     try {
       confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
@@ -468,6 +485,49 @@ export const CreativityGame: React.FC = () => {
               ))}
             </div>
           </div>
+
+          {/* Optional child comment (only for the report, not stored in the profile) */}
+          {!completed && (
+            <div className="rounded-3xl bg-slate-900 border border-slate-800 p-4 space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <label htmlFor="child-comment" className="text-xs font-bold text-amber-300 uppercase tracking-wider">
+                  {text(language, "✏️ Cuéntanos tu invento (si quieres)")}
+                </label>
+                <AudioButton textToSpeak={text(language, "Cuéntanos tu invento, si quieres. Puedes escribir o elegir una carita.")} />
+              </div>
+              <div className="flex flex-wrap gap-1.5" role="group" aria-label={text(language, "¿Cómo te sientes con tu invento?")}>
+                {COMMENT_EMOJIS.map(({ emoji, label }) => (
+                  <button
+                    key={emoji}
+                    type="button"
+                    onClick={() => toggleCommentEmoji(emoji)}
+                    aria-pressed={commentEmojis.includes(emoji)}
+                    title={text(language, label)}
+                    aria-label={text(language, label)}
+                    className={`w-10 h-10 rounded-xl text-xl transition ${
+                      commentEmojis.includes(emoji)
+                        ? 'bg-amber-500/25 border-2 border-amber-400 scale-110'
+                        : 'bg-slate-800/70 border border-slate-700/50 hover:bg-slate-800'
+                    }`}
+                  >{emoji}</button>
+                ))}
+              </div>
+              <textarea
+                id="child-comment"
+                dir="auto"
+                value={childComment}
+                onChange={(event) => setChildComment(event.target.value.slice(0, CHILD_COMMENT_MAX_LENGTH))}
+                maxLength={CHILD_COMMENT_MAX_LENGTH}
+                rows={3}
+                placeholder={text(language, "Mi invento sirve para…")}
+                className="w-full rounded-xl bg-slate-950/70 border border-slate-700/60 p-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400 resize-none"
+              />
+              <div className="flex items-center justify-between text-[10px] text-slate-500">
+                <span>{text(language, "No escribas tu nombre ni dónde vives.")}</span>
+                <span>{childComment.length}/{CHILD_COMMENT_MAX_LENGTH}</span>
+              </div>
+            </div>
+          )}
 
           {/* Complete Button */}
           {!completed ? (

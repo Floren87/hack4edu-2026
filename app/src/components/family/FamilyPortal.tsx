@@ -4,6 +4,7 @@ import { useApp } from '../../context/AppContext';
 import { translations } from '../../i18n/translations';
 import { generatePedagogicalAssessment } from '../../utils/aiPedagogy';
 import { AudioButton } from '../common/AudioButton';
+import { ChildCommentsCard } from '../common/ChildCommentsCard';
 import { executeBrowserPrint, downloadPrintableFamilyReport } from '../../utils/printReport';
 import { soundManager } from '../../utils/soundEffects';
 import { Heart, Compass, Home, Smile, BookOpen, Star, Printer, Download, GraduationCap } from 'lucide-react';
@@ -177,6 +178,8 @@ export const FamilyPortal: React.FC = () => {
             ))}
           </div>
         </div>
+
+        <ChildCommentsCard studentId={activeStudent.id} language={language} />
 
         {/* Closing Warm Message */}
         <div className="pt-4 text-center border-t border-slate-800">

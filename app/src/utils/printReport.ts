@@ -1,5 +1,6 @@
 import type { ComprehensiveAssessmentReport, Language, StudentProfile } from '../types';
 import { localizeText } from '../i18n/localize';
+import { getChildComments, type ChildComment } from './childComments';
 
 // Escape all dynamic content, including aliases and the professional's notes.
 const escapeHtml = (value: unknown): string => String(value ?? '').replace(/[&<>"']/g,
@@ -20,6 +21,7 @@ export function printableReportHtml(
   report: ComprehensiveAssessmentReport,
   language: Language,
   audience: 'teacher' | 'family',
+  childComments: ChildComment[] = [],
 ): string {
   const en = language === 'en';
   const label = (es: string, english: string) => en ? english : es;
@@ -41,11 +43,17 @@ export function printableReportHtml(
     <p>${status[strength.levelDescription]}</p><p>${text(strength.description)}</p>
     ${list(strength.evidenceItems)}
     ${list(audience === 'teacher' ? strength.classroomSuggestions : strength.familyHomeTips)}</article>`).join('');
+  const commentsSection = childComments.length === 0 ? '' : section(label('En palabras del niño o la niña', 'In the child\'s own words'),
+    childComments.map(comment => `<article><p>${escapeHtml(comment.pieces.join(' '))}${comment.purpose ? ` · ${escapeHtml(comment.purpose)}` : ''}</p>
+      ${comment.text ? `<p dir="auto"><em>«${escapeHtml(comment.text)}»</em></p>` : ''}
+      ${comment.emojis.length ? `<p>${escapeHtml(comment.emojis.join(' '))}</p>` : ''}</article>`).join('')
+    + `<p>${label('Tal como lo escribió, sin traducir ni puntuar.', 'As written by the child, not translated or scored.')}</p>`);
   let body: string;
   if (audience === 'teacher') {
     const analysis = report.pedagogicalAnalysis;
     const breakdown = report.strengthsBreakdown;
     body = section(label('Actividades y evidencias', 'Activities and Evidence'), activityList)
+      + commentsSection
       + section(label('Habilidades e intereses', 'Skills and Interests'),
         list(report.skillsPercentages.map(skill => `${skill.name}: ${skill.status === 'evaluada' ? skill.percentage + '%' : label('Pendiente', 'Pending')}`))
         + list(report.interestsPercentages.map(interest => `${interest.name}: ${interest.visits} ${label('visitas', 'visits')} (${interest.percentage}%)`)))
@@ -68,6 +76,7 @@ export function printableReportHtml(
           `${report.strengths.find(strength => strength.id === id)?.title ?? id}: ${agrees ? label('Coincide', 'Matches observation') : label('En observación', 'Under observation')}`))}`);
   } else {
     body = `<p>${text(report.familyLetter.greeting)}</p><p>${text(report.familyLetter.positiveSummary)}</p>`
+      + commentsSection
       + section(label('Fortalezas observadas', 'Observed Strengths'), strengths)
       + section(label('Intereses', 'Interests'), list(report.primaryInterests.map(interest => interest.name)))
       + section(label('Ideas para casa', 'Ideas for Home'), list(report.familyLetter.homeActivities))
@@ -88,7 +97,7 @@ export function printableReportHtml(
 }
 
 function downloadReport(student: StudentProfile, report: ComprehensiveAssessmentReport, language: Language, audience: 'teacher' | 'family') {
-  const url = URL.createObjectURL(new Blob([printableReportHtml(student, report, language, audience)], { type: 'text/html;charset=utf-8' }));
+  const url = URL.createObjectURL(new Blob([printableReportHtml(student, report, language, audience, getChildComments(student.id))], { type: 'text/html;charset=utf-8' }));
   const link = document.createElement('a');
   link.href = url;
   link.download = `${audience === 'teacher' ? 'Professional_Report' : 'Family_Summary'}_${student.id.replace(/[^a-zA-Z0-9_-]/g, '_')}.html`;
