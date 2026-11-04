@@ -1,7 +1,9 @@
 import { hablar } from '../i18n.js'
+import { INSIGNIAS, estrellasTotales } from '../progreso.js'
 
 // Resumen para la familia: solo en positivo, en su idioma, con voz.
-export default function Familia({ sesion, informe, t, onBorrar }) {
+export default function Familia({ jugador, informe, idioma, t, onBorrar }) {
+  if (!jugador) return <div className="pantalla"><p>{t('sin_jugadores')}</p></div>
   const fortalezas = informe.capacidades.filter((c) => c.destaca)
   const texto = [
     t('familia_titulo') + ':',
@@ -12,10 +14,13 @@ export default function Familia({ sesion, informe, t, onBorrar }) {
   return (
     <div className="pantalla">
       <h1>
-        {sesion.avatar?.emoji} {t('familia_titulo')}{' '}
-        <button className="altavoz" onClick={() => hablar(texto, sesion.idioma)}>🔊</button>
+        {jugador.avatar.emoji} {t('familia_titulo')}{' '}
+        <button className="altavoz" onClick={() => hablar(texto, idioma)}>🔊</button>
       </h1>
       <div className="tarjeta">
+        <p className="grande">
+          ⭐ {estrellasTotales(jugador)} · {jugador.insignias.map((i) => INSIGNIAS[i]).join(' ')}
+        </p>
         {fortalezas.map((c) => (
           <p key={c.id} className="grande">⭐ {t('cap_' + c.id)}</p>
         ))}

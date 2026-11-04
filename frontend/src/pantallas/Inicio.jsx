@@ -8,22 +8,24 @@ const AVATARES = [
   { emoji: '🐙', nombre: 'Pulpo' },
   { emoji: '🦉', nombre: 'Búho' },
   { emoji: '🐬', nombre: 'Delfín' },
+  { emoji: '🐼', nombre: 'Panda' },
+  { emoji: '🦒', nombre: 'Jirafa' },
+  { emoji: '🐸', nombre: 'Rana' },
 ]
 
-// Paso 1: idioma + consentimiento de la familia. Paso 2: el niño elige su avatar (pseudónimo).
-export default function Inicio({ sesion, actualizar, t, siguiente }) {
-  const [paso, setPaso] = useState(sesion.consentimiento ? 2 : 1)
+// 1) idioma + consentimiento (solo la primera vez en este dispositivo)
+// 2) ¿quién juega? (varios niños pueden compartir el mismo dispositivo)
+// 3) jugador nuevo: elige su avatar (pseudónimo)
+export default function Inicio({ estado, actualizar, t, elegirJugador, crearJugador }) {
+  const [nuevo, setNuevo] = useState(false)
+  const idioma = estado.idioma
 
-  if (paso === 1) {
+  if (!estado.consentimiento) {
     return (
       <div className="pantalla">
         <div className="idiomas">
           {Object.entries(IDIOMAS).map(([id, i]) => (
-            <button
-              key={id}
-              className={'chip' + (sesion.idioma === id ? ' activo' : '')}
-              onClick={() => actualizar({ idioma: id })}
-            >
+            <button key={id} className={'chip' + (idioma === id ? ' activo' : '')} onClick={() => actualizar({ idioma: id })}>
               {i.bandera} {i.nombre}
             </button>
           ))}
@@ -31,19 +33,33 @@ export default function Inicio({ sesion, actualizar, t, siguiente }) {
         <h1>{t('consentimiento_titulo')}</h1>
         <p className="tarjeta">
           {t('consentimiento_texto')}{' '}
-          <button className="altavoz" onClick={() => hablar(t('consentimiento_texto'), sesion.idioma)} aria-label="Escuchar">
+          <button className="altavoz" onClick={() => hablar(t('consentimiento_texto'), idioma)} aria-label="Escuchar">
             🔊
           </button>
         </p>
-        <button
-          className="principal"
-          onClick={() => {
-            actualizar({ consentimiento: true })
-            setPaso(2)
-          }}
-        >
+        <button className="principal" onClick={() => actualizar({ consentimiento: true })}>
           ✅ {t('acepto')}
         </button>
+      </div>
+    )
+  }
+
+  const usados = estado.jugadores.map((j) => j.avatar.emoji)
+
+  if (nuevo || estado.jugadores.length === 0) {
+    return (
+      <div className="pantalla">
+        <h1>
+          {t('bienvenida')} <button className="altavoz" onClick={() => hablar(t('elige_avatar'), idioma)}>🔊</button>
+        </h1>
+        <p>{t('elige_avatar')}</p>
+        <div className="rejilla">
+          {AVATARES.filter((a) => !usados.includes(a.emoji)).map((a) => (
+            <button key={a.emoji} className="casilla grande" onClick={() => crearJugador(a)} aria-label={a.nombre}>
+              {a.emoji}
+            </button>
+          ))}
+        </div>
       </div>
     )
   }
@@ -51,24 +67,18 @@ export default function Inicio({ sesion, actualizar, t, siguiente }) {
   return (
     <div className="pantalla">
       <h1>
-        {t('bienvenida')} <button className="altavoz" onClick={() => hablar(t('elige_avatar'), sesion.idioma)}>🔊</button>
+        {t('quien_juega')} <button className="altavoz" onClick={() => hablar(t('quien_juega'), idioma)}>🔊</button>
       </h1>
-      <p>{t('elige_avatar')}</p>
       <div className="rejilla">
-        {AVATARES.map((a) => (
-          <button
-            key={a.emoji}
-            className={'casilla grande' + (sesion.avatar?.emoji === a.emoji ? ' activo' : '')}
-            onClick={() => actualizar({ avatar: a })}
-            aria-label={a.nombre}
-          >
-            {a.emoji}
+        {estado.jugadores.map((j) => (
+          <button key={j.id} className="casilla grande" onClick={() => elegirJugador(j.id)} aria-label={j.avatar.nombre}>
+            {j.avatar.emoji}
           </button>
         ))}
+        <button className="casilla grande nuevo" onClick={() => setNuevo(true)} aria-label={t('nuevo_jugador')}>
+          ➕
+        </button>
       </div>
-      <button className="principal" disabled={!sesion.avatar} onClick={siguiente}>
-        {t('empezar')}
-      </button>
     </div>
   )
 }

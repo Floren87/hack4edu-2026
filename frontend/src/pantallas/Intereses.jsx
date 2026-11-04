@@ -10,8 +10,10 @@ export const ISLAS = [
   { id: 'escenario', emoji: '🎤', clave: 'isla_escenario' }, // contar/comunicar
 ]
 
-export default function MapaMundos({ sesion, registrar, t, siguiente }) {
-  const elegidas = sesion.evidencias.intereses
+// Se pregunta una vez al crear el jugador. Después, los intereses también se observan
+// en lo que el niño ELIGE jugar una y otra vez (ver informe.js).
+export default function Intereses({ jugador, idioma, t, guardarIntereses, siguiente }) {
+  const elegidas = jugador.intereses
 
   function tocar(id) {
     const nuevas = elegidas.includes(id)
@@ -19,13 +21,13 @@ export default function MapaMundos({ sesion, registrar, t, siguiente }) {
       : elegidas.length < 3
         ? [...elegidas, id]
         : elegidas
-    registrar('intereses', nuevas)
+    guardarIntereses(nuevas)
   }
 
   return (
     <div className="pantalla">
       <h1>
-        {t('mapa_titulo')} <button className="altavoz" onClick={() => hablar(t('mapa_titulo') + ' ' + t('mapa_instr'), sesion.idioma)}>🔊</button>
+        {t('mapa_titulo')} <button className="altavoz" onClick={() => hablar(t('mapa_titulo') + ' ' + t('mapa_instr'), idioma)}>🔊</button>
       </h1>
       <p>{t('mapa_instr')} · {elegidas.length}/3</p>
       <div className="rejilla">
