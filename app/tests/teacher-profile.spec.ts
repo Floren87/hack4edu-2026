@@ -28,6 +28,11 @@ test('teacher identity stays professional-only and the teacher profile return wo
     for (let index = 0; index < 2; index++) await expect(identity.nth(index).locator('bdi')).toHaveText(username);
     await page.setViewportSize({ width: 360, height: 800 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    for (let index = 0; index < 2; index++) {
+      const name = identity.nth(index).locator('bdi');
+      await expect(name).toBeVisible();
+      expect((await name.boundingBox())!.width).toBeGreaterThan(60);
+    }
     if (id === 'ar') await page.screenshot({ path: testInfo.outputPath('teacher-mobile-ar.png') });
     await page.setViewportSize({ width: 1366, height: 900 });
   }
