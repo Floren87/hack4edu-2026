@@ -39,6 +39,21 @@ Proyecto del equipo para el **#Hack4Edu 2026** (ProFuturo + UPSA), **Reto 20**. 
 
 La [arquitectura final](docs/arquitectura.md) incluye diagrama, flujo de datos, tablas y límites. No hay sincronización offline, historial versionado de evaluaciones, recuperación de contraseña ni administración compartida de centros. La información pendiente de guardar vive en memoria y puede perderse al cerrar/recargar; esperar la confirmación «Guardado». Los informes descargados pueden conservarse localmente, pero eso no convierte la aplicación en offline.
 
+### Decisiones técnicas en Frontend
+### Contribución de Delia Gaibor Sánchez | Desarrollo frontend 
+
+Responsable de la implementación del frontend de KoraMAP, participando en la construcción de la aplicación web mediante **JavaScript, TypeScript, HTML y CSS**. El desarrollo se centró en el diseño y funcionalidades interactivas, organizando la experiencia mediante componentes y vistas diferenciadas para estudiantes, profesionales y familias.
+
+**Decisiones técnicas de frontend:**
+
+- **Desarrollo de componentes interactivos:** implementación de los cuatro minijuegos de habilidades y las seis actividades de los mundos temáticos.
+- **Lógica de interacción:** navegación, estados y comportamientos dinámicos de las actividades.
+- **Presentación de información:** construcción de interfaces para visualizar evidencias de juego, avances, habilidades e intereses, así como información de seguimiento pedagógico.
+- **Diseño adaptable y accesible:** aplicación de HTML y CSS para estructurar y presentar los elementos visuales, priorizando la legibilidad, la navegación intuitiva y la reducción de la carga cognitiva.
+- **Experiencia de usuario:** desarrollo de elementos gráficos, flujos de navegación y pantallas para facilitar la interacción de niños, profesionales y familias.
+
+La generación de informes incorpora el apoyo de herramientas de inteligencia artificial para facilitar la síntesis y presentación de información relevante sobre las habilidades, intereses y evidencias obtenidas durante las actividades, como complemento al seguimiento pedagógico realizado por los profesionales.
+
 ### Datos y protección
 
 No se solicitan nombres reales, email, documentos, fotos ni datos de salud. Se usan usuarios inventados y pseudónimos, con edad opcional, progreso y observaciones educativas. **No se garantiza anonimización irreversible:** un centro podría relacionar el pseudónimo con un niño, y los campos libres no eliminan datos identificativos automáticamente.
@@ -143,7 +158,7 @@ docs/                     Documentación del proyecto (ver abajo)
 |---|---|---|
 | Floren (`Floren87`) | Madrid 🇪🇸 | Programación y repo |
 | Cristina | Madrid 🇪🇸 | Mercado, presentación y vídeo |
-| Delia (`deliainclusiveapps`) | Ecuador 🇪🇨 | Diseño, accesibilidad y prototipo de la app |
+| Delia (`deliainclusiveapps`) | Ecuador 🇪🇨 | Diseño, frontend, accesibilidad y prototipo de la app |
 | Miguel (`XxMigue03xX`) | Colombia 🇨🇴 | Programación y backend |
 
 ## Cómo contribuir
