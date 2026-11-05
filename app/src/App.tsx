@@ -91,7 +91,7 @@ const AppContent: React.FC = () => {
       <footer className="border-t border-slate-900 py-4 px-4 text-center text-[11px] text-slate-500 print:hidden">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>{text(language, "KoraMAP • Evaluación sin etiquetas ni barreras de idioma")}</span>
-
+          <a href="./privacidad.html" target="_blank" rel="noopener" className="font-semibold text-slate-400 underline-offset-2 hover:text-indigo-300 hover:underline focus-visible:outline-2 focus-visible:outline-amber-400">{text(language, "Política de privacidad")}</a>
         </div>
       </footer>
 

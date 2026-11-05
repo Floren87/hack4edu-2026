@@ -25,6 +25,17 @@ Proyecto del equipo para el **#Hack4Edu 2026** (ProFuturo + UPSA), **Reto 20**. 
 
 [API y configuración](backend/README.md) · [Integración realizada](docs/integracion-backend.md) · [Despliegue gratuito](docs/despliegue-demo.md) · [Traspaso para Floren y Claude Code](docs/traspaso-floren.md)
 
+## Marco de referencia
+
+- **Diseño Universal para el Aprendizaje (DUA / UDL)**, de David Rose y Anne Meyer (CAST): aplicamos su tercer principio, **«Múltiples formas de acción y expresión»**. El niño demuestra sus habilidades jugando, no con pruebas en papel o con texto.
+- **ODS 4 – Educación de calidad:**
+  - **Meta 4.5:** acceso igualitario a la educación para las personas vulnerables, incluidos los niños en situaciones de vulnerabilidad. Es la más ligada al Reto 20.
+  - **Meta 4.a:** entornos de aprendizaje seguros, no violentos, inclusivos y eficaces para todos.
+
+Textos completos y fuentes en [`docs/propuesta.md`](docs/propuesta.md#3-bis-marco-de-referencia).
+
+**Privacidad:** [política de privacidad](https://floren87.github.io/hack4edu-2026/privacidad.html). Solo pseudónimos, sin nombres reales ni datos de salud, y para niños y niñas desde 7 años.
+
 ## Instalación y uso
 **Requisitos:** [Node.js](https://nodejs.org/) **22.12 o posterior** (con npm) y Git. Con Node 18 o 20 el build falla.
 
@@ -46,7 +57,7 @@ VITE_API_BASE_URL=http://localhost:3001/api
 
 La API debe autorizar `http://localhost:3000` y, cuando se publique la interfaz, el origen HTTPS exacto de esa interfaz. No se comparte el token de BBDD con el frontend. En un despliegue estático, definir la variable antes del build y reconstruir al cambiarla.
 
-Crear una cuenta y un alumno con pseudónimos. Pulsar «Comenzar juego» para entregar el dispositivo al niño y «Volver al adulto» para introducir la contraseña. Las sesiones vigentes recuperan su modo al recargar. Una pestaña nueva independiente requiere login; una pestaña duplicada puede compartir la sesión y el bloqueo. Se necesita conexión; una partida sin confirmar muestra «Cambios sin guardar» y permite reintentar o descartar/cargar el estado del servidor.
+Crear una cuenta y un alumno con pseudónimos. El usuario de la cuenta aparece en «Mis alumnos» y en la cabecera profesional, bajo «Perfil Docente». Pulsar «Comenzar juego» para entregar el dispositivo al niño y «Volver al Perfil Docente» para introducir la contraseña. La identidad docente se oculta en modo niño. Las sesiones vigentes recuperan su modo al recargar. Una pestaña nueva independiente requiere login; una pestaña duplicada puede compartir la sesión y el bloqueo. Se necesita conexión; una partida sin confirmar muestra «Cambios sin guardar» y permite reintentar o descartar/cargar el estado del servidor.
 
 No hay recuperación de contraseña en esta demo. Las descargas son HTML imprimible; para obtener PDF usar «Imprimir / Guardar PDF» del navegador.
 
@@ -67,7 +78,7 @@ Todos se ejecutan dentro de `app/`:
 - **La app no se actualiza después de instalarla como PWA:** borra la caché del sitio en el navegador.
 
 ## Despliegue
-La **API Render y BBDD Turso ya están publicadas** por Miguel. Seguir [despliegue de API y BBDD](docs/despliegue-demo.md) para configuración y operación. Floren/Delia publican el frontend estático; el build usa Render por defecto y admite `VITE_API_BASE_URL` como override público. **Tras integrar, Miguel debe añadir el origen HTTPS exacto de Netlify a `ALLOWED_ORIGINS` en Render y redesplegar la API.** No se necesita proxy ni secretos en el frontend. El workflow existente de **GitHub Pages** ([`pages.yml`](.github/workflows/pages.yml)) no ejecuta el backend; queda pendiente reconciliar el hosting al integrar. La CI actual comprueba tipos, tests unitarios y build de `app/` ([`ci.yml`](.github/workflows/ci.yml)); no ejecuta aún las pruebas del backend ni las E2E.
+La **API Render y BBDD Turso ya están publicadas** por Miguel. El frontend final se publica en **[GitHub Pages](https://floren87.github.io/hack4edu-2026/)** al integrar el PR #24 hacia `main`; el build usa Render por defecto y admite `VITE_API_BASE_URL` como override público. Render despliega la rama estable `develop` y permite `ALLOWED_ORIGINS=http://localhost:3000,https://floren87.github.io` (preflight 204 verificado). No usar la rama eliminada `feat/backend`, ni incluir `/hack4edu-2026/` en el origen. No se necesita proxy ni secretos en el frontend. La CI comprueba tipos, tests y build de [app](.github/workflows/ci.yml) y [backend](.github/workflows/backend.yml); las E2E se ejecutan aparte. Seguir [operación y despliegue](docs/despliegue-demo.md) para comprobar el commit y el límite de autenticación publicados.
 
 ## Estructura
 ```

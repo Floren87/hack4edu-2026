@@ -4,13 +4,14 @@ import { useApp } from '../../context/AppContext';
 import { ui } from '../../i18n/account';
 import { translations } from '../../i18n/translations';
 import { LanguagePicker } from '../common/LanguagePicker';
+import { TeacherIdentity } from '../common/TeacherIdentity';
 import type { Language, StudentProfile } from '../../types';
 
 const AVATARS = ['🦊', '🐬', '🦁', '🐼', '🦉', '🦋', '🚀', '🌟', '🦄', '🐲'];
 interface StudentForm { id?: string; nameOrAlias: string; avatar: string; age: number; preferredLanguage: Language }
 
 export function ProfileManager() {
-  const { students, activeStudent, switchStudent, setView, language, saveStudent, deleteStudent, startPlaying, busy } = useApp();
+  const { session, students, activeStudent, switchStudent, setView, language, saveStudent, deleteStudent, startPlaying, busy } = useApp();
   const t = ui(language);
   const labels = translations[language];
   const [form, setForm] = useState<StudentForm | null>(null);
@@ -25,6 +26,7 @@ export function ProfileManager() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 space-y-2">
           <h1 className="flex items-center gap-2 text-xl font-black text-white sm:text-2xl"><Users size={22} className="text-amber-400" />{t.students}</h1>
+          {session?.mode === 'professional' && <div className="flex"><TeacherIdentity username={session.account.username} label={t.teacherProfile} /></div>}
           <p className="flex max-w-xl items-start gap-2 text-xs leading-relaxed text-slate-400"><ShieldCheck size={14} className="mt-0.5 shrink-0 text-indigo-400" />{t.privacy}</p>
         </div>
         <button className="flex shrink-0 items-center gap-1.5 rounded-2xl bg-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-md transition hover:bg-indigo-500 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400" disabled={busy} onClick={() => edit()}>

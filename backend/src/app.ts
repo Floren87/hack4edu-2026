@@ -61,7 +61,8 @@ export async function buildApp(options: Options) {
     if (!result.rowsAffected) throw new ApiError(409, 'VERSION_CONFLICT');
     return { version: version + 1 };
   }
-  const authLimit = { rateLimit: { max: options.rateLimits === false ? 100_000 : 10, timeWindow: '1 minute' } };
+  // The demo audience can share a public IP; keep protection with room for the QR burst.
+  const authLimit = { rateLimit: { max: options.rateLimits === false ? 100_000 : 60, timeWindow: '1 minute' } };
   // Equal-cost verification for unknown users avoids an immediate timing shortcut.
   const dummyHash = await hashPassword(token());
   app.get('/api/health', async () => { await query('SELECT 1'); return { ok: true }; });
