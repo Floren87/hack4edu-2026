@@ -51,6 +51,15 @@ export function clearChildComments(studentId: string) {
   writeAll(all);
 }
 
+/** Borra los comentarios de todos los alumnos: al cerrar o iniciar sesión, para que no pasen a otra persona. */
+export function clearAllChildComments() {
+  try {
+    sessionStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Sin sessionStorage no hay nada que borrar.
+  }
+}
+
 /** Opciones para los niños que no escriben (o no en este idioma). */
 export const COMMENT_EMOJIS = [
   { emoji: '😄', label: 'Me gusta mucho' },
