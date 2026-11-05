@@ -44,7 +44,7 @@ export function LoginScreen() {
           }}>
             <label className="block space-y-2 text-xs font-bold text-amber-400">
               <span className="flex items-center gap-1.5"><UserRound size={14} />{t.username}</span>
-              <input className="account-field" autoComplete="username" required minLength={3} maxLength={32} pattern="[a-zA-Z0-9_-]+" value={username} disabled={busy} onChange={event => setUsername(event.target.value)} />
+              <input className="account-field" autoComplete="username" required minLength={3} maxLength={32} pattern="[a-zA-Z0-9_\-]+" value={username} disabled={busy} onChange={event => setUsername(event.target.value)} />
             </label>
             <label className="block space-y-2 text-xs font-bold text-amber-400">
               <span className="flex items-center gap-1.5"><KeyRound size={14} />{t.password}</span>
