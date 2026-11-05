@@ -82,7 +82,6 @@
   "Tiempo dedicado a la experimentación visual: {0}s.": "Temps consacré à l’expérimentation visuelle : {0}s.",
   "🎨 Minijuego 1: Creatividad": "🎨 Mini-jeu 1 : Créativité",
   "🛠️ Mesa de Inventos": "🛠️ Table des inventions",
-  "(Toca las piezas para rotar o mover)": "(Touche les pièces pour les tourner ou les déplacer)",
   "Añade piezas desde la bandeja derecha para armar tu invento.": "Ajoute des pièces du plateau à droite pour construire ton invention.",
   "Girar 45°": "Tourner de 45°",
   "Quitar pieza": "Retirer la pièce",
@@ -575,5 +574,8 @@
   "sesiones": "sessions",
   "Observaciones del juego; no constituye un diagnóstico. El profesional decide.": "Observations issues du jeu ; ceci n’est pas un diagnostic. Le professionnel décide.",
   "El mapa de intereses aún está en fase de exploración inicial. Se recomienda invitar al estudiante a recorrer los diferentes mundos para conocer sus inclinaciones espontáneas.": "La carte des intérêts est encore en phase d’exploration. Inviter l’élève à visiter différents mondes pour découvrir ses préférences.",
-  "Índice de perseverancia en observación. Se medirá de forma continua a medida que el alumno afronte retos con reintentos.": "La persévérance est en observation. Elle sera suivie au fil des défis et des nouvelles tentatives."
+  "Índice de perseverancia en observación. Se medirá de forma continua a medida que el alumno afronte retos con reintentos.": "La persévérance est en observation. Elle sera suivie au fil des défis et des nouvelles tentatives.",
+  "(Arrastra las piezas para moverlas; tócalas para girarlas o quitarlas)": "(Fais glisser les pièces pour les déplacer ; touche-les pour les tourner ou les retirer)",
+  "Pieza {0}. Arrástrala o usa las flechas para moverla.": "Pièce {0}. Fais-la glisser ou utilise les flèches pour la déplacer.",
+  "Recolocó piezas {0} veces para probar combinaciones.": "A repositionné des pièces {0} fois pour essayer des combinaisons."
 }

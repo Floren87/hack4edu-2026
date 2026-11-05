@@ -82,7 +82,6 @@
   "Tiempo dedicado a la experimentación visual: {0}s.": "الوقت المخصص للتجربة البصرية: {0}ث.",
   "🎨 Minijuego 1: Creatividad": "🎨 اللعبة 1: الإبداع",
   "🛠️ Mesa de Inventos": "🛠️ طاولة الاختراعات",
-  "(Toca las piezas para rotar o mover)": "(المس القطع لتدويرها أو تحريكها)",
   "Añade piezas desde la bandeja derecha para armar tu invento.": "أضف قطعاً من الصينية اليمنى لبناء اختراعك.",
   "Girar 45°": "تدوير 45°",
   "Quitar pieza": "إزالة القطعة",
@@ -575,5 +574,8 @@
   "sesiones": "جلسات",
   "Observaciones del juego; no constituye un diagnóstico. El profesional decide.": "ملاحظات من اللعب؛ لا تشكّل تشخيصاً. القرار للمختص.",
   "El mapa de intereses aún está en fase de exploración inicial. Se recomienda invitar al estudiante a recorrer los diferentes mundos para conocer sus inclinaciones espontáneas.": "لا تزال خريطة الاهتمامات في مرحلة الاستكشاف الأولى. يُنصح بدعوة الطالب لزيارة عوالم مختلفة لاكتشاف ميوله.",
-  "Índice de perseverancia en observación. Se medirá de forma continua a medida que el alumno afronte retos con reintentos.": "المثابرة قيد الملاحظة. ستُرصد تدريجياً مع مواجهة الطالب لتحديات ومحاولات جديدة."
+  "Índice de perseverancia en observación. Se medirá de forma continua a medida que el alumno afronte retos con reintentos.": "المثابرة قيد الملاحظة. ستُرصد تدريجياً مع مواجهة الطالب لتحديات ومحاولات جديدة.",
+  "(Arrastra las piezas para moverlas; tócalas para girarlas o quitarlas)": "(اسحب القطع لتحريكها، والمسها لتدويرها أو إزالتها)",
+  "Pieza {0}. Arrástrala o usa las flechas para moverla.": "القطعة {0}. اسحبها أو استخدم الأسهم لتحريكها.",
+  "Recolocó piezas {0} veces para probar combinaciones.": "أعاد ترتيب القطع {0} مرات لتجربة تركيبات مختلفة."
 }
