@@ -32,6 +32,10 @@ Qué está pasando ahora mismo. Cada persona (o su IA) añade una línea al term
 - **Ampliar el campo de estudio** a nuevas habilidades, aptitudes e intereses.
 - **Ampliar los mapas de empatía** (`docs/investigacion/mapas-de-empatia.md`) para descubrir nuevas habilidades que observar.
 - **Informes cada vez más completos**, según las sugerencias de los profesionales y de los expertos del sector.
+- **Evaluación final: «¿Qué es lo que más te gusta hacer?»**, como última actividad antes del informe final. Detectar desde pequeños lo que más le gusta hacer al niño, o lo que más le gustaría hacer, ayuda mucho al profesional y también a los padres.
+  - Una encuesta **visual**, con dibujos, imágenes o actividades entre las que el niño elige. No hace falta leer ni hablar el idioma.
+  - Si no elige ninguna, **pasa a la siguiente** sin penalizar: no elegir también es una respuesta válida.
+  - Sus elecciones se suman a los intereses que ya se observan en los juegos y los mundos, y aparecen en el informe del profesional y en el **resumen para la familia**.
 
 ## Diario
 | Fecha y hora (zona) | Quién | Qué hizo | Qué queda |
