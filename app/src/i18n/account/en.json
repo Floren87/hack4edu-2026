@@ -1,9 +1,9 @@
 {
   "login": "Sign in",
   "register": "Create account",
-  "username": "Made-up username",
+  "username": "Anonymous username",
   "password": "Password",
-  "loginHint": "Professional access. Use a made-up username without real personal data.",
+  "loginHint": "Professional access. Use an anonymous username without real personal data.",
   "registerHint": "Username: 3–32 lowercase letters, numbers, hyphens or _. Password: 10–128 characters. No email recovery.",
   "loading": "Connecting…",
   "retry": "Retry",
