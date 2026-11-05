@@ -25,6 +25,14 @@ Qué está pasando ahora mismo. Cada persona (o su IA) añade una línea al term
 - [ ] QR (Floren y Miguel), cuando funcione Render desde Pages.
 - [ ] Presentación (Cristina).
 
+## Mejoras futuras (después del hackathon)
+- **Diversificar los juegos:** más minijuegos y actividades para observar cada habilidad desde varios ángulos.
+- **Muchos niveles de dificultad** dentro de cada juego.
+- **Clasificar los juegos por edades**, dentro del rango de 7 a 14 años.
+- **Ampliar el campo de estudio** a nuevas habilidades, aptitudes e intereses.
+- **Ampliar los mapas de empatía** (`docs/investigacion/mapas-de-empatia.md`) para descubrir nuevas habilidades que observar.
+- **Informes cada vez más completos**, según las sugerencias de los profesionales y de los expertos del sector.
+
 ## Diario
 | Fecha y hora (zona) | Quién | Qué hizo | Qué queda |
 |---|---|---|---|
