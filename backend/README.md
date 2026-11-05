@@ -57,7 +57,7 @@ La configuración local presupone abrir la UI en **localhost:3000**. `127.0.0.1:
 
 **Demo publicada por Miguel:** `https://hack4edu-2026.onrender.com/api`, con base libSQL en Turso. Es el destino predeterminado del frontend en esta rama. Para probar contra el backend local, definir `VITE_API_BASE_URL=http://localhost:3001/api` en `app/.env.local` y reiniciar Vite. El healthcheck público es `/api/health`, pero esa ruta no es una URL base. `ALLOWED_ORIGINS` de Render incluye `http://localhost:3000,https://floren87.github.io`; no incluir la ruta `/hack4edu-2026/`. No hace falta crear de nuevo la base ni sus tablas.
 
-**Actualización 5 de noviembre:** el frontend final se publica en GitHub Pages: `https://floren87.github.io/hack4edu-2026/`. El origen autorizado es **`https://floren87.github.io`**, sin subcarpeta ni barra final. Miguel cambió la rama de Render a `develop` porque `feat/backend` fue eliminada al integrarse, y el preflight de Pages ya devuelve 204 con su origen permitido. Mantener una rama de despliegue estable. El ajuste de 60/min requiere integrar su PR y desplegar ese commit; ver [operación y comprobaciones](../docs/despliegue-demo.md).
+**Actualización 5 de noviembre:** el frontend final se publica en GitHub Pages: `https://floren87.github.io/hack4edu-2026/`. El origen autorizado es **`https://floren87.github.io`**, sin subcarpeta ni barra final. Miguel cambió la rama de Render a `develop` porque `feat/backend` fue eliminada al integrarse, y el preflight de Pages ya devuelve 204 con su origen permitido. Mantener una rama de despliegue estable. El ajuste de 60/min requiere integrar su PR y desplegar ese commit; ver [operación y comprobaciones](../docs/equipo/despliegue-demo.md).
 
 ## API
 
@@ -129,7 +129,7 @@ La contraseña es un ejemplo para reemplazar, no una cuenta precreada. Repetir e
 
 ## Integración y publicación
 
-- [Contrato vigente de integración desacoplada](../docs/integracion-backend.md).
-- [Guía de despliegue gratuito](../docs/despliegue-demo.md).
+- [Contrato vigente de integración desacoplada](../docs/equipo/integracion-backend.md).
+- [Guía de despliegue gratuito](../docs/equipo/despliegue-demo.md).
 - Esquema de datos y validación: `src/db.ts` y `src/schemas.ts`.
 - Pruebas de aislamiento, permisos, persistencia, Bearer, CORS/orígenes, revocación y despliegue estático opcional: `tests/api.test.ts`.
