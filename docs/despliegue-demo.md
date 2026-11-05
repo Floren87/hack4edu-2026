@@ -4,7 +4,9 @@
 
 **Estado al 4 de noviembre de 2026:** Miguel ya creó la BBDD Turso y publicó la API en **`https://hack4edu-2026.onrender.com/api`**. [Healthcheck público](https://hack4edu-2026.onrender.com/api/health) responde `200 {"ok":true}`. Esta rama usa esa API por defecto, sin `.env.local`. La prueba real en navegador desde `http://localhost:3000` validó cuentas, CRUD, persistencia tras recarga/nuevo login, modo niño, aislamiento y exportaciones árabes. Ver [traspaso y pruebas](traspaso-floren.md).
 
-**Pendiente de mañana tras la integración:** Floren/Delia despliegan el frontend y comunican su origen HTTPS; Miguel lo añade a `ALLOWED_ORIGINS` en Render y redespliega la API. Después se repite el flujo desde Netlify antes de distribuir el QR. No se necesita recrear la BBDD ni implementar un proxy. Las secciones 1 y 2 conservan las instrucciones de aprovisionamiento/republicación; los valores `TU-…` siguen siendo ejemplos, nunca secretos reales. Documentación oficial consultada el **4 de noviembre de 2026**.
+**Actualización 5 de noviembre:** el frontend definitivo es **GitHub Pages**, `https://floren87.github.io/hack4edu-2026/`. Miguel guardó `ALLOWED_ORIGINS=http://localhost:3000,https://floren87.github.io` y cambió en Render la rama eliminada `feat/backend` por **`develop`**. Tras confirmar el servicio Live, el preflight desde Pages devuelve **204** con `Access-Control-Allow-Origin: https://floren87.github.io`; una petición vacía de login devuelve 400 por validación, con CORS correcto. No se necesita recrear Turso ni implementar un proxy. Las referencias anteriores a Netlify eran una previsión sustituida por Pages.
+
+**Ajuste de aforo de demo:** el PR de `fix/demo-api-render` eleva registro/login/salida del modo niño de 10 a **60/minuto por IP y ruta**, manteniendo 429 y Retry-After. La API publicada al comprobar CORS aún anunciaba 10: después de integrar el PR, desplegar el nuevo commit de `develop` y verificar el encabezado `X-RateLimit-Limit: 60`. No hacer una ráfaga de 61 intentos contra producción para comprobarlo; el límite se prueba localmente. El cambio no altera permisos, sesiones ni tablas. Documentación oficial de despliegue consultada también el **5 de noviembre de 2026**.
 
 ## 1. Crear la base en Turso
 
@@ -30,7 +32,7 @@ Crear un **Web Service** desde el repositorio. Ver [despliegue Node](https://ren
 
 | Campo | Valor |
 |---|---|
-| Branch | `feat/backend` durante la prueba; cambiar al integrar con Floren |
+| Branch | **`develop`** (integrada y estable). No usar `feat/backend`: fue eliminada. `main` solo después de que incluya el backend y se coordine el cambio con Floren. |
 | Runtime | Node |
 | Root Directory | `backend` |
 | Build Command | `npm ci --include=dev && npm run build` |
@@ -46,7 +48,7 @@ Variables de entorno del servicio:
 NODE_VERSION=22
 NODE_ENV=production
 HOST=0.0.0.0
-ALLOWED_ORIGINS=http://localhost:3000
+ALLOWED_ORIGINS=http://localhost:3000,https://floren87.github.io
 DATABASE_URL=libsql://URL-REAL-DE-TU-BASE
 DATABASE_AUTH_TOKEN=TOKEN-REAL-SOLO-EN-RENDER
 ```
@@ -57,10 +59,10 @@ DATABASE_AUTH_TOKEN=TOKEN-REAL-SOLO-EN-RENDER
 - Dejar `STATIC_DIR` sin configurar: este servicio solo publica la API.
 - `APP_ORIGIN` es un alias de compatibilidad para el `.env` antiguo. La configuración vigente es `ALLOWED_ORIGINS`, que tiene prioridad.
 
-Con esa configuración puedes probar hoy desde localhost sin esperar a que Floren publique. Cuando conozcas la URL definitiva del frontend, actualizar **solo la configuración de la API** y desplegar de nuevo:
+La configuración sirve tanto a localhost como al frontend definitivo de Pages. Cualquier origen adicional requiere actualizar **solo la configuración de la API** y desplegar de nuevo:
 
 ```dotenv
-ALLOWED_ORIGINS=http://localhost:3000,https://TU-FRONTEND.netlify.app
+ALLOWED_ORIGINS=http://localhost:3000,https://floren87.github.io
 ```
 
 Son orígenes exactos, sin `/` final ni rutas. `localhost` y `127.0.0.1`, o dos puertos distintos, son orígenes diferentes. Añadirlos explícitamente si se necesitan. Producción admite HTTPS y HTTP únicamente para loopback (`localhost`, `127.0.0.1`, `[::1]`). No usar `*`, comodines de Netlify ni `null`. Un preview de Netlify requiere su propio origen autorizado.
@@ -104,7 +106,20 @@ La variable es pública y se incorpora al compilar. Cambiarla requiere reconstru
 
 Miguel añade el origen del frontend a `ALLOWED_ORIGINS` en Render. El frontend público y la API deben usar HTTPS. Para previsualizar un build local con `npm run preview` (habitualmente puerto 4173), añadir ese origen al backend; no asumir que comparte el origen de desarrollo.
 
-Secuencia de cierre tras integrar: obtener la URL de Netlify → Miguel configura `ALLOWED_ORIGINS=http://localhost:3000,https://ORIGEN-REAL.netlify.app` en Render → redesplegar la API → probar registro, juego, guardado, recarga e informes desde ese dominio. Es un cambio de configuración del backend, sin cambios de código del frontend. No autorizar una URL inventada ni `*`; cada preview adicional exige su origen exacto.
+Para **GitHub Pages**, el workflow del repositorio compila `app/` y publica su `dist`; la subcarpeta `/hack4edu-2026/` ya es compatible con el `base: './'` de Vite. Esa ruta no se incluye en `ALLOWED_ORIGINS`. Tras la aprobación y el merge del PR #24 por Floren, comprobar la web pública. No hacen falta variables secretas, proxy ni nueva BBDD. Si en el futuro se usa Netlify, añadir su origen exacto explícitamente; no usar `*`.
+
+### Rama eliminada o deploy que no aplica Environment
+
+En el servicio de Render: **Settings → Build & Deploy → Branch → `develop` → Save**, y después **Manual Deploy → Deploy latest commit**. La variable guardada no cambia un proceso anterior hasta que se despliega correctamente; un deploy fallido deja el servicio previo atendiendo. Mantener `Root Directory=backend`, build y start de la tabla, y todas las credenciales de Turso existentes. No recrear `feat/backend` para corregir el servicio.
+
+Comprobación mínima sin datos ni contraseñas:
+
+```powershell
+curl.exe -i -X OPTIONS https://hack4edu-2026.onrender.com/api/auth/login -H "Origin: https://floren87.github.io" -H "Access-Control-Request-Method: POST" -H "Access-Control-Request-Headers: content-type,authorization"
+curl.exe -i -X POST https://hack4edu-2026.onrender.com/api/auth/login -H "Origin: https://floren87.github.io" -H "Content-Type: application/json" --data '{}'
+```
+
+La primera devuelve 204 y el origen permitido. La segunda devuelve 400 `INVALID_INPUT` porque no se envían credenciales; revisar su `X-RateLimit-Limit` para confirmar la versión del límite desplegada. Consume solo un intento, no crea cuentas. Fastify toma la cuota de `request.ip` y confía un salto en producción: se ha probado la selección con clientes simulados, no se ha inspeccionado ni registrado la IP real de asistentes. Referencias: [despliegues y rama enlazada](https://render.com/docs/deploys), [trustProxy en Fastify](https://fastify.dev/docs/latest/Reference/Server/#trustproxy) y [clave del rate limiter](https://github.com/fastify/fastify-rate-limit#options).
 
 ## 5. Validación antes de entregar el QR
 

@@ -2,6 +2,8 @@
 
 **Fecha:** 4 de noviembre de 2026, Bogotá. **Objetivo:** facilitar las pruebas y la integración del equipo del día siguiente. Este documento resume todo el trabajo desde la construcción del backend; no solo el último sprint.
 
+**Actualización 5 de noviembre:** el trabajo acumulado ya está integrado en `develop`, incluido KoraMAP y los cambios posteriores del equipo. `feat/backend` se eliminó al integrar; no usarla como rama de despliegue. Miguel cambió Render a `develop`, autorizó `https://floren87.github.io` y confirmó Live: el preflight de Pages devuelve 204. El destino final es `https://floren87.github.io/hack4edu-2026/`, sustituyendo la previsión anterior de Netlify. Corrección posterior en `fix/demo-api-render`: auth a 60/min por IP/ruta, límite 429 conservado y pruebas de clientes tras proxy; hace falta integrar y desplegar ese commit. Ver [guía vigente](despliegue-demo.md). El resto de este traspaso conserva el contexto histórico del día 4; los cambios posteriores de PDF/comentarios/creatividad están en `develop` y el PR #24.
+
 ## Rama y alcance acordado
 
 - Rama: **`feat/backend`**, creada desde `develop` en `d9b5040`. No se ha fusionado posteriormente `develop` ni se ha modificado `main`.
