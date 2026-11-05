@@ -128,8 +128,34 @@ test('authentication is rate limited and production returns no authentication co
     const login = await send('/auth/login', { username: 'cookie-test', password });
     assert.equal(login.headers['set-cookie'], undefined);
     assert.match(login.json().token, /^[a-f0-9]{64}$/);
-    for (let i = 0; i < 9; i++) await send('/auth/login', { username: 'unknown-test', password });
-    assert.equal((await send('/auth/login', { username: 'unknown-test', password })).statusCode, 429);
+    // Login used one attempt. Invalid requests count too, without running scrypt 59 times.
+    for (let i = 0; i < 59; i++) assert.equal((await send('/auth/login', {})).statusCode, 400);
+    const blocked = await send('/auth/login', {});
+    assert.equal(blocked.statusCode, 429);
+    assert.equal(blocked.json().error, 'RATE_LIMITED');
+    assert.ok(Number(blocked.headers['retry-after']) > 0);
+    // Each protected authentication route has its own 60/minute bucket.
+    for (let i = 0; i < 59; i++) assert.equal((await send('/auth/register', {})).statusCode, 400);
+    assert.equal((await send('/auth/register', {})).statusCode, 429);
+    for (let i = 0; i < 60; i++) assert.equal((await send('/mode/professional', {})).statusCode, 401);
+    assert.equal((await send('/mode/professional', {})).statusCode, 429);
+  } finally { await t.close(); }
+});
+
+test('production rate limits separate forwarded clients and ignore untrusted address prefixes', async () => {
+  const t = await setup(':memory:', { rateLimits: true, production: true, origins: ['https://demo.example'] });
+  try {
+    const attempt = (forwarded: string, proxy = '10.0.0.2') => t.app.inject({
+      method: 'POST', url: '/api/auth/login', remoteAddress: proxy,
+      headers: { origin: 'https://demo.example', 'x-forwarded-for': forwarded }, payload: {},
+    });
+    for (let i = 0; i < 60; i++) assert.equal((await attempt('198.51.100.10')).statusCode, 400);
+    assert.equal((await attempt('198.51.100.10')).statusCode, 429);
+    // Another client through the same proxy must not inherit the exhausted bucket.
+    assert.equal((await attempt('198.51.100.11')).statusCode, 400);
+    // Trust only the immediate proxy; prepending a client-supplied IP cannot bypass it.
+    assert.equal((await attempt('203.0.113.99, 198.51.100.10')).statusCode, 429);
+    assert.equal((await attempt('198.51.100.10', '10.0.0.3')).statusCode, 429);
   } finally { await t.close(); }
 });
 
