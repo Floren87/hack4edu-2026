@@ -143,7 +143,7 @@ docs/                     Documentación del proyecto (ver abajo)
 |---|---|---|
 | Floren (`Floren87`) | Madrid 🇪🇸 | Programación y repo |
 | Cristina | Madrid 🇪🇸 | Mercado, presentación y vídeo |
-| Delia (`deliainclusiveapps`) | Ecuador 🇪🇨 | Diseño, accesibilidad y prototipo de la app |
+| Delia (`deliainclusiveapps`) | Ecuador 🇪🇨 | Diseño, Frontend, accesibilidad y prototipo de la app |
 | Miguel (`XxMigue03xX`) | Colombia 🇨🇴 | Programación y backend |
 
 ## Cómo contribuir
