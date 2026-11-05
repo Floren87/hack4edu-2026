@@ -1,209 +1,97 @@
-import { localizeText as text } from '../../i18n/localize';
-import React from 'react';
-import { 
-  Compass, 
-  GraduationCap, 
-  HeartHandshake, 
-  Volume2, 
-  VolumeX, 
-  Users, 
-  UserPlus, 
-  Globe2 
-} from 'lucide-react';
-import { useApp } from '../../context/AppContext';
+import React, { useState } from 'react';
+import { GraduationCap, HeartHandshake, KeyRound, LockKeyhole, LogOut, Users, Volume2, VolumeX, X } from 'lucide-react';
+import { useApp, type ActiveView } from '../../context/AppContext';
+import { ui } from '../../i18n/account';
 import { translations } from '../../i18n/translations';
-import { Language } from '../../types';
-import { PWAInstallButton } from './PWAInstallButton';
+import { LanguagePicker } from './LanguagePicker';
 import { WorldLogo } from './WorldLogo';
-import { soundManager } from '../../utils/soundEffects';
 
-export const Navbar: React.FC = () => {
-  const { 
-    role, 
-    setRole, 
-    language, 
-    setLanguage, 
-    soundMuted, 
-    toggleSound, 
-    activeStudent, 
-    setView,
-    view,
-    openOnboarding 
-  } = useApp();
+export function Navbar() {
+  const { session, activeStudent, language, view, setView, logout, unlock, busy, soundMuted, toggleSound } = useApp();
+  const t = ui(language);
+  const [showUnlock, setShowUnlock] = useState(false);
+  const [password, setPassword] = useState('');
+  const child = session?.mode === 'child';
+  const navigation = [
+    { view: 'profile_manager' as ActiveView, label: t.students, icon: Users },
+    { view: 'teacher_dashboard' as ActiveView, label: t.results, icon: GraduationCap },
+    { view: 'family_portal' as ActiveView, label: t.family, icon: HeartHandshake },
+  ];
 
-  const t = translations[language];
-
-  const handleRoleChange = (newRole: 'child' | 'teacher' | 'family') => {
-    soundManager.playClick();
-    setRole(newRole);
-  };
-
-  const handleLangChange = (lang: Language) => {
-    soundManager.playPop();
-    setLanguage(lang);
-  };
-
-  return (
-    <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-slate-950/85 border-b border-slate-800/80 transition-all">
-      <div className="max-w-6xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
-        
-        {/* Brand & Child Quick Info */}
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={() => setView('child_hub')}
-            className="flex items-center gap-2.5 text-left focus:outline-none group"
-            title={text(language, "Ir a inicio de Talento sin Fronteras")}
-          >
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-500/20 via-indigo-600/30 to-emerald-500/20 p-0.5 border border-sky-400/30 shadow-md shadow-sky-500/10 group-hover:scale-105 transition-transform flex items-center justify-center">
+  return <>
+    <header className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-slate-950/85 backdrop-blur-md print:hidden">
+      <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-3 px-3 py-3 sm:px-6 xl:grid-cols-[minmax(0,1fr)_auto_auto]">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+          <button disabled={busy} aria-label={translations[language].appName} onClick={() => setView(child ? 'child_hub' : 'profile_manager')} className="group flex shrink-0 items-center gap-2.5 rounded-2xl text-start focus-visible:outline-2 focus-visible:outline-amber-400">
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-sky-400/30 bg-gradient-to-tr from-sky-500/20 via-indigo-600/30 to-emerald-500/20 shadow-md shadow-sky-500/10 transition-transform group-hover:scale-105">
               <WorldLogo size={34} />
-            </div>
-            <div className="hidden sm:block">
-              <span className="text-base font-black tracking-tight text-white block leading-none">{' '}{text(language, "Talento")}{' '}<span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-indigo-400">{' '}{text(language, "sin Fronteras")}{' '}</span>
-              </span>
-              <span className="text-[10px] text-slate-400 font-medium">{' '}{text(language, "Inclusión & Potencial")}{' '}</span>
-            </div>
-          </button>
-
-          {/* Active Student Pill (Click to open profile manager) */}
-          <button
-            onClick={() => setView('profile_manager')}
-            className="flex items-center gap-2 px-2.5 py-1.5 rounded-full bg-slate-900 border border-slate-700/70 hover:border-indigo-500/60 transition-all group"
-            title={text(language, "Cambiar de estudiante / perfil")}
-          >
-            <span className="text-lg leading-none group-hover:scale-110 transition-transform">{activeStudent.avatar}</span>
-            <span className="text-xs font-semibold text-slate-200 max-w-[80px] sm:max-w-[120px] truncate">
-              {activeStudent.nameOrAlias}
             </span>
-            <div className="flex items-center gap-1 text-[11px] font-bold text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded-full">
-              <span>⭐</span>
-              <span>{activeStudent.starsCount || 0}</span>
+            <span className="hidden max-w-44 bg-gradient-to-r from-white via-white to-indigo-300 bg-clip-text text-sm font-black tracking-tight text-transparent md:block">{translations[language].appName}</span>
+          </button>
+          {activeStudent && (child ? (
+            <div className="flex min-w-0 items-center gap-1.5 rounded-full border border-slate-700/70 bg-slate-900 px-2.5 py-1.5">
+              <span className="text-lg">{activeStudent.avatar}</span>
+              <span className="max-w-24 truncate text-xs font-semibold text-slate-200">{activeStudent.nameOrAlias}</span>
+              <span className="hidden rounded-full bg-amber-400/10 px-1.5 py-0.5 text-[11px] font-bold text-amber-400 sm:inline">⭐ {activeStudent.starsCount}</span>
             </div>
-          </button>
+          ) : (
+            <button disabled={busy} onClick={() => setView('profile_manager')} title={t.students} className="flex min-w-0 items-center gap-1.5 rounded-full border border-slate-700/70 bg-slate-900 px-2.5 py-1.5 transition hover:border-indigo-500/60 focus-visible:outline-2 focus-visible:outline-amber-400">
+              <span className="text-lg">{activeStudent.avatar}</span><span className="max-w-24 truncate text-xs font-semibold text-slate-200">{activeStudent.nameOrAlias}</span>
+            </button>
+          ))}
         </div>
 
-        {/* Center: Role Switcher */}
-        <div className="flex items-center bg-slate-900/90 p-1 rounded-2xl border border-slate-800">
-          <button
-            onClick={() => handleRoleChange('child')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              role === 'child'
+        {!child && <nav aria-label={t.students} className="order-last col-span-2 grid grid-cols-3 gap-1 rounded-2xl border border-slate-800 bg-slate-900/90 p-1 xl:order-none xl:col-span-1">
+          {navigation.map(item => {
+            const selected = view === item.view;
+            const Icon = item.icon;
+            return <button
+              key={item.view} disabled={busy || (!activeStudent && item.view !== 'profile_manager')}
+              aria-current={selected ? 'page' : undefined} onClick={() => setView(item.view)}
+              className={`flex min-h-10 items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-xs font-bold transition-shadow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 sm:px-3 ${selected
                 ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-sm shadow-indigo-600/30'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Compass size={14} />
-            <span className="hidden md:inline">{t.roleChild}</span>
-            <span className="md:hidden">{' '}{text(language, "Juegos")}{' '}</span>
-          </button>
+                : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200'}`}
+            >
+              <Icon size={15} className="hidden shrink-0 min-[360px]:block" /><span>{item.label}</span>
+            </button>;
+          })}
+        </nav>}
 
-          <button
-            onClick={() => handleRoleChange('teacher')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              role === 'teacher'
-                ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-sm shadow-indigo-600/30'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <GraduationCap size={14} />
-            <span className="hidden md:inline">{t.roleTeacher}</span>
-            <span className="md:hidden">{' '}{text(language, "Profesional")}{' '}</span>
-          </button>
-
-          <button
-            onClick={() => handleRoleChange('family')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              role === 'family'
-                ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-sm shadow-indigo-600/30'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <HeartHandshake size={14} />
-            <span className="hidden md:inline">{t.roleFamily}</span>
-            <span className="md:hidden">{' '}{text(language, "Familia")}{' '}</span>
-          </button>
-        </div>
-
-        {/* Right Tools: Language, Sound, PWA, Switcher */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* PWA Install */}
-          <PWAInstallButton />
-
-          {/* Sound Mute Toggle */}
-          <button
-            onClick={toggleSound}
-            aria-label={soundMuted ? text(language, "Activar sonido") : text(language, "Silenciar sonido")}
-            className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-slate-700 transition"
-            title={soundMuted ? text(language, "Sonido desactivado") : text(language, "Sonido activado")}
-          >
+        <div className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-2">
+          <LanguagePicker disabled={busy} />
+          <button onClick={toggleSound} aria-label={t.sound} aria-pressed={!soundMuted} title={t.sound} className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-800 bg-slate-900 text-slate-300 transition hover:border-slate-600 hover:text-white focus-visible:outline-2 focus-visible:outline-amber-400">
             {soundMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
           </button>
-
-          {/* Language Selector Dropdown */}
-          <div className="relative group">
-            <button className="h-8 px-2.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-1 text-xs font-semibold text-slate-300 hover:border-slate-700 transition">
-              <Globe2 size={13} className="text-indigo-400" />
-              <span className="uppercase">{language}</span>
+          {child ? (
+            <button disabled={busy} aria-label={t.back} title={t.back} onClick={() => setShowUnlock(true)} className="flex h-9 items-center justify-center gap-1.5 rounded-xl border border-slate-800 bg-slate-900 px-2.5 text-xs font-semibold text-slate-300 transition hover:border-amber-400/50 hover:text-amber-300 focus-visible:outline-2 focus-visible:outline-amber-400">
+              <LockKeyhole size={14} /><span className="hidden sm:inline">{t.back}</span>
             </button>
-            <div className="absolute right-0 mt-1 w-36 py-1 bg-slate-900 border border-slate-800 rounded-xl shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all z-50">
-              <button
-                onClick={() => handleLangChange('es')}
-                className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between ${language === 'es' ? 'bg-indigo-600/20 text-indigo-300 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
-              >
-                <span>🇪🇸 Español</span>
-                {language === 'es' && <span>✓</span>}
-              </button>
-              <button
-                onClick={() => handleLangChange('en')}
-                className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between ${language === 'en' ? 'bg-indigo-600/20 text-indigo-300 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
-              >
-                <span>🇬🇧 English</span>
-                {language === 'en' && <span>✓</span>}
-              </button>
-              <button
-                onClick={() => handleLangChange('fr')}
-                className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between ${language === 'fr' ? 'bg-indigo-600/20 text-indigo-300 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
-              >
-                <span>🇫🇷 Français</span>
-                {language === 'fr' && <span>✓</span>}
-              </button>
-              <button
-                onClick={() => handleLangChange('ar')}
-                className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between ${language === 'ar' ? 'bg-indigo-600/20 text-indigo-300 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
-              >
-                <span>🇸🇦 العربية</span>
-                {language === 'ar' && <span>✓</span>}
-              </button>
-              <button
-                onClick={() => handleLangChange('uk')}
-                className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between ${language === 'uk' ? 'bg-indigo-600/20 text-indigo-300 font-bold' : 'text-slate-300 hover:bg-slate-800'}`}
-              >
-                <span>🇺🇦 Українська</span>
-                {language === 'uk' && <span>✓</span>}
-              </button>
-            </div>
-          </div>
-
-          {/* Profile Switcher Icon */}
-          <button
-            onClick={() => setView('profile_manager')}
-            className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-indigo-400 hover:border-indigo-500/50 transition"
-            title={text(language, "Gestionar perfiles de estudiantes")}
-          >
-            <Users size={15} />
-          </button>
-
-          {/* Return to Welcome / New Explorer Screen */}
-          <button
-            onClick={openOnboarding}
-            className="h-8 px-2.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-1.5 text-xs font-semibold text-slate-300 hover:text-amber-300 hover:border-amber-400/50 transition cursor-pointer"
-            title={text(language, "Pantalla de inicio / Crear nuevo explorador")}
-          >
-            <UserPlus size={13} className="text-amber-400" />
-            <span className="hidden sm:inline">{' '}{text(language, "Inicio")}{' '}</span>
-          </button>
+          ) : (
+            <button disabled={busy} aria-label={t.logout} title={t.logout} onClick={() => { void logout().catch(() => {}); }} className="flex h-9 items-center justify-center gap-1.5 rounded-xl border border-slate-800 bg-slate-900 px-2.5 text-xs font-semibold text-slate-300 transition hover:border-rose-500/50 hover:text-rose-300 focus-visible:outline-2 focus-visible:outline-amber-400">
+              <LogOut size={14} /><span className="hidden sm:inline">{t.logout}</span>
+            </button>
+          )}
         </div>
-
       </div>
     </header>
-  );
-};
+
+    {child && showUnlock && <div className="fixed inset-0 z-50 grid place-items-center bg-black/75 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="unlock-title">
+      <form className="relative w-full max-w-sm space-y-5 rounded-3xl border border-indigo-500/40 bg-gradient-to-b from-indigo-950 via-slate-900 to-slate-950 p-6 shadow-2xl" onSubmit={async event => {
+        event.preventDefault();
+        try { await unlock(password); setShowUnlock(false); }
+        catch { /* The shared alert displays the localized error. */ }
+        finally { setPassword(''); }
+      }}>
+        <button type="button" disabled={busy} aria-label={t.close} onClick={() => { setShowUnlock(false); setPassword(''); }} className="absolute end-4 top-4 rounded-xl p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white"><X size={16} /></button>
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-indigo-500/40 bg-indigo-500/15 text-indigo-300"><KeyRound size={24} /></div>
+        <h2 id="unlock-title" className="text-lg font-black text-white">{t.back}</h2>
+        <p className="text-xs leading-relaxed text-slate-300">{t.unlock}</p>
+        <label className="block space-y-2 text-xs font-bold text-amber-400">{t.password}<input autoFocus required type="password" autoComplete="current-password" className="account-field" maxLength={128} value={password} disabled={busy} onChange={event => setPassword(event.target.value)} /></label>
+        <div className="flex flex-wrap items-center justify-end gap-3">
+          <button type="button" disabled={busy} onClick={() => { setShowUnlock(false); setPassword(''); }} className="rounded-xl bg-slate-800 px-4 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-700">{t.cancel}</button>
+          <button className="account-button" disabled={busy}>{t.back}</button>
+        </div>
+      </form>
+    </div>}
+  </>;
+}

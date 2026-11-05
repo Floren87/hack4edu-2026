@@ -1,3 +1,7 @@
+# Propuesta anterior · archivada
+
+**Sustituida el 4 de noviembre de 2026 por el alcance aprobado: backend TypeScript, sin offline ni historial de evaluaciones.** Ver `../backend/README.md`, `integracion-backend.md` y `despliegue-demo.md`. El texto siguiente se conserva solo como antecedente; no describe la implementación vigente.
+
 # Propuesta: cuentas e historial para profesionales
 
 Estado: **propuesta para revisar**, no implementada ni desplegada. No cambia por sí sola la decisión de mantener la demo sin servidor. Complementa la issue #10; el endpoint de IA no proporciona autenticación ni historial.

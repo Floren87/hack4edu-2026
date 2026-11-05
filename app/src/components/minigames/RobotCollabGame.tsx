@@ -164,7 +164,7 @@ export const RobotCollabGame: React.FC = () => {
           {/* Feedback dialog */}
           <div className="w-full max-w-md p-3 rounded-2xl bg-slate-950/70 border border-slate-800 text-center">
             <p className="text-xs font-medium text-emerald-200">
-              {feedbackMsg}
+              {text(language, feedbackMsg)}
             </p>
           </div>
 

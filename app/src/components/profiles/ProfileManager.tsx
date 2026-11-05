@@ -1,215 +1,130 @@
-import { localizeText as text } from '../../i18n/localize';
 import React, { useState } from 'react';
+import { Check, GraduationCap, Pencil, Play, ShieldCheck, Trash2, UserPlus, Users, X } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { ui } from '../../i18n/account';
 import { translations } from '../../i18n/translations';
-import { soundManager } from '../../utils/soundEffects';
-import { Language } from '../../types';
-import { ArrowLeft, UserPlus, Users, Check, Trash2 } from 'lucide-react';
+import { LanguagePicker } from '../common/LanguagePicker';
+import type { Language, StudentProfile } from '../../types';
 
-const AVATAR_OPTIONS = ['🦊', '🐬', '🦁', '🐼', '🦉', '🦋', '🚀', '🌟', '🦄', '🐲'];
+const AVATARS = ['🦊', '🐬', '🦁', '🐼', '🦉', '🦋', '🚀', '🌟', '🦄', '🐲'];
+interface StudentForm { id?: string; nameOrAlias: string; avatar: string; age: number; preferredLanguage: Language }
 
-export const ProfileManager: React.FC = () => {
-  const { 
-    students, 
-    activeStudent, 
-    switchStudent, 
-    createStudent, 
-    setView, 
-    language, 
-    resetStudentProgress 
-  } = useApp();
-
-  const t = translations[language];
-
-  const [isCreating, setIsCreating] = useState(false);
-  const [nameOrAlias, setNameOrAlias] = useState('');
-  const [selectedAvatar, setSelectedAvatar] = useState('🦊');
-  const [studentAge, setStudentAge] = useState(9);
-  const [preferredLang, setPreferredLang] = useState<Language>(language);
-
-  const handleCreateSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!nameOrAlias.trim()) return;
-    createStudent(nameOrAlias, selectedAvatar, preferredLang, studentAge);
-    setNameOrAlias('');
-    setIsCreating(false);
-    setView('child_hub');
-  };
+export function ProfileManager() {
+  const { students, activeStudent, switchStudent, setView, language, saveStudent, deleteStudent, startPlaying, busy } = useApp();
+  const t = ui(language);
+  const labels = translations[language];
+  const [form, setForm] = useState<StudentForm | null>(null);
+  const edit = (student?: StudentProfile) => setForm({
+    id: student?.id, nameOrAlias: student?.nameOrAlias ?? '', avatar: student?.avatar ?? '🦊',
+    age: student?.age ?? 9, preferredLanguage: student?.preferredLanguage ?? language,
+  });
+  const avatarOptions = form && !AVATARS.includes(form.avatar) ? [...AVATARS, form.avatar] : AVATARS;
 
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
-      
-      {/* Top Bar */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={() => setView('child_hub')}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition"
-        >
-          <ArrowLeft size={16} />
-          <span className="text-xs font-semibold">{t.backToHub}</span>
+    <section className="mx-auto max-w-4xl space-y-6 p-4 sm:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0 space-y-2">
+          <h1 className="flex items-center gap-2 text-xl font-black text-white sm:text-2xl"><Users size={22} className="text-amber-400" />{t.students}</h1>
+          <p className="flex max-w-xl items-start gap-2 text-xs leading-relaxed text-slate-400"><ShieldCheck size={14} className="mt-0.5 shrink-0 text-indigo-400" />{t.privacy}</p>
+        </div>
+        <button className="flex shrink-0 items-center gap-1.5 rounded-2xl bg-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-md transition hover:bg-indigo-500 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400" disabled={busy} onClick={() => edit()}>
+          <UserPlus size={15} />{t.newStudent}
         </button>
-
-        <h1 className="text-base font-black text-white">{' '}{text(language, "Gestor de Perfiles de Alumnos")}{' '}</h1>
       </div>
 
-      {/* Profiles Grid */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-black text-white flex items-center gap-2">
-              <span>{' '}{text(language, "Alumnos en este dispositivo")}{' '}</span>
-              <Users size={18} className="text-amber-400" />
-            </h2>
-            <p className="text-xs text-slate-400">{' '}{text(language, "Varios niños pueden turnarse en el mismo móvil o tableta sin mezclar sus progresos.")}{' '}</p>
+      {form && (
+        <form aria-label={form.id ? t.edit : t.newStudent} className="space-y-5 rounded-3xl border-2 border-indigo-500/60 bg-slate-900 p-5 shadow-2xl sm:p-6" onSubmit={async event => {
+          event.preventDefault();
+          const { id, ...input } = form;
+          try { await saveStudent(input, id); setForm(null); }
+          catch { /* The shared alert displays the localized API error. */ }
+        }}>
+          <div className="flex items-center justify-between gap-3 border-b border-slate-800 pb-4">
+            <div className="flex min-w-0 items-center gap-3">
+              <div aria-hidden="true" className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-indigo-500/40 bg-indigo-950/60 text-3xl shadow-inner">{form.avatar}</div>
+              <h2 className="min-w-0 text-base font-black text-white">{form.id ? t.edit : t.newStudent}</h2>
+            </div>
+            <button type="button" disabled={busy} aria-label={t.close} onClick={() => setForm(null)} className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-800 hover:text-white"><X size={16} /></button>
           </div>
 
-          <button
-            onClick={() => setIsCreating(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition shadow-md"
-          >
-            <UserPlus size={14} />
-            <span>{' '}{text(language, "Nuevo Estudiante")}{' '}</span>
-          </button>
-        </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+            <label className="block space-y-2 text-xs font-bold text-amber-400">{t.alias}
+              <input className="account-field" autoFocus required maxLength={40} placeholder={t.aliasExample} value={form.nameOrAlias} disabled={busy} onChange={event => setForm({ ...form, nameOrAlias: event.target.value })} />
+            </label>
+            <label className="block space-y-2 text-xs font-bold text-slate-300">{t.age}
+              <input className="account-field" type="number" min={7} max={14} required value={form.age} disabled={busy} onChange={event => setForm({ ...form, age: Number(event.target.value) })} />
+            </label>
+          </div>
 
-        {/* Create Student Modal / Drawer */}
-        {isCreating && (
-          <form
-            onSubmit={handleCreateSubmit}
-            className="rounded-3xl bg-slate-900 border-2 border-indigo-500/60 p-6 space-y-4 shadow-2xl animate-in fade-in"
-          >
-            <h3 className="text-base font-black text-white">{' '}{text(language, "Crear nuevo perfil de estudiante")}{' '}</h3>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">{' '}{text(language, "Alias del estudiante (nunca su nombre real):")}{' '}</label>
-                <input
-                  type="text"
-                  required
-                  placeholder={text(language, "ej. Lince Audaz, Zorro Curioso")}
-                  value={nameOrAlias}
-                  onChange={(e) => setNameOrAlias(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">{' '}{text(language, "Edad aproximada (7 a 14 años):")}{' '}</label>
-                <input
-                  type="number"
-                  min={7}
-                  max={14}
-                  value={studentAge}
-                  onChange={(e) => setStudentAge(Number(e.target.value))}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
-                />
-              </div>
+          <fieldset disabled={busy} className="space-y-3">
+            <legend className="mb-3 text-xs font-bold text-slate-300">{t.avatar}</legend>
+            <div className="flex max-w-xl flex-wrap gap-2">
+              {avatarOptions.map(avatar => (
+                <button
+                  key={avatar} type="button" disabled={busy} aria-label={`${t.avatar} ${avatar}`} aria-pressed={form.avatar === avatar}
+                  onClick={() => setForm({ ...form, avatar })}
+                  className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border text-2xl transition-transform focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 ${form.avatar === avatar
+                    ? 'border-amber-400 bg-indigo-600 shadow-lg shadow-indigo-500/20 ring-1 ring-amber-400'
+                    : 'border-slate-700 bg-slate-800 hover:border-indigo-400/60 hover:bg-slate-700'}`}
+                >
+                  <span aria-hidden="true">{avatar}</span>
+                  {form.avatar === avatar && <Check size={10} className="absolute end-1 top-1 text-amber-300" />}
+                </button>
+              ))}
             </div>
+          </fieldset>
 
-            {/* Avatar selector */}
-            <div>
-              <label className="text-xs font-bold text-slate-300 block mb-1.5">{' '}{text(language, "Elige un avatar divertido:")}{' '}</label>
-              <div className="flex flex-wrap gap-2">
-                {AVATAR_OPTIONS.map(av => (
-                  <button
-                    key={av}
-                    type="button"
-                    onClick={() => setSelectedAvatar(av)}
-                    className={`w-11 h-11 text-2xl rounded-2xl flex items-center justify-center transition ${
-                      selectedAvatar === av
-                        ? 'bg-indigo-600 border-2 border-amber-400 scale-110 shadow-lg'
-                        : 'bg-slate-800 border border-slate-700 hover:bg-slate-700'
-                    }`}
-                  >
-                    {av}
-                  </button>
-                ))}
-              </div>
-            </div>
+          <div className="space-y-2">
+            <p className="text-xs font-bold text-slate-300">{t.language}</p>
+            <LanguagePicker variant="inline" value={form.preferredLanguage} onChange={preferredLanguage => setForm({ ...form, preferredLanguage })} disabled={busy} />
+          </div>
+          <div className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-800 pt-4">
+            <button type="button" disabled={busy} onClick={() => setForm(null)} className="rounded-xl bg-slate-800 px-4 py-2.5 text-xs font-semibold text-slate-300 transition hover:bg-slate-700">{t.cancel}</button>
+            <button className="account-button flex items-center gap-1.5" disabled={busy}><Check size={15} />{t.save}</button>
+          </div>
+        </form>
+      )}
 
-            {/* Actions */}
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setIsCreating(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-xs font-semibold text-slate-300 hover:bg-slate-700"
-              >{' '}{text(language, "Cancelar")}{' '}</button>
-              <button
-                type="submit"
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-xs font-bold text-white shadow-md"
-              >{' '}{text(language, "Guardar y Activar")}{' '}</button>
-            </div>
-          </form>
-        )}
+      {!students.length && !form && <div className="rounded-3xl border border-dashed border-slate-700 bg-slate-900/60 p-8 text-center">
+        <Users size={32} className="mx-auto mb-3 text-indigo-400" /><p className="text-sm leading-relaxed text-slate-300">{t.empty}</p>
+      </div>}
 
-        {/* Existing Students List */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {students.map(s => {
-            const isActive = s.id === activeStudent.id;
-            return (
-              <div
-                key={s.id}
-                className={`p-5 rounded-3xl border transition-all flex flex-col justify-between space-y-4 ${
-                  isActive
-                    ? 'bg-indigo-950/40 border-indigo-500 shadow-xl shadow-indigo-500/10'
-                    : 'bg-slate-900 border-slate-800 hover:border-slate-700'
-                }`}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="text-4xl">{s.avatar}</span>
-                    <div>
-                      <h3 className="text-base font-black text-white">{s.nameOrAlias}</h3>
-                      <span className="text-xs text-slate-400">{' '}{text(language, "Edad:")}{' '} {s.age || 9} {' '}{text(language, "años")}{' '}</span>
-                    </div>
-                  </div>
-
-                  {isActive && (
-                    <span className="text-[10px] font-bold text-indigo-300 bg-indigo-500/20 px-2.5 py-1 rounded-full border border-indigo-400/30">{' '}{text(language, "Activo ahora")}{' '}</span>
-                  )}
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-slate-300 bg-slate-950/60 p-3 rounded-2xl border border-slate-800/80">
-                  <span>{' '}{text(language, "⭐ Estrellas:")}{' '} <strong>{s.starsCount || 0}</strong></span>
-                  <span>{' '}{text(language, "🏅 Insignias:")}{' '} <strong>{s.unlockedBadges.length}</strong></span>
-                  <span>{' '}{text(language, "📊 Sesiones:")}{' '} <strong>{s.telemetryLog.length}</strong></span>
-                </div>
-
-                <div className="flex items-center justify-between gap-2 pt-1">
-                  {!isActive ? (
-                    <button
-                      onClick={() => {
-                        switchStudent(s.id);
-                        setView('child_hub');
-                      }}
-                      className="flex-1 py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition text-center"
-                    >{' '}{text(language, "Seleccionar este Alumno")}{' '}</button>
-                  ) : (
-                    <button
-                      onClick={() => setView('child_hub')}
-                      className="flex-1 py-2 px-3 rounded-xl bg-slate-800 text-xs font-bold text-indigo-300 text-center"
-                    >{' '}{text(language, "Ir a jugar con este alumno")}{' '}</button>
-                  )}
-
-                  <button
-                    onClick={() => {
-                      if (confirm(text(language, "¿Reiniciar progreso de juego para {0}?", [s.nameOrAlias]))) {
-                        resetStudentProgress(s.id);
-                      }
-                    }}
-                    className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-rose-400"
-                    title={text(language, "Reiniciar progreso")}
-                  >
-                    <Trash2 size={14} />
-                  </button>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {students.map(student => {
+          const selected = activeStudent?.id === student.id;
+          return <article key={student.id} className={`flex min-w-0 flex-col justify-between space-y-4 rounded-3xl border p-5 transition ${selected
+            ? 'border-indigo-500 bg-indigo-950/40 shadow-xl shadow-indigo-500/10'
+            : 'border-slate-800 bg-slate-900 hover:border-slate-700'}`}>
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="shrink-0 text-4xl" aria-hidden="true">{student.avatar}</span>
+                <div className="min-w-0 space-y-1">
+                  <h2 className="break-words text-base font-black text-white [overflow-wrap:anywhere]">{student.nameOrAlias}</h2>
+                  <span className="text-xs text-slate-400">{t.ageLabel}: {student.age ?? '—'}</span>
                 </div>
               </div>
-            );
-          })}
-        </div>
+              {selected && <span className="flex shrink-0 items-center gap-1 rounded-full border border-indigo-400/30 bg-indigo-500/20 px-2 py-1 text-[10px] font-bold text-indigo-300"><Check size={10} />{t.selected}</span>}
+            </div>
 
+            <div className="grid grid-cols-3 gap-2 rounded-2xl border border-slate-800/80 bg-slate-950/60 p-3 text-center">
+              <div className="min-w-0"><span className="text-[10px] text-slate-400">⭐ {labels.stars}</span><strong className="mt-1 block text-sm text-amber-300">{student.starsCount}</strong></div>
+              <div className="min-w-0"><span className="text-[10px] text-slate-400">🏅 {labels.badges}</span><strong className="mt-1 block text-sm text-indigo-300">{student.unlockedBadges.length}</strong></div>
+              <div className="min-w-0"><span className="text-[10px] text-slate-400">🎮 {t.sessions}</span><strong className="mt-1 block text-sm text-slate-200">{student.telemetryLog.length}</strong></div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <button disabled={busy} onClick={() => { switchStudent(student.id); setView('teacher_dashboard'); }} className="flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-bold text-indigo-200 transition hover:border-indigo-500/60 hover:bg-indigo-600/20 focus-visible:outline-2 focus-visible:outline-amber-400"><GraduationCap size={15} className="shrink-0" />{t.results}</button>
+                <button disabled={busy} onClick={() => { void startPlaying(student.id).catch(() => {}); }} className="flex min-h-10 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-3 py-2 text-xs font-bold text-white shadow-md transition hover:from-indigo-400 hover:to-purple-500 focus-visible:outline-2 focus-visible:outline-amber-400"><Play size={14} className="shrink-0" />{t.play}</button>
+              </div>
+              <div className="flex items-center justify-end gap-2 border-t border-slate-800/80 pt-3">
+                <button disabled={busy} onClick={() => edit(student)} className="flex items-center gap-1.5 rounded-xl bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-700 hover:text-white"><Pencil size={13} />{t.edit}</button>
+                <button disabled={busy} onClick={() => { if (confirm(t.deleteConfirm)) void deleteStudent(student.id).catch(() => {}); }} className="flex items-center gap-1.5 rounded-xl border border-transparent px-3 py-2 text-xs font-semibold text-slate-400 transition hover:border-rose-900/60 hover:bg-rose-950/40 hover:text-rose-300"><Trash2 size={13} />{t.remove}</button>
+              </div>
+            </div>
+          </article>;
+        })}
       </div>
-
-    </div>
+    </section>
   );
-};
+}
