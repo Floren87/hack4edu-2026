@@ -1,12 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-
-async function openCreativityGame(page: Page) {
-  await page.goto('/');
-  await page.getByRole('textbox').fill('Zorro Azul');
-  await page.getByRole('button', { name: /Entrar|Enter/ }).first().click();
-  await page.getByRole('button', { name: /¿Qué Inventas\?/ }).first().click();
-  await expect(page.locator('[data-piece-id]')).toHaveCount(2);
-}
+import { openCreativityGame, savedProgress } from './session-helpers';
 
 const pieceIds = (page: Page) => page.locator('[data-piece-id]').evaluateAll(els => els.map(el => el.getAttribute('data-piece-id')!.replace(/_\d+$/, '')));
 
@@ -65,8 +58,7 @@ test('«Quitar la última» quita las piezas de la más nueva a la más antigua 
   expect(await rotation()).toBe('rotate(0deg)');
 
   // Al guardar queda la evidencia de que usó Deshacer.
-  await page.getByRole('button', { name: 'Guardar mi invento' }).click();
-  const saved = await page.evaluate(() => Object.keys(localStorage).map(k => localStorage.getItem(k) ?? '').join('\n'));
+  const saved = await savedProgress(page, () => page.getByRole('button', { name: 'Guardar mi invento' }).click());
   expect(saved).toContain('"undoCount":4');
   expect(saved).toContain('Revisó y corrigió su invento 4 veces con «Deshacer».');
 });

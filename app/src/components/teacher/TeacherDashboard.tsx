@@ -1,4 +1,4 @@
-import { localizeText as text } from '../../i18n/localize';
+import { localizeText as text, formatDate } from '../../i18n/localize';
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { translations } from '../../i18n/translations';
@@ -7,18 +7,18 @@ import { soundManager } from '../../utils/soundEffects';
 import { AudioButton } from '../common/AudioButton';
 import { ChildCommentsCard } from '../common/ChildCommentsCard';
 import { executeBrowserPrint, downloadPrintableTeacherReport } from '../../utils/printReport';
-import { 
-  CheckCircle2, 
-  HelpCircle, 
-  FileText, 
-  Lightbulb, 
-  Compass, 
-  Brain, 
-  ShieldCheck, 
-  Printer, 
-  Save, 
-  Clock, 
-  Layers, 
+import {
+  CheckCircle2,
+  HelpCircle,
+  FileText,
+  Lightbulb,
+  Compass,
+  Brain,
+  ShieldCheck,
+  Printer,
+  Save,
+  Clock,
+  Layers,
   HeartHandshake,
   Download,
   BarChart3,
@@ -30,12 +30,12 @@ import {
 } from 'lucide-react';
 
 export const TeacherDashboard: React.FC = () => {
-  const { 
-    activeStudent, 
-    students, 
-    switchStudent, 
-    language, 
-    updateTeacherValidation 
+  const {
+    activeStudent,
+    students,
+    switchStudent,
+    language,
+    updateTeacherValidation, busy
   } = useApp();
 
   const t = translations[language];
@@ -71,9 +71,9 @@ export const TeacherDashboard: React.FC = () => {
     setIsSaved(false);
   };
 
-  const handleSaveValidation = () => {
+  const handleSaveValidation = async () => {
     soundManager.playSparkle();
-    updateTeacherValidation(teacherAgreements, teacherNotes);
+    try { await updateTeacherValidation(teacherAgreements, teacherNotes); } catch { return; }
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);
   };
@@ -84,7 +84,7 @@ export const TeacherDashboard: React.FC = () => {
     if (!success) {
       // If browser print is restricted by iframe sandbox, automatically download the printable document
       downloadPrintableTeacherReport(activeStudent, report, language);
-      setPrintFeedback(text(language, "Descargando documento imprimible del Panel Profesional..."));
+      setPrintFeedback("Descargando documento imprimible del Panel Profesional...");
       setTimeout(() => setPrintFeedback(null), 3500);
     }
   };
@@ -92,7 +92,7 @@ export const TeacherDashboard: React.FC = () => {
   const handleDownloadReport = () => {
     soundManager.playSparkle();
     downloadPrintableTeacherReport(activeStudent, report, language);
-    setPrintFeedback(text(language, "¡Informe del Panel Profesional descargado listo para imprimir!"));
+    setPrintFeedback("¡Informe del Panel Profesional descargado listo para imprimir!");
     setTimeout(() => setPrintFeedback(null), 3500);
   };
 
@@ -100,14 +100,14 @@ export const TeacherDashboard: React.FC = () => {
   const pendingCount = report.pendingActivities.length;
 
   return (
-    <div className="max-w-5xl mx-auto p-4 sm:p-6 space-y-8 print:p-0 print:space-y-4">
-      
+    <div className="min-w-0 max-w-5xl mx-auto p-4 sm:p-6 space-y-8 print:p-0 print:space-y-4 [overflow-wrap:anywhere]">
+
       {/* Student Selector Bar & Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-4 rounded-3xl print:hidden">
-        <div className="flex items-center gap-3">
-          <div className="text-3xl">{activeStudent.avatar}</div>
-          <div>
-            <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="shrink-0 text-3xl">{activeStudent.avatar}</div>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider block">{' '}{text(language, "Panel Profesional • Expediente Activo")}{' '}</span>
               <span className="text-[10px] bg-slate-800 text-slate-300 font-bold px-2 py-0.5 rounded-full">
                 {completedCount}{' '}{text(language, "de 10 completadas")}{' '}</span>
@@ -118,12 +118,12 @@ export const TeacherDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
           <span className="text-xs text-slate-400">{' '}{text(language, "Cambiar alumno:")}{' '}</span>
           <select
             value={activeStudent.id}
             onChange={(e) => switchStudent(e.target.value)}
-            className="bg-slate-950 border border-slate-700 text-xs text-slate-200 rounded-xl px-3 py-2 font-medium focus:outline-none focus:border-indigo-500"
+            className="min-w-0 max-w-full bg-slate-950 border border-slate-700 text-xs text-slate-200 rounded-xl px-3 py-2 font-medium focus:outline-none focus:border-indigo-500"
           >
             {students.map(s => (
               <option key={s.id} value={s.id}>
@@ -155,7 +155,7 @@ export const TeacherDashboard: React.FC = () => {
 
       {printFeedback && (
         <div className="p-3 rounded-2xl bg-indigo-950/80 border border-indigo-500 text-indigo-200 text-xs text-center font-medium animate-in fade-in">
-          {printFeedback}
+          {text(language, printFeedback)}
         </div>
       )}
 
@@ -227,7 +227,7 @@ export const TeacherDashboard: React.FC = () => {
             <span className="text-indigo-400">{completedCount} {' '}{text(language, "de 10 completadas (")}{' '}{Math.round((completedCount / 10) * 100)}%)</span>
           </div>
           <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden flex">
-            <div 
+            <div
               className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full transition-all duration-500"
               style={{ width: `${(completedCount / 10) * 100}%` }}
             />
@@ -332,7 +332,7 @@ export const TeacherDashboard: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
+
           {/* Card A: Porcentajes de Habilidades (5 competencias) */}
           <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 space-y-4 shadow-lg flex flex-col justify-between">
             <div>
@@ -445,7 +445,7 @@ export const TeacherDashboard: React.FC = () => {
                   {report.strengthsBreakdown.consolidationPercentage}%
                 </div>
                 <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 h-full transition-all duration-500"
                     style={{ width: `${report.strengthsBreakdown.consolidationPercentage}%` }}
                   />
@@ -508,7 +508,7 @@ export const TeacherDashboard: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-          
+
           {/* Block 1: Síntesis General */}
           <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1.5">
             <h5 className="font-black text-indigo-300 uppercase tracking-wide text-[11px] flex items-center gap-1.5">
@@ -579,8 +579,8 @@ export const TeacherDashboard: React.FC = () => {
                 className="rounded-3xl bg-slate-900 border border-slate-800 p-6 space-y-4 shadow-lg hover:border-indigo-600/50 transition-all"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                  <div>
-                    <div className="flex items-center gap-2">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
                       <h4 className="text-base font-black text-white">{strength.title}</h4>
                       <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                         strength.levelDescription === 'destaca'
@@ -589,7 +589,7 @@ export const TeacherDashboard: React.FC = () => {
                           ? 'bg-indigo-950 text-indigo-300 border border-indigo-500/40'
                           : 'bg-slate-800 text-slate-400'
                       }`}>
-                        {strength.levelDescription === 'destaca' 
+                        {strength.levelDescription === 'destaca'
                           ? text(language, "⭐ Destaca con brillo propio")
                           : strength.levelDescription === 'destreza_solida'
                           ? text(language, "✓ Destreza sólida observada")
@@ -600,7 +600,7 @@ export const TeacherDashboard: React.FC = () => {
                   </div>
 
                   {/* Validation toggle (R15) */}
-                  <div className="flex items-center gap-1.5 shrink-0 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 print:hidden">
+                  <div className="grid w-full max-w-full grid-cols-2 items-stretch gap-1.5 shrink-0 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 sm:flex sm:w-auto sm:flex-wrap print:hidden">
                     <button
                       onClick={() => handleToggleAgreement(strength.id, true)}
                       className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
@@ -722,14 +722,15 @@ export const TeacherDashboard: React.FC = () => {
           className="w-full rounded-2xl bg-slate-950 border border-slate-700 p-4 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
         />
 
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
           <span className="text-xs text-slate-400">
             {activeStudent.teacherValidation?.validatedAt
-              ? text(language, "Última validación guardada: {0}", [new Date(activeStudent.teacherValidation.validatedAt).toLocaleDateString()])
+              ? text(language, "Última validación guardada: {0}", [formatDate(language, activeStudent.teacherValidation.validatedAt)])
               : text(language, "Informe en fase de borrador pedagógico")}
           </span>
 
           <button
+            disabled={busy}
             onClick={handleSaveValidation}
             className="py-3 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black text-xs shadow-lg shadow-emerald-500/20 active:scale-95 transition-all flex items-center gap-2"
           >

@@ -1,25 +1,23 @@
 import { expect, test } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { openCreativityGame, openFamily, openResults, savedProgress } from './session-helpers';
 
 test('El comentario del niño sale en el panel, la familia y los informes, pero no se guarda en el perfil', async ({ page, context }) => {
-  await page.goto('/');
-  await page.getByRole('textbox').fill('Zorro Azul');
-  await page.getByRole('button', { name: /Entrar|Enter/ }).first().click();
-  await page.getByRole('button', { name: /¿Qué Inventas\?/ }).first().click();
+  await openCreativityGame(page);
 
   const comment = 'Es una barca <b>para</b> cruzar el río';
   await page.getByRole('button', { name: 'Me gusta mucho' }).click();
   await page.getByLabel(/Cuéntanos tu invento/).fill(comment);
   await expect(page.getByText(`${comment.length}/200`)).toBeVisible();
-  await page.getByRole('button', { name: 'Guardar mi invento' }).click();
+  const sent = await savedProgress(page, () => page.getByRole('button', { name: 'Guardar mi invento' }).click());
   await page.getByRole('button', { name: /a seguir jugando/ }).click(); // cierra la ventana de insignia nueva
 
-  // Nunca en localStorage (perfil y telemetría).
-  const local = await page.evaluate(() => JSON.stringify({ ...localStorage }));
-  expect(local).not.toContain('cruzar el río');
+  // Nunca sale del navegador (API) ni va a localStorage.
+  expect(sent).not.toContain('cruzar el río');
+  expect(await page.evaluate(() => JSON.stringify({ ...localStorage }))).not.toContain('cruzar el río');
 
   // Panel profesional: tarjeta y informe descargado (con el HTML escapado).
-  await page.locator('header').getByRole('button', { name: /Panel Profesional/ }).click();
+  await openResults(page);
   const card = page.getByTestId('child-comments');
   await expect(card).toContainText(comment);
   await expect(card).toContainText('😄');
@@ -30,7 +28,7 @@ test('El comentario del niño sale en el panel, la familia y los informes, pero 
   expect(html).toContain('Es una barca &lt;b&gt;para&lt;/b&gt; cruzar el río');
 
   // Espacio familiar: tarjeta y resumen descargado.
-  await page.locator('header').getByRole('button', { name: /Espacio Familiar/ }).click();
+  await openFamily(page);
   await expect(page.getByTestId('child-comments')).toContainText(comment);
   const familyDownload = page.waitForEvent('download');
   await page.getByTitle('Descargar resumen formateado').click();
@@ -49,12 +47,9 @@ test('El comentario del niño sale en el panel, la familia y los informes, pero 
 });
 
 test('Sin comentario ni emojis no aparece ninguna tarjeta', async ({ page }) => {
-  await page.goto('/');
-  await page.getByRole('textbox').fill('Zorro Azul');
-  await page.getByRole('button', { name: /Entrar|Enter/ }).first().click();
-  await page.getByRole('button', { name: /¿Qué Inventas\?/ }).first().click();
-  await page.getByRole('button', { name: 'Guardar mi invento' }).click();
+  await openCreativityGame(page);
+  await savedProgress(page, () => page.getByRole('button', { name: 'Guardar mi invento' }).click());
   await page.getByRole('button', { name: /a seguir jugando/ }).click(); // cierra la ventana de insignia nueva
-  await page.locator('header').getByRole('button', { name: /Panel Profesional/ }).click();
+  await openResults(page);
   await expect(page.getByTestId('child-comments')).toHaveCount(0);
 });

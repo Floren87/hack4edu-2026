@@ -1,12 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-
-async function openCreativityGame(page: Page) {
-  await page.goto('/');
-  await page.getByRole('textbox').fill('Zorro Azul');
-  await page.getByRole('button', { name: /Entrar|Enter/ }).first().click();
-  await page.getByRole('button', { name: /¿Qué Inventas\?|What Do You Invent\?/ }).first().click();
-  await expect(page.locator('[data-piece-id]').first()).toBeVisible();
-}
+import { openCreativityGame, savedProgress } from './session-helpers';
 
 const box = async (page: Page, selector: string) => (await page.locator(selector).first().boundingBox())!;
 
@@ -63,8 +56,7 @@ test('Las piezas de «¿Qué inventas?» se arrastran con ratón y dedo, se muev
   expect(touched.x).toBeLessThan(g.x - 60);
 
   // Al guardar, las recolocaciones llegan como evidencia para el profesional (3 arrastres + 1 serie de flechas).
-  await page.getByRole('button', { name: 'Guardar mi invento' }).click();
-  const saved = await page.evaluate(() => Object.keys(localStorage).map(k => localStorage.getItem(k) ?? '').join('\n'));
+  const saved = await savedProgress(page, () => page.getByRole('button', { name: 'Guardar mi invento' }).click());
   expect(saved).toContain('"repositionsCount":4');
   expect(saved).toContain('Recolocó piezas 4 veces para probar combinaciones.');
 });

@@ -24,7 +24,7 @@ export const FamilyPortal: React.FC = () => {
     const success = executeBrowserPrint();
     if (!success) {
       downloadPrintableFamilyReport(activeStudent, report, language);
-      setPrintFeedback(text(language, "Descargando resumen para la familia..."));
+      setPrintFeedback("Descargando resumen para la familia...");
       setTimeout(() => setPrintFeedback(null), 3500);
     }
   };
@@ -32,18 +32,18 @@ export const FamilyPortal: React.FC = () => {
   const handleDownloadFamily = () => {
     soundManager.playSparkle();
     downloadPrintableFamilyReport(activeStudent, report, language);
-    setPrintFeedback(text(language, "¡Resumen familiar descargado listo para imprimir!"));
+    setPrintFeedback("¡Resumen familiar descargado listo para imprimir!");
     setTimeout(() => setPrintFeedback(null), 3500);
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
+    <div className="min-w-0 max-w-4xl mx-auto p-4 sm:p-6 space-y-6 [overflow-wrap:anywhere]">
       
       {/* Action Toolbar for Family & Teacher switch */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-900 border border-slate-800 p-4 rounded-3xl print:hidden">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">{activeStudent.avatar}</span>
-          <div>
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="shrink-0 text-2xl">{activeStudent.avatar}</span>
+          <div className="min-w-0">
             <span className="text-xs font-bold text-white block">{activeStudent.nameOrAlias}</span>
             <span className="text-[10px] text-slate-400">{' '}{text(language, "Resumen adaptado para familias")}{' '}</span>
           </div>
@@ -84,14 +84,14 @@ export const FamilyPortal: React.FC = () => {
 
       {printFeedback && (
         <div className="p-3 rounded-2xl bg-rose-950/80 border border-rose-500 text-rose-200 text-xs text-center font-medium animate-in fade-in">
-          {printFeedback}
+          {text(language, printFeedback)}
         </div>
       )}
 
       {/* Header Banner */}
       <div className="rounded-3xl bg-gradient-to-r from-rose-950 via-slate-900 to-amber-950 p-6 sm:p-8 border border-rose-800/40 shadow-2xl relative overflow-hidden">
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="space-y-2">
+          <div className="min-w-0 space-y-2">
             <div className="flex items-center gap-2 text-rose-300 text-xs font-bold uppercase tracking-wider">
               <Heart size={16} />
               <span>{t.familyPortalTitle}</span>
@@ -119,11 +119,11 @@ export const FamilyPortal: React.FC = () => {
 
       {/* Main Family Letter */}
       <div className="rounded-3xl bg-slate-900 border border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-          <span className="text-sm font-black text-amber-300">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <span className="min-w-0 text-sm font-black text-amber-300">
             {report.familyLetter.greeting}
           </span>
-          <div className="flex items-center gap-1.5 text-xs text-amber-400 font-bold bg-amber-400/10 px-3 py-1 rounded-full">
+          <div className="flex shrink-0 items-center gap-1.5 text-xs text-amber-400 font-bold bg-amber-400/10 px-3 py-1 rounded-full">
             <Star size={14} className="fill-amber-400" />
             <span>{activeStudent.starsCount || 0} {' '}{text(language, "Estrellas Ganadas")}{' '}</span>
           </div>

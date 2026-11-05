@@ -4,6 +4,8 @@ __pycache__/
 *.pyc
 .venv/
 .env
+app/.env.*
+!app/.env.example
 *.sqlite3
 *.db
 .DS_Store
@@ -11,3 +13,6 @@ __pycache__/
 .idea/
 playwright-report/
 test-results/
+*.db-*
+backend/.env.*
+!backend/.env.example
