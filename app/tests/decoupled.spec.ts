@@ -36,11 +36,11 @@ test('direct cross-site API works without cookies; reload restores the tab and l
   const popup=page.waitForEvent('popup');await page.evaluate(()=>window.open('/', '_blank'));const duplicate=await popup;
   await expect(duplicate.getByRole('heading',{name:'My students'})).toBeVisible();
   await page.getByRole('button',{name:'Start playing',exact:true}).click();
-  await expect(duplicate.getByRole('button',{name:'Back to adult'})).toBeVisible();
-  await duplicate.reload();await expect(duplicate.getByRole('button',{name:'Back to adult'})).toBeVisible();
-  await page.getByRole('button',{name:'Back to adult'}).click();
+  await expect(duplicate.getByRole('button',{name:'Back to Teacher Profile'})).toBeVisible();
+  await duplicate.reload();await expect(duplicate.getByRole('button',{name:'Back to Teacher Profile'})).toBeVisible();
+  await page.getByRole('button',{name:'Back to Teacher Profile'}).click();
   await page.getByLabel('Password',{exact:true}).fill(password);
-  await page.getByRole('dialog').getByRole('button',{name:'Back to adult'}).click();
+  await page.getByRole('dialog').getByRole('button',{name:'Back to Teacher Profile'}).click();
   await expect(page.getByRole('heading',{name:'My students'})).toBeVisible();
   await expect(duplicate.getByRole('heading',{name:'My students'})).toBeVisible();
   await page.getByRole('button',{name:'Sign out'}).click();

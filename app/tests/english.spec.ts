@@ -22,22 +22,22 @@ test('login first, full student CRUD, child/professional separation, persistence
  await register(page,'crud');await add(page,'Fox Alpha');await page.screenshot({path:'test-results/professional.png'});
  await page.getByRole('button',{name:'Edit',exact:true}).click();await page.getByLabel('Pseudonym (never a real name)').fill('Fox Beta');await page.getByRole('button',{name:'Save',exact:true}).click();await expect(page.getByRole('heading',{name:'Fox Beta'})).toBeVisible();
  await page.getByRole('button',{name:'Start playing',exact:true}).click();
- await expect(page.getByRole('button',{name:'Back to adult'})).toBeVisible();
+ await expect(page.getByRole('button',{name:'Back to Teacher Profile'})).toBeVisible();
  await expect(page.getByRole('button',{name:'My students',exact:true})).toHaveCount(0);
  await expect(page.getByRole('button',{name:'Results',exact:true})).toHaveCount(0);
  await expect(page.getByRole('button',{name:'Family summary',exact:true})).toHaveCount(0);
- await page.reload();await expect(page.getByRole('button',{name:'Back to adult'})).toBeVisible();await page.screenshot({path:'test-results/child.png'});
+ await page.reload();await expect(page.getByRole('button',{name:'Back to Teacher Profile'})).toBeVisible();await page.screenshot({path:'test-results/child.png'});
  await page.getByRole('button',{name:/What Do You Invent/}).filter({hasText:'Play now'}).click();
  await page.getByRole('button',{name:/Flying or space vehicle/}).click();
  await page.getByRole('button',{name:'Save my invention'}).click();
  // The badge modal is purely a game celebration, not a professional navigation.
  const badge=page.getByRole('button',{name:"Great! Let's keep playing!"});if(await badge.isVisible())await badge.click();
  await expect(page.getByRole('status')).toContainText('Saved');
- await page.getByRole('button',{name:'Back to adult'}).click();
- await page.getByLabel('Password',{exact:true}).fill('incorrect-password');await page.getByRole('dialog').getByRole('button',{name:'Back to adult'}).click();
+ await page.getByRole('button',{name:'Back to Teacher Profile'}).click();
+ await page.getByLabel('Password',{exact:true}).fill('incorrect-password');await page.getByRole('dialog').getByRole('button',{name:'Back to Teacher Profile'}).click();
  await expect(page.getByRole('alert')).toContainText('Incorrect username or password');
  await expect(page.getByRole('dialog')).toBeVisible();
- await page.getByLabel('Password',{exact:true}).fill(password);await page.getByRole('dialog').getByRole('button',{name:'Back to adult'}).click();
+ await page.getByLabel('Password',{exact:true}).fill(password);await page.getByRole('dialog').getByRole('button',{name:'Back to Teacher Profile'}).click();
  await expect(page.getByRole('heading',{name:'My students'})).toBeVisible();
  await page.getByRole('article').getByRole('button',{name:'Results',exact:true}).click();
  await expect(page.getByRole('heading',{name:'What Do You Invent?',exact:true})).toBeVisible();
@@ -56,7 +56,7 @@ test('two accounts, synchronized child lock in another tab, all five login langu
  // A fresh tab has its own login; a duplicated/opened tab inherits sessionStorage.
  const independent=await page.context().newPage();await independent.goto('/');await expect(independent.getByRole('heading',{name:'Sign in'})).toBeVisible();await independent.close();
  const duplicate=page.waitForEvent('popup');await page.evaluate(()=>window.open('/', '_blank'));const other=await duplicate;await expect(other.getByRole('heading',{name:'My students'})).toBeVisible();
- await page.getByRole('button',{name:'Start playing'}).click();await expect(other.getByRole('button',{name:'Back to adult'})).toBeVisible();await expect(other.getByRole('button',{name:'My students',exact:true})).toHaveCount(0);
+ await page.getByRole('button',{name:'Start playing'}).click();await expect(other.getByRole('button',{name:'Back to Teacher Profile'})).toBeVisible();await expect(other.getByRole('button',{name:'My students',exact:true})).toHaveCount(0);
  await other.close();
  const context=await browser.newContext();const second=await context.newPage();await register(second,'second');await expect(second.getByText('Private Fox')).toHaveCount(0);await second.getByRole('button',{name:'Sign out'}).click();
  for(const [lang,name] of [['es','Español'],['en','English'],['fr','Français'],['ar','العربية'],['uk','Українська']]){await second.getByRole('group').getByRole('button',{name,exact:true}).click();await expect(second.locator('html')).toHaveAttribute('lang',lang);await expect(second.locator('input[autocomplete=username]')).toHaveCount(1);await expect(second.locator('input[type=password]')).toHaveCount(1);await expect(second.locator('html')).toHaveAttribute('dir',lang==='ar'?'rtl':'ltr');}
@@ -68,13 +68,13 @@ test('failed and conflicting saves never claim success or unlock the child view'
  await page.route('**/api/students/*/progress',route=>route.abort());
  await page.getByRole('button',{name:'Open Worlds Map'}).click();await page.getByRole('button',{name:/Building World/}).click();
  await expect(page.getByRole('status')).toContainText('Unsaved changes');await expect(page.getByRole('alert')).toBeVisible();
- await page.getByRole('button',{name:'Back to adult'}).click();await page.getByLabel('Password',{exact:true}).fill(password);await page.getByRole('dialog').getByRole('button',{name:'Back to adult'}).click();
+ await page.getByRole('button',{name:'Back to Teacher Profile'}).click();await page.getByLabel('Password',{exact:true}).fill(password);await page.getByRole('dialog').getByRole('button',{name:'Back to Teacher Profile'}).click();
  await expect(page.getByRole('dialog')).toBeVisible();await page.getByRole('button',{name:'Cancel',exact:true}).click();
  await page.unroute('**/api/students/*/progress');await page.getByRole('button',{name:'Retry',exact:true}).click();await expect(page.getByRole('status')).toContainText('Saved');
  await page.route('**/api/students/*/progress',route=>route.fulfill({status:409,contentType:'application/json',body:JSON.stringify({error:'VERSION_CONFLICT'})}));
  await page.getByRole('button',{name:'Back to Worlds',exact:true}).click();await page.getByRole('button',{name:/Exploring World/}).click();
  await expect(page.getByRole('alert')).toContainText('There are newer changes');await expect(page.getByRole('button',{name:'Retry',exact:true})).toBeDisabled();
- page.once('dialog',dialog=>dialog.accept());await page.getByRole('button',{name:'Load server state'}).click();await expect(page.getByRole('button',{name:'Back to adult'})).toBeVisible();await expect(page.getByRole('status')).toContainText('Saved');
+ page.once('dialog',dialog=>dialog.accept());await page.getByRole('button',{name:'Load server state'}).click();await expect(page.getByRole('button',{name:'Back to Teacher Profile'})).toBeVisible();await expect(page.getByRole('status')).toContainText('Saved');
  await expect(page.getByRole('button',{name:'Results',exact:true})).toHaveCount(0);
 });
 

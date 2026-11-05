@@ -5,6 +5,7 @@ import { ui } from '../../i18n/account';
 import { translations } from '../../i18n/translations';
 import { LanguagePicker } from './LanguagePicker';
 import { WorldLogo } from './WorldLogo';
+import { TeacherIdentity } from './TeacherIdentity';
 
 export function Navbar() {
   const { session, activeStudent, language, view, setView, logout, unlock, busy, soundMuted, toggleSound } = useApp();
@@ -72,6 +73,7 @@ export function Navbar() {
             </button>
           )}
         </div>
+        {session?.mode === 'professional' && <div className="order-last col-span-2 flex min-w-0 xl:col-span-3"><TeacherIdentity username={session.account.username} label={t.teacherProfile} /></div>}
       </div>
     </header>
 
