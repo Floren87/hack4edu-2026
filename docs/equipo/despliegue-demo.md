@@ -1,6 +1,6 @@
 # Despliegue de API y BBDD · Miguel
 
-**Estado final después del PR #36 (5 nov):** frontend en Pages y API/BBDD externas, **solo online**. `main` contiene la integración y `develop` ya no existe. En esta sesión: `/api/health` responde 200 con CORS para Pages y una petición vacía de login devuelve 400 con `X-RateLimit-Limit: 60`, sin crear datos. Antes del próximo redeploy de Render, verificar Branch=`main`; no se modifica Render en esta entrega de documentación/logo. Los pasos de integración con `develop` de abajo son históricos. Arquitectura vigente: [arquitectura.md](arquitectura.md); límites de protección de datos: [datos-y-seguridad.md](datos-y-seguridad.md).
+**Estado final después del PR #36 (5 nov):** frontend en Pages y API/BBDD externas, **solo online**. `main` contiene la integración y `develop` ya no existe. En esta sesión: `/api/health` responde 200 con CORS para Pages y una petición vacía de login devuelve 400 con `X-RateLimit-Limit: 60`, sin crear datos. Antes del próximo redeploy de Render, verificar Branch=`main`; no se modifica Render en esta entrega de documentación/logo. Los pasos de integración con `develop` de abajo son históricos. Arquitectura vigente: [arquitectura.md](../arquitectura.md); límites de protección de datos: [datos-y-seguridad.md](../datos-y-seguridad.md).
 
 **Arquitectura vigente:** API TypeScript/Fastify en Render + base **libSQL** en Turso. El frontend lo publica Floren/Delia de forma independiente; no necesita proxy. También se puede usar el frontend de localhost contra la API pública.
 

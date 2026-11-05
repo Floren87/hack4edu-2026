@@ -30,7 +30,7 @@ flowchart LR
 
 URLs de la demo: [frontend](https://floren87.github.io/hack4edu-2026/), API base `https://hack4edu-2026.onrender.com/api`, [healthcheck](https://hack4edu-2026.onrender.com/api/health). El navegador conecta directamente con `VITE_API_BASE_URL`; no necesita proxy de Netlify ni de Vite. Render permite el origen exacto `https://floren87.github.io`, sin la subcarpeta de Pages.
 
-El frontend se publica al integrar en `main`. `develop` fue integrada y eliminada después del PR #36; esta entrega parte de `main` y vuelve por PR, con aprobación de Miguel. **Antes del próximo redeploy de Render, comprobar que su Branch sea `main`**, porque una configuración que conserve `develop` fallará al buscar esa rama. Este sprint no modifica el servicio ni las credenciales de Turso. Ver [despliegue y operación](despliegue-demo.md).
+El frontend se publica al integrar en `main`. `develop` fue integrada y eliminada después del PR #36; esta entrega parte de `main` y vuelve por PR, con aprobación de Miguel. **Antes del próximo redeploy de Render, comprobar que su Branch sea `main`**, porque una configuración que conserve `develop` fallará al buscar esa rama. Este sprint no modifica el servicio ni las credenciales de Turso. Ver [despliegue y operación](equipo/despliegue-demo.md).
 
 ## Sesión y separación profesional/niño
 

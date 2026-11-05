@@ -4,7 +4,7 @@ Conecta el prototipo con una API TypeScript/Fastify y persistencia SQLite/libSQL
 
 Incluye todos los cambios acumulados en `feat/backend` desde `develop`: backend, integración frontend, recuperación de estilos del prototipo, traducción completa ES/EN/FR/AR/UK e informes RTL, y conexión directa entre frontend/API mediante Bearer y orígenes explícitos, sin proxy. Conserva `VITE_API_BASE_URL` para cambiar de API; sin override, el frontend utiliza **https://hack4edu-2026.onrender.com/api**, ya publicada por Miguel en Render con Turso.
 
-Contexto para Floren/Claude Code: [traspaso acumulado](docs/traspaso-floren.md), [contrato API](backend/README.md), [integración](docs/integracion-backend.md), [operación/despliegue](docs/despliegue-demo.md) y [mantenimiento de idiomas](docs/i18n.md). Sin offline, histórico complejo, recuperación por email ni IA externa.
+Contexto para Floren/Claude Code: [traspaso acumulado](traspaso-floren.md), [contrato API](../../backend/README.md), [integración](integracion-backend.md), [operación/despliegue](despliegue-demo.md) y [mantenimiento de idiomas](i18n.md). Sin offline, histórico complejo, recuperación por email ni IA externa.
 
 ## Cómo probarlo
 
