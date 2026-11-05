@@ -1,7 +1,7 @@
 {
   "login": "Se connecter",
   "register": "Créer un compte",
-  "username": "Nom d’utilisateur inventé",
+  "username": "Nom d’utilisateur anonyme",
   "password": "Mot de passe",
   "loginHint": "Accès professionnel. Utilisez un pseudonyme sans données personnelles réelles.",
   "registerHint": "Identifiant : 3–32 minuscules, chiffres, tirets ou _. Mot de passe : 10–128 caractères. Sans récupération par email.",
