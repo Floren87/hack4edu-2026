@@ -4,8 +4,15 @@ __pycache__/
 *.pyc
 .venv/
 .env
+app/.env.*
+!app/.env.example
 *.sqlite3
 *.db
 .DS_Store
 .vscode/
 .idea/
+playwright-report/
+test-results/
+*.db-*
+backend/.env.*
+!backend/.env.example

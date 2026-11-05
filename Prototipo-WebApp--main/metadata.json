@@ -1,6 +1,0 @@
-{
-  "name": "Talento sin Fronteras",
-  "description": "Herramienta lúdica e inclusiva para detectar habilidades, fortalezas e intereses en estudiantes migrantes, refugiados y neurodivergentes mediante juegos, retos visuales e IA pedagógica sin etiquetas.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

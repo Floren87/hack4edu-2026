@@ -1,16 +1,28 @@
 # Cómo contribuir
 
+## Ramas
+| Rama | Para qué | Quién escribe |
+|---|---|---|
+| `main` | Versión entregable y la que se publica en GitHub Pages | Solo recibe `develop` cuando todo está comprobado |
+| `develop` | Rama de trabajo del equipo | Solo por Pull Request |
+| `feat/…`, `fix/…`, `docs/…` | Una tarea cada una | Quien hace la tarea |
+
 ## Flujo de trabajo
 ```bash
-git checkout main && git pull            # 1. traer lo último
-git checkout -b feat/mi-tarea            # 2. rama para tu tarea
+git checkout develop && git pull            # 1. traer lo último
+git checkout -b feat/mi-tarea               # 2. rama para tu tarea
 # ...trabajar, commits pequeños...
 git add . && git commit -m "Añade X"
-git push -u origin feat/mi-tarea         # 3. subir la rama
-gh pr create --fill                      # 4. abrir el PR (o desde la web)
+git pull origin develop                     # 3. traer cambios de otros antes de subir
+cd app && npm run lint && npm test && npm run build && cd ..   # 4. comprobar
+git push -u origin feat/mi-tarea            # 5. subir la rama
+gh pr create --base develop --fill          # 6. abrir el PR contra develop (o desde la web)
 ```
-5. Otra persona del equipo revisa y pulsa **Approve**. Sin aprobación, GitHub no deja fusionar.
-6. Quien abrió el PR lo fusiona (**Squash and merge**) y borra la rama.
+7. Otra persona del equipo revisa y pulsa **Approve**. GitHub Actions comprueba tipos, tests y build en el PR.
+8. Quien abrió el PR lo fusiona (**Squash and merge**) y borra la rama.
+
+## Pasar de `develop` a `main`
+Cuando `develop` está lista (demo de punta a punta, `npm run test:e2e` en verde y probada en el móvil), se abre un PR `develop` → `main`. Al fusionarlo, la app se publica en GitHub Pages.
 
 ## Reglas de `main`
 - Prohibido el push directo y el force push.

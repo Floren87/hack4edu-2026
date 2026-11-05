@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@media print {
+  /* Clean high-contrast white paper print */
+  html, body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 11pt !important;
+  }
+
+  /* Hide navigation, toolbars, buttons, and decorative elements */
+  header,
+  footer,
+  nav,
+  button,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Force print containers to have clean white backgrounds and visible borders */
+  .rounded-3xl,
+  .rounded-2xl {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  /* Ensure text colors are dark and crisp on paper */
+  p, span, h1, h2, h3, h4, li, div {
+    color: #0f172a !important;
+    text-shadow: none !important;
+  }
+
+  .text-slate-400,
+  .text-slate-500 {
+    color: #475569 !important;
+  }
+
+  .text-indigo-200,
+  .text-purple-200,
+  .text-rose-200 {
+    color: #334155 !important;
+  }
+}
+
+.account-field {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin-top: .5rem;
+  border: 1px solid #334155;
+  border-radius: 1rem;
+  padding: .75rem 1rem;
+  color: #f8fafc;
+  background: #020617;
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.account-field::placeholder { color: #64748b; font-weight: 400; }
+.account-field:focus { border-color: #fbbf24; box-shadow: 0 0 0 2px #fbbf2420; }
+.account-button {
+  border-radius: .875rem;
+  background: linear-gradient(to right, #6366f1, #9333ea);
+  color: white;
+  padding: .75rem 1.25rem;
+  font-size: .75rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+  box-shadow: 0 4px 12px #4f46e51a;
+  transition: filter .15s, transform .15s;
+}
+.account-button:hover:not(:disabled) { filter: brightness(1.12); }
+.account-button:active:not(:disabled) { transform: scale(.98); }
+.account-button:focus-visible { outline: 2px solid #fbbf24; outline-offset: 2px; }
+button:disabled { cursor: not-allowed; opacity: .5; }

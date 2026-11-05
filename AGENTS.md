@@ -11,36 +11,66 @@ Este fichero lo leen las IAs de los 4 miembros del equipo (Claude Code, Copilot,
 - No copiar ítems de tests con derechos (TAMAI, BAS, WISC…). Sí se puede citar en qué competencias se inspiran.
 - Idea y decisiones vigentes: ver `docs/decisiones.md` (manda sobre cualquier otra cosa). Quién hace qué ahora: `docs/estado.md`.
 
-## Stack (provisional, ver decisiones)
-- Frontend: React + Vite, PWA con modo sin conexión (IndexedDB).
-- Backend: FastAPI (Python) + SQLite.
+## Stack
+- **App (`app/`):** React 19 + TypeScript + Vite + Tailwind, Online, sin service worker de caché. Datos de alumnos en el backend, informes con reglas locales (`src/utils/aiPedagogy.ts`). Necesita **Node 22.12+**. Instalación y comandos: `README.md`.
+- **Backend (`backend/`):** TypeScript + Fastify + SQLite/libSQL. API independiente con Bearer y sesiones de servidor. Frontend: `VITE_API_BASE_URL`; backend: `ALLOWED_ORIGINS` (incluye localhost si se prueba contra API pública). Sin proxy ni cookies de autenticación. Contrato en `backend/README.md`, integración en `docs/integracion-backend.md`, despliegue API/BBDD en `docs/despliegue-demo.md`. Sin sincronización offline ni historial de evaluaciones.
+- **Traspaso de `feat/backend`:** antes de integrar con el equipo, leer `docs/traspaso-floren.md` (cambios acumulados, pruebas y pendientes) y `docs/i18n.md` (catálogos completos ES/EN/FR/AR/UK). La integración y el merge quedan a Floren; los commits de esta rama no implican su aprobación.
+- **Demo publicada:** frontend apunta por defecto a `https://hack4edu-2026.onrender.com/api` (Render + Turso de Miguel). Override local: `VITE_API_BASE_URL=http://localhost:3001/api`. Pendiente tras integrar: autorizar el origen exacto de Netlify en `ALLOWED_ORIGINS` de Render. `npm run test:e2e` usa memoria; `npm run test:live` es opt-in y crea cuentas QA en la API pública, no ejecutarlo como comprobación rutinaria ni en CI.
 
-## 🔁 Protocolo al EMPEZAR cada sesión (obligatorio)
-Antes de escribir código o proponer nada, haz esto y enséñale el resultado a la persona:
+## 🌿 Ramas
+- `main`: versión entregable. **No se toca** hasta que `develop` esté comprobada; entonces se fusiona `develop` → `main` con un PR.
+- `develop`: rama de trabajo del equipo. Todas las ramas de tarea salen de `develop` y vuelven a ella con un PR.
 
-1. **Sincronizar:** `git status` → si hay cambios sin guardar, avisa y no sigas hasta resolverlo. Después `git checkout main && git pull`.
-2. **Ponerse al día:** lee `docs/estado.md` y `docs/decisiones.md`.
-3. **Ver qué hay pendiente** (si `gh` está instalado; si no, pide a la persona que mire la pestaña Issues y Pull requests):
-   - `gh pr list` → PR abiertos. **Si hay alguno de otra persona esperando revisión, propón revisarlo primero**: desbloquear a un compañero es la prioridad.
-   - `gh issue list --assignee @me` y `gh issue list --label tarea --search "no:assignee"` → tareas suyas y tareas libres.
-4. **Resumir y preguntar.** Responde con este formato y espera a que la persona elija:
-   > 📥 He hecho `git pull`. Novedades desde tu última sesión: …
-   > 👀 PR esperando tu revisión: …
-   > 📋 Tus tareas: … · Tareas libres: …
-   > **¿Con qué seguimos ahora?**
+## 👥 Equipo (para saber con quién hablas)
+| Persona | Usuario de GitHub | Zona | Fuerte en |
+|---|---|---|---|
+| Floren | `Floren87` | Madrid (UTC+1) | Programación, coordinación del repo |
+| Miguel | `XxMigue03xX` | Colombia (UTC−5) | Programación, backend (TypeScript/Fastify) |
+| Delia | `deliainclusiveapps` | Ecuador (UTC−5) | Diseño de pantallas, accesibilidad |
+| Cristina | _pendiente_ | Madrid (UTC+1) | Mercado, presentación, vídeo, investigación |
 
-No empieces una tarea sin que la persona la haya elegido.
+Para saber quién eres: `gh api user -q .login`. Si `gh` no está instalado, pregunta «¿Quién eres del equipo?».
+
+## 🧭 Cuando la persona pregunte «¿con qué sigo?» (o empiece la sesión)
+La persona pregunta y **tú recomiendas**. No le devuelvas la pregunta: haz lo siguiente y dale **una pista clara**.
+
+1. **Sincronizar:** `git status`. Si hay cambios sin guardar, avisa y resuélvelo primero. Después `git checkout develop && git pull`.
+2. **Ponerte al día:** lee `docs/estado.md`, `docs/decisiones.md` y `docs/propuesta.md`.
+3. **Ver qué hay pendiente** (con `gh`; si no está instalado, pide a la persona que te pegue las listas de Issues y Pull requests):
+   - `gh pr list` → PR abiertos y quién debe revisarlos
+   - `gh issue list --state open` → todas las tareas, con sus responsables
+4. **Elegir lo MÁS URGENTE para esta persona**, en este orden de prioridad:
+   1. 🔴 **Algo que bloquea la entrega** (5 nov, 23:59 hora local): vídeo, presentación, demo que no funciona, formulario.
+   2. 👀 **Un PR de otra persona esperando revisión** que esta persona pueda aprobar: desbloquea a un compañero en minutos.
+   3. ❓ **Una decisión pendiente asignada a esta persona** (por ejemplo, la issue #11): sin ella otros no pueden avanzar.
+   4. 📋 **Sus issues asignadas**, empezando por las del flujo principal de la demo.
+   5. 🆓 **Una issue libre que encaje con lo que se le da bien** (tabla de Equipo).
+   Ten en cuenta la hora de su zona y cuánto falta para la entrega.
+5. **Responder con este formato** (corto):
+   > 📥 He hecho `git pull`. Novedades: …
+   > 👉 **Te recomiendo seguir con:** [tarea + enlace] — **por qué es lo más urgente ahora:** …
+   > 🪜 **Primer paso concreto:** … (por ejemplo: «crea la rama `feat/estilo-visual` y empieza por `app/src/components/child/ChildHome.tsx`»)
+   > 🔀 Otras opciones si prefieres: 1) … 2) …
+
+Si la persona acepta, asígnale la issue (`gh issue edit N --add-assignee @me`), apunta en `docs/estado.md` que está con ella y empieza. Si elige otra, respeta su decisión.
+
+## ⬆️ Antes de SUBIR algo (`git push` o abrir un PR)
+Mientras trabajabas, otro compañero puede haber cambiado `develop`. Antes de subir:
+1. `git pull origin develop` **en tu rama**: trae lo último de `develop` a tu trabajo.
+2. Si hay **conflictos**, explícale a la persona qué choca y resuélvelo con ella; no borres el trabajo de otros.
+3. Comprueba que todo sigue funcionando (en `app/`: `npm run lint`, `npm test` y `npm run build`).
+4. Ahora sí: `git push` y, si no existe, abre el PR **contra `develop`** (`gh pr create --base develop`).
 
 ## 🔚 Protocolo al TERMINAR la sesión
-1. Commit y `git push` de la rama, aunque el trabajo esté a medias (si está a medias, abre el PR como borrador: `gh pr create --draft`).
+1. Sigue los pasos de «Antes de SUBIR algo» y haz `git push` de la rama, aunque el trabajo esté a medias (si está a medias, abre el PR como borrador: `gh pr create --draft`).
 2. Actualiza `docs/estado.md` con una línea: quién, qué hizo, qué queda pendiente.
 3. Recuerda a la persona pedir revisión a alguien de la otra zona horaria.
 
 ## Reglas para la IA
-1. **Nunca hagas commit ni push a `main`.** Trabaja en una rama `tipo/descripcion-corta` (`feat/`, `fix/`, `docs/`) y abre un Pull Request.
+1. **Nunca hagas commit ni push a `main` ni directamente a `develop`.** Trabaja en una rama `tipo/descripcion-corta` (`feat/`, `fix/`, `docs/`) creada desde `develop` y abre un Pull Request contra `develop`.
 2. Commits pequeños y frecuentes, con mensaje claro en español. El historial de commits es nuestra prueba de trabajo durante el hackathon.
 3. Antes de empezar, lee la Issue de la tarea y `docs/decisiones.md`. Si tomas una decisión de diseño, propón añadirla a `docs/decisiones.md` en el mismo PR.
 4. **No inventes datos** (cifras, currículos, estudios). Si algo no tiene fuente, márcalo como `TODO: verificar`.
-5. No subas secretos (claves de API, `.env`). Usa `.env.example`.
+5. No subas secretos (claves de API, `.env`). Si hace falta configuración, añade un `.env.example` sin valores.
 6. Todo el código debe poder publicarse con licencia MIT.
 7. Prioriza que la demo funcione de punta a punta antes que añadir funciones.
