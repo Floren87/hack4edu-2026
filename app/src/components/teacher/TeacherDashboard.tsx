@@ -5,6 +5,7 @@ import { translations } from '../../i18n/translations';
 import { generatePedagogicalAssessment } from '../../utils/aiPedagogy';
 import { soundManager } from '../../utils/soundEffects';
 import { AudioButton } from '../common/AudioButton';
+import { ChildCommentsCard } from '../common/ChildCommentsCard';
 import { executeBrowserPrint, downloadPrintableTeacherReport } from '../../utils/printReport';
 import {
   CheckCircle2,
@@ -695,6 +696,8 @@ export const TeacherDashboard: React.FC = () => {
           ))}
         </div>
       </div>
+
+      <ChildCommentsCard studentId={activeStudent.id} language={language} />
 
       {/* ======================================================== */}
       {/* SECTION 7: TEACHER'S NOTES & HUMAN VALIDATION (R15) */}

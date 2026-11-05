@@ -7,7 +7,9 @@ if (production && !url.startsWith('libsql://')) throw new Error('En producción 
 if (production && !process.env.DATABASE_AUTH_TOKEN) throw new Error('Falta DATABASE_AUTH_TOKEN');
 const origins = readOrigins(process.env);
 const db = await openDatabase(url, process.env.DATABASE_AUTH_TOKEN || undefined);
-const app = await buildApp({ db, production, origins, staticDir: process.env.STATIC_DIR || undefined });
+// Los e2e crean una cuenta por test y superan el límite de 10 registros/minuto; en producción nunca se desactiva.
+const rateLimits = production || process.env.E2E_DISABLE_RATE_LIMITS !== '1';
+const app = await buildApp({ db, production, origins, staticDir: process.env.STATIC_DIR || undefined, rateLimits });
 app.addHook('onClose', async () => { db.close(); });
 await app.listen({ port: Number(process.env.PORT ?? 3001), host: process.env.HOST ?? '127.0.0.1' });
 console.log(`Backend disponible en puerto ${process.env.PORT ?? 3001}`);

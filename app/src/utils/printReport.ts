@@ -1,5 +1,6 @@
 import type { ComprehensiveAssessmentReport, Language, StudentProfile } from '../types';
 import { localizeText, formatDate, direction } from '../i18n/localize';
+import { getChildComments, type ChildComment } from './childComments';
 
 // Escape all dynamic content, including aliases and the professional's notes.
 const escapeHtml = (value: unknown): string => String(value ?? '').replace(/[&<>"']/g,
@@ -20,6 +21,7 @@ export function printableReportHtml(
   report: ComprehensiveAssessmentReport,
   language: Language,
   audience: 'teacher' | 'family',
+  childComments: ChildComment[] = [],
 ): string {
   const label = (source: string) => localizeText(language, source);
   const text = escapeHtml; // Report fields are already localized; aliases and notes are opaque.
@@ -40,11 +42,17 @@ export function printableReportHtml(
     <p>${status[strength.levelDescription]}</p><p>${text(strength.description)}</p>
     ${list(strength.evidenceItems)}
     ${list(audience === 'teacher' ? strength.classroomSuggestions : strength.familyHomeTips)}</article>`).join('');
+  const commentsSection = childComments.length === 0 ? '' : section(label('En palabras del niño o la niña'),
+    childComments.map(comment => `<article><p>${escapeHtml(comment.pieces.join(' '))}${comment.purpose ? ` · ${escapeHtml(comment.purpose)}` : ''}</p>
+      ${comment.text ? `<p dir="auto"><em>«${escapeHtml(comment.text)}»</em></p>` : ''}
+      ${comment.emojis.length ? `<p>${escapeHtml(comment.emojis.join(' '))}</p>` : ''}</article>`).join('')
+    + `<p>${escapeHtml(label('Tal como lo escribió, sin traducir ni puntuar.'))}</p>`);
   let body: string;
   if (audience === 'teacher') {
     const analysis = report.pedagogicalAnalysis;
     const breakdown = report.strengthsBreakdown;
     body = section(label("Actividades y evidencias"), activityList)
+      + commentsSection
       + section(label("Habilidades e intereses"),
         list(report.skillsPercentages.map(skill => `${skill.name}: ${skill.status === 'evaluada' ? skill.percentage + '%' : label("Pendiente")}`))
         + list(report.interestsPercentages.map(interest => `${interest.name}: ${interest.visits} ${label("visitas")} (${interest.percentage}%)`)))
@@ -67,6 +75,7 @@ export function printableReportHtml(
           `${report.strengths.find(strength => strength.id === id)?.title ?? id}: ${agrees ? label("Coincide") : label("En observación")}`))}`);
   } else {
     body = `<p>${text(report.familyLetter.greeting)}</p><p>${text(report.familyLetter.positiveSummary)}</p>`
+      + commentsSection
       + section(label("Fortalezas observadas"), strengths)
       + section(label("Intereses"), list(report.primaryInterests.map(interest => interest.name)))
       + section(label("Ideas para casa"), list(report.familyLetter.homeActivities))
@@ -87,7 +96,7 @@ export function printableReportHtml(
 }
 
 function downloadReport(student: StudentProfile, report: ComprehensiveAssessmentReport, language: Language, audience: 'teacher' | 'family') {
-  const url = URL.createObjectURL(new Blob([printableReportHtml(student, report, language, audience)], { type: 'text/html;charset=utf-8' }));
+  const url = URL.createObjectURL(new Blob([printableReportHtml(student, report, language, audience, getChildComments(student.id))], { type: 'text/html;charset=utf-8' }));
   const link = document.createElement('a');
   link.href = url;
   const title = localizeText(language, audience === 'teacher' ? 'Informe profesional' : 'Resumen para la familia');

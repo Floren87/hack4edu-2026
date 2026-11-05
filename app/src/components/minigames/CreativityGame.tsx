@@ -5,8 +5,9 @@ import { useApp } from '../../context/AppContext';
 import { translations } from '../../i18n/translations';
 import { soundManager } from '../../utils/soundEffects';
 import { AudioButton } from '../common/AudioButton';
-import { ArrowLeft, Check, Palette, RefreshCw, Star } from 'lucide-react';
+import { ArrowLeft, Check, Palette, RefreshCw, Star, Trash2, Undo2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { addChildComment, CHILD_COMMENT_MAX_LENGTH, COMMENT_EMOJIS } from '../../utils/childComments';
 
 interface WorkshopItem {
   id: string;
@@ -29,6 +30,14 @@ const getAVAILABLE_PARTS = (language: Language) => ([
   { id: 'part_wheel', name: text(language, "Rueda Flotante"), icon: '🛞', label: text(language, "Rueda") },
   { id: 'part_bell', name: text(language, "Campana Sonora"), icon: '🔔', label: text(language, "Campana") },
   { id: 'part_leaf', name: text(language, "Hoja Viva"), icon: '🌿', label: text(language, "Hoja") },
+  { id: 'part_rain', name: text(language, "Nube de Lluvia"), icon: '🌧️', label: text(language, "Nube") },
+  { id: 'part_sun', name: text(language, "Sol Brillante"), icon: '☀️', label: text(language, "Sol") },
+  { id: 'part_wave', name: text(language, "Ola de Agua"), icon: '🌊', label: text(language, "Agua") },
+  { id: 'part_stone', name: text(language, "Piedra Fuerte"), icon: '🪨', label: text(language, "Piedra") },
+  { id: 'part_fish', name: text(language, "Pez Nadador"), icon: '🐟', label: text(language, "Pez") },
+  { id: 'part_bee', name: text(language, "Abeja Trabajadora"), icon: '🐝', label: text(language, "Abeja") },
+  { id: 'part_bucket', name: text(language, "Cubo Grande"), icon: '🪣', label: text(language, "Cubo") },
+  { id: 'part_rope', name: text(language, "Cuerda Larga"), icon: '🪢', label: text(language, "Cuerda") },
 ]);
 
 const getINVENTION_PURPOSES = (language: Language) => ([
@@ -53,10 +62,16 @@ export const CreativityGame: React.FC = () => {
   const [startTime] = useState(Date.now());
   const [originalMovesCount, setOriginalMovesCount] = useState(0);
   const [repositionCount, setRepositionCount] = useState(0);
+  // Historial para «Deshacer»: cómo estaba la mesa antes de cada acción (máximo 30 pasos).
+  const [history, setHistory] = useState<WorkshopItem[][]>([]);
+  const [undoCount, setUndoCount] = useState(0);
+  // Comentario opcional del niño: solo va al informe, nunca al perfil ni a la telemetría.
+  const [childComment, setChildComment] = useState('');
+  const [commentEmojis, setCommentEmojis] = useState<string[]>([]);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const workshopRef = useRef<HTMLDivElement>(null);
   // Arrastre en curso: dónde empezó el puntero y la pieza, y si ya se ha movido.
-  const dragRef = useRef<{ index: number; pointerId: number; startX: number; startY: number; itemX: number; itemY: number; size: number; moved: boolean } | null>(null);
+  const dragRef = useRef<{ index: number; pointerId: number; startX: number; startY: number; itemX: number; itemY: number; size: number; moved: boolean; before: WorkshopItem[] } | null>(null);
   const lastKeyboardMoveRef = useRef(0);
 
   // Add initial item
@@ -77,6 +92,20 @@ export const CreativityGame: React.FC = () => {
     const maxX = Math.max(0, (area?.clientWidth ?? 400) - size);
     const maxY = Math.max(0, (area?.clientHeight ?? 300) - size);
     return { x: Math.min(Math.max(0, x), maxX), y: Math.min(Math.max(0, y), maxY) };
+  };
+
+  const MAX_HISTORY = 30;
+  const saveHistory = (snapshot: WorkshopItem[] = placedItems) => {
+    setHistory(prev => [...prev, snapshot].slice(-MAX_HISTORY));
+  };
+
+  const handleUndo = () => {
+    if (history.length === 0) return;
+    soundManager.playClick();
+    setPlacedItems(history[history.length - 1]);
+    setHistory(prev => prev.slice(0, -1));
+    setSelectedItemIndex(null);
+    setUndoCount(prev => prev + 1);
   };
 
   const countReposition = () => {
@@ -107,6 +136,7 @@ export const CreativityGame: React.FC = () => {
       itemY: item.y,
       size: Math.max(event.currentTarget.offsetWidth, event.currentTarget.offsetHeight),
       moved: false,
+      before: placedItems,
     };
     if (selectedItemIndex !== index) soundManager.playPop();
     setSelectedItemIndex(index);
@@ -130,6 +160,7 @@ export const CreativityGame: React.FC = () => {
     if (!drag || drag.pointerId !== event.pointerId) return;
     if (drag.moved) {
       soundManager.playClick();
+      saveHistory(drag.before);
       countReposition();
     }
     dragRef.current = null;
@@ -145,15 +176,19 @@ export const CreativityGame: React.FC = () => {
     event.preventDefault();
     const step = event.shiftKey ? KEYBOARD_STEP * 3 : KEYBOARD_STEP;
     const size = Math.max(event.currentTarget.offsetWidth, event.currentTarget.offsetHeight);
+    const now = Date.now();
+    const startsNewSeries = now - lastKeyboardMoveRef.current > 800;
+    lastKeyboardMoveRef.current = now;
+    // Una serie seguida de pulsaciones cuenta como una sola recolocación y un solo paso de «Deshacer».
+    if (startsNewSeries) {
+      saveHistory();
+      countReposition();
+    }
     setSelectedItemIndex(index);
     // Se parte de la posición más reciente para que varias pulsaciones rápidas se sumen.
     setPlacedItems(prev => prev.map((item, idx) => (
       idx === index ? { ...item, ...clampToWorkshop(item.x + delta[0] * step, item.y + delta[1] * step, size) } : item
     )));
-    // Una serie seguida de pulsaciones cuenta como una sola recolocación.
-    const now = Date.now();
-    if (now - lastKeyboardMoveRef.current > 800) countReposition();
-    lastKeyboardMoveRef.current = now;
   };
 
   // Mantiene todas las piezas dentro de la mesa al abrir el juego y al cambiar el tamaño de la ventana.
@@ -180,6 +215,7 @@ export const CreativityGame: React.FC = () => {
         Math.floor(Math.random() * (height - PIECE_SIZE)),
       ),
     };
+    saveHistory();
     setPlacedItems(prev => [...prev, newItem]);
     setSelectedItemIndex(placedItems.length);
     setOriginalMovesCount(prev => prev + 1);
@@ -188,6 +224,7 @@ export const CreativityGame: React.FC = () => {
   const handleRotateSelected = () => {
     if (selectedItemIndex === null || !placedItems[selectedItemIndex]) return;
     soundManager.playClick();
+    saveHistory();
     setPlacedItems(prev => prev.map((item, idx) => {
       if (idx !== selectedItemIndex) return item;
       return { ...item, rotation: (item.rotation + 45) % 360 };
@@ -195,17 +232,51 @@ export const CreativityGame: React.FC = () => {
     setOriginalMovesCount(prev => prev + 1);
   };
 
-  const handleRemoveSelected = () => {
-    if (selectedItemIndex === null) return;
+  // Quita la pieza seleccionada. Si no hay ninguna, quita la última que se puso;
+  // al volver a pulsar, la anterior, y así sucesivamente.
+  const hasSelection = selectedItemIndex !== null && !!placedItems[selectedItemIndex];
+  const handleRemovePiece = () => {
+    if (placedItems.length === 0) return;
+    const indexToRemove = hasSelection ? selectedItemIndex! : placedItems.length - 1;
     soundManager.playPop();
-    setPlacedItems(prev => prev.filter((_, idx) => idx !== selectedItemIndex));
+    saveHistory();
+    setPlacedItems(prev => prev.filter((_, idx) => idx !== indexToRemove));
     setSelectedItemIndex(null);
+  };
+
+  // Ctrl+Z (o Cmd+Z) también deshace, salvo cuando se escribe en un campo de texto.
+  const undoRef = useRef(handleUndo);
+  undoRef.current = handleUndo;
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+      if ((event.ctrlKey || event.metaKey) && !event.shiftKey && event.key.toLowerCase() === 'z') {
+        event.preventDefault();
+        undoRef.current();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  const toggleCommentEmoji = (emoji: string) => {
+    soundManager.playClick();
+    setCommentEmojis(prev => (prev.includes(emoji) ? prev.filter(e => e !== emoji) : [...prev, emoji]));
   };
 
   const handleSaveInvention = () => {
     soundManager.playSparkle();
     const duration = Math.round((Date.now() - startTime) / 1000);
     const purposeObj = INVENTION_PURPOSES.find(p => p.id === selectedPurpose);
+
+    addChildComment(activeStudent.id, {
+      createdAt: Date.now(),
+      pieces: placedItems.map(item => item.icon),
+      purpose: purposeObj ? purposeObj.label : null,
+      emojis: commentEmojis,
+      text: childComment,
+    });
 
     try {
       confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
@@ -226,11 +297,13 @@ export const CreativityGame: React.FC = () => {
         text(language, "Ensambló un artefacto con {0} piezas no convencionales.", [placedItems.length]),
         purposeObj ? text(language, "Asignó propósito creativo: \"{0}\"", [purposeObj.label]) : text(language, "Exploró combinación libre de piezas."),
         text(language, "Tiempo dedicado a la experimentación visual: {0}s.", [duration]),
-        ...(repositionCount > 0 ? [text(language, "Recolocó piezas {0} veces para probar combinaciones.", [repositionCount])] : [])
+        ...(repositionCount > 0 ? [text(language, "Recolocó piezas {0} veces para probar combinaciones.", [repositionCount])] : []),
+        ...(undoCount > 0 ? [text(language, "Revisó y corrigió su invento {0} veces con «Deshacer».", [undoCount])] : [])
       ],
       metrics: {
         partsCount: placedItems.length,
         repositionsCount: repositionCount,
+        undoCount,
         purposeSelected: selectedPurpose || 'libre',
         durationSec: duration,
       }
@@ -277,15 +350,16 @@ export const CreativityGame: React.FC = () => {
       {/* Main Game Stage */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        {/* Left: Workbench Canvas */}
-        <div className="md:col-span-2 rounded-3xl bg-slate-900/90 border-2 border-dashed border-indigo-700/50 p-4 relative min-h-[380px] flex flex-col justify-between overflow-hidden shadow-inner">
+        {/* Left: Workbench Canvas + child comment underneath */}
+        <div className="md:col-span-2 space-y-4">
+        <div className="rounded-3xl bg-slate-900/90 border-2 border-dashed border-indigo-700/50 p-4 relative min-h-[380px] flex flex-col justify-between overflow-hidden shadow-inner">
           <div className="text-xs font-bold text-slate-400 uppercase tracking-wider flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
             <span>{' '}{text(language, "🛠️ Mesa de Inventos")}{' '}</span>
             <span className="text-[11px] font-normal text-slate-500">{' '}{text(language, "(Arrastra las piezas para moverlas; tócalas para girarlas o quitarlas)")}{' '}</span>
           </div>
 
           {/* Interactive Workshop Area */}
-          <div ref={workshopRef} className="relative w-full h-[300px] mt-3 bg-slate-950/60 rounded-2xl border border-slate-800/60 overflow-hidden">
+          <div ref={workshopRef} onPointerDown={(event) => { if (event.target === event.currentTarget) setSelectedItemIndex(null); }} className="relative w-full h-[300px] mt-3 bg-slate-950/60 rounded-2xl border border-slate-800/60 overflow-hidden">
             {placedItems.map((item, idx) => {
               const isSelected = selectedItemIndex === idx;
               const isDragging = draggingIndex === idx;
@@ -330,8 +404,17 @@ export const CreativityGame: React.FC = () => {
           </div>
 
           {/* Controls for Selected Item */}
-          <div className="flex items-center justify-between pt-3 border-t border-slate-800">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-800">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={handleUndo}
+                disabled={history.length === 0}
+                title={text(language, "Deshacer la última acción")}
+                className="px-3 py-1.5 rounded-xl bg-sky-950/60 border border-sky-800/60 text-xs font-semibold text-sky-200 hover:bg-sky-900/60 disabled:opacity-40 transition flex items-center gap-1.5"
+              >
+                <Undo2 size={13} />
+                <span>{' '}{text(language, "Deshacer")}{' '}</span>
+              </button>
               <button
                 onClick={handleRotateSelected}
                 disabled={selectedItemIndex === null}
@@ -341,15 +424,63 @@ export const CreativityGame: React.FC = () => {
                 <span>{' '}{text(language, "Girar 45°")}{' '}</span>
               </button>
               <button
-                onClick={handleRemoveSelected}
-                disabled={selectedItemIndex === null}
-                className="px-3 py-1.5 rounded-xl bg-rose-950/50 border border-rose-800/50 text-xs font-semibold text-rose-300 hover:bg-rose-900/50 disabled:opacity-40 transition"
-              >{' '}{text(language, "Quitar pieza")}{' '}</button>
+                onClick={handleRemovePiece}
+                disabled={placedItems.length === 0}
+                title={hasSelection ? text(language, "Quitar la pieza seleccionada") : text(language, "Quitar la última pieza que pusiste")}
+                className="px-3 py-1.5 rounded-xl bg-rose-950/50 border border-rose-800/50 text-xs font-semibold text-rose-300 hover:bg-rose-900/50 disabled:opacity-40 transition flex items-center gap-1.5"
+              >
+                <Trash2 size={13} />
+                <span>{' '}{hasSelection ? text(language, "Quitar pieza") : text(language, "Quitar la última")}{' '}</span>
+              </button>
             </div>
 
             <span className="text-xs font-medium text-slate-400">{' '}{text(language, "Piezas en tu invento:")}{' '}<strong className="text-amber-400">{placedItems.length}</strong>
             </span>
           </div>
+        </div>
+
+          {/* Optional child comment (only for the report, not stored in the profile) */}
+          {!completed && (
+            <div className="rounded-3xl bg-slate-900 border border-slate-800 p-4 space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <label htmlFor="child-comment" className="text-xs font-bold text-amber-300 uppercase tracking-wider">
+                  {text(language, "✏️ Cuéntanos tu invento (si quieres)")}
+                </label>
+                <AudioButton textToSpeak={text(language, "Cuéntanos tu invento, si quieres. Puedes escribir o elegir una carita.")} />
+              </div>
+              <div className="flex flex-wrap gap-1.5" role="group" aria-label={text(language, "¿Cómo te sientes con tu invento?")}>
+                {COMMENT_EMOJIS.map(({ emoji, label }) => (
+                  <button
+                    key={emoji}
+                    type="button"
+                    onClick={() => toggleCommentEmoji(emoji)}
+                    aria-pressed={commentEmojis.includes(emoji)}
+                    title={text(language, label)}
+                    aria-label={text(language, label)}
+                    className={`w-10 h-10 rounded-xl text-xl transition ${
+                      commentEmojis.includes(emoji)
+                        ? 'bg-amber-500/25 border-2 border-amber-400 scale-110'
+                        : 'bg-slate-800/70 border border-slate-700/50 hover:bg-slate-800'
+                    }`}
+                  >{emoji}</button>
+                ))}
+              </div>
+              <textarea
+                id="child-comment"
+                dir="auto"
+                value={childComment}
+                onChange={(event) => setChildComment(event.target.value.slice(0, CHILD_COMMENT_MAX_LENGTH))}
+                maxLength={CHILD_COMMENT_MAX_LENGTH}
+                rows={3}
+                placeholder={text(language, "Mi invento sirve para…")}
+                className="w-full rounded-xl bg-slate-950/70 border border-slate-700/60 p-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400 resize-none"
+              />
+              <div className="flex items-center justify-between text-[10px] text-slate-500">
+                <span>{text(language, "No escribas tu nombre ni dónde vives.")}</span>
+                <span>{childComment.length}/{CHILD_COMMENT_MAX_LENGTH}</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right: Available Parts Picker & Purpose */}
