@@ -4,7 +4,7 @@ import { useApp, type ActiveView } from '../../context/AppContext';
 import { ui } from '../../i18n/account';
 import { translations } from '../../i18n/translations';
 import { LanguagePicker } from './LanguagePicker';
-import { WorldLogo } from './WorldLogo';
+import { AppLogo } from './AppLogo';
 import { TeacherIdentity } from './TeacherIdentity';
 
 export function Navbar() {
@@ -25,7 +25,7 @@ export function Navbar() {
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <button disabled={busy} aria-label={translations[language].appName} onClick={() => setView(child ? 'child_hub' : 'profile_manager')} className="group flex shrink-0 items-center gap-2.5 rounded-2xl text-start focus-visible:outline-2 focus-visible:outline-amber-400">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-sky-400/30 bg-gradient-to-tr from-sky-500/20 via-indigo-600/30 to-emerald-500/20 shadow-md shadow-sky-500/10 transition-transform group-hover:scale-105">
-              <WorldLogo size={34} />
+              <AppLogo size={34} />
             </span>
             <span className="hidden max-w-44 bg-gradient-to-r from-white via-white to-indigo-300 bg-clip-text text-sm font-black tracking-tight text-transparent md:block">{translations[language].appName}</span>
           </button>

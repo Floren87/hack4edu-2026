@@ -1,6 +1,7 @@
 import type { ComprehensiveAssessmentReport, Language, StudentProfile } from '../types';
 import { localizeText, formatDate, direction } from '../i18n/localize';
 import { getChildComments, type ChildComment } from './childComments';
+import { loadReportLogo } from './brand';
 
 // Escape all dynamic content, including aliases and the professional's notes.
 const escapeHtml = (value: unknown): string => String(value ?? '').replace(/[&<>"']/g,
@@ -23,6 +24,7 @@ export function printableReportHtml(
   audience: 'teacher' | 'family',
   childComments: ChildComment[] = [],
   pdf?: { library: string; fileName: string },
+  logoDataUrl?: string,
 ): string {
   const label = (source: string) => localizeText(language, source);
   const text = escapeHtml; // Report fields are already localized; aliases and notes are opaque.
@@ -86,7 +88,7 @@ export function printableReportHtml(
   const printIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg>';
   const saveIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>';
   const toolbar = `<nav class="actions" data-html2canvas-ignore="true" aria-label="${escapeHtml(title)}">
-    <span class="brand"><span class="dot"></span>KoraMAP</span>
+    <span class="brand">KoraMAP</span>
     <span class="buttons">
       <button type="button" class="btn ghost" onclick="window.print()">${printIcon}<span>${escapeHtml(label("Imprimir"))}</span></button>
       <button type="button" class="btn primary" id="save-pdf" onclick="savePdf(this)">${saveIcon}<span>${escapeHtml(label("Guardar PDF"))}</span></button>
@@ -116,7 +118,6 @@ export function printableReportHtml(
       border-bottom:1px solid rgba(99,102,241,.35);box-shadow:0 8px 24px -12px rgba(2,6,23,.6)}
     .brand{display:inline-flex;align-items:center;gap:10px;font-weight:900;letter-spacing:-.01em;font-size:15px;
       background:linear-gradient(90deg,#fff,#c7d2fe);-webkit-background-clip:text;background-clip:text;color:transparent}
-    .dot{width:22px;height:22px;border-radius:8px;background:conic-gradient(from 200deg,#38bdf8,#6366f1,#10b981,#38bdf8);box-shadow:0 0 0 1px rgba(56,189,248,.4),0 4px 14px rgba(99,102,241,.45)}
     .buttons{display:inline-flex;gap:10px;flex-wrap:wrap}
     .btn{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 18px;border-radius:14px;font:inherit;font-size:14px;font-weight:800;
       cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,background .15s ease,border-color .15s ease}
@@ -131,7 +132,7 @@ export function printableReportHtml(
     @media (max-width:560px){main{margin:12px;padding:22px 18px;border-radius:16px}.btn{flex:1;justify-content:center}.buttons{width:100%}}
     @media print{.actions{display:none}body{background:#fff}main{margin:0;padding:0;box-shadow:none;border-radius:0;max-width:none}}</style>
     </head><body>${toolbar}<main id="report">
-    <header><h1>${label("KoraMAP")} · ${title}</h1>
+    <header>${logoDataUrl?.match(/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/) ? `<img src="${logoDataUrl}" alt="KoraMAP" width="96" height="105" style="object-fit:contain;border-radius:12px">` : ''}<h1>${label("KoraMAP")} · ${title}</h1>
     <p>${escapeHtml(student.avatar)} <bdi>${escapeHtml(student.nameOrAlias)}</bdi> · <bdi>${formatDate(language, report.generatedAt)}</bdi></p>
     <p>${label("Edad")}: ${escapeHtml(student.age ?? '—')} · ${label("Estrellas")}: ${escapeHtml(student.starsCount)} ⭐ · ${label("Insignias")}: ${escapeHtml(student.unlockedBadges.length)}</p>
     <p>${report.completedActivities.length} / ${report.allActivities.length} ${label("actividades completadas")} · ${report.totalSessionsAnalyzed} ${label("sesiones")}</p></header>
@@ -145,11 +146,11 @@ function reportFileName(student: StudentProfile, language: Language, audience: '
 
 async function downloadReport(student: StudentProfile, report: ComprehensiveAssessmentReport, language: Language, audience: 'teacher' | 'family') {
   const name = reportFileName(student, language, audience);
-  // La librería de PDF (~950 KB) solo se descarga al pedir un informe y viaja dentro del archivo: funciona sin conexión.
+  // El HTML exportado incluye su motor PDF y el logo. Esto no habilita modo offline en la app.
   let library: string | undefined;
   try { library = (await import('html2pdf.js/dist/html2pdf.bundle.min.js?raw')).default; } catch { library = undefined; }
   const html = printableReportHtml(student, report, language, audience, getChildComments(student.id),
-    library ? { library, fileName: `${name}.pdf` } : undefined);
+    library ? { library, fileName: `${name}.pdf` } : undefined, await loadReportLogo());
   const url = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
   const link = document.createElement('a');
   link.href = url;
