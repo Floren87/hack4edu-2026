@@ -5,6 +5,7 @@ import { ui } from '../../i18n/account';
 import { translations } from '../../i18n/translations';
 import { LanguagePicker } from './LanguagePicker';
 import { WorldLogo } from './WorldLogo';
+import { TeacherIdentity } from './TeacherIdentity';
 
 export function Navbar() {
   const { session, activeStudent, language, view, setView, logout, unlock, busy, soundMuted, toggleSound } = useApp();
@@ -28,6 +29,7 @@ export function Navbar() {
             </span>
             <span className="hidden max-w-44 bg-gradient-to-r from-white via-white to-indigo-300 bg-clip-text text-sm font-black tracking-tight text-transparent md:block">{translations[language].appName}</span>
           </button>
+          {session?.mode === 'professional' && <TeacherIdentity username={session.account.username} label={t.teacherProfile} />}
           {activeStudent && (child ? (
             <div className="flex min-w-0 items-center gap-1.5 rounded-full border border-slate-700/70 bg-slate-900 px-2.5 py-1.5">
               <span className="text-lg">{activeStudent.avatar}</span>
@@ -35,7 +37,7 @@ export function Navbar() {
               <span className="hidden rounded-full bg-amber-400/10 px-1.5 py-0.5 text-[11px] font-bold text-amber-400 sm:inline">⭐ {activeStudent.starsCount}</span>
             </div>
           ) : (
-            <button disabled={busy} onClick={() => setView('profile_manager')} title={t.students} className="flex min-w-0 items-center gap-1.5 rounded-full border border-slate-700/70 bg-slate-900 px-2.5 py-1.5 transition hover:border-indigo-500/60 focus-visible:outline-2 focus-visible:outline-amber-400">
+            <button disabled={busy} onClick={() => setView('profile_manager')} title={t.students} className="hidden min-w-0 items-center gap-1.5 rounded-full border border-slate-700/70 bg-slate-900 px-2.5 py-1.5 transition hover:border-indigo-500/60 focus-visible:outline-2 focus-visible:outline-amber-400 lg:flex">
               <span className="text-lg">{activeStudent.avatar}</span><span className="max-w-24 truncate text-xs font-semibold text-slate-200">{activeStudent.nameOrAlias}</span>
             </button>
           ))}

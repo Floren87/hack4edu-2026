@@ -1,4 +1,4 @@
-# Comprueba la app en cada PR a develop o main: tipos, tests y build
+# Comprueba tipos, tests, build y navegador en ramas de trabajo y PR de integración.
 name: Comprobar app
 
 on:
@@ -6,12 +6,13 @@ on:
     branches: [develop, main]
     paths: ['app/**', '.github/workflows/ci.yml']
   push:
-    branches: [develop]
+    branches: [develop, 'feat/**', 'fix/**']
     paths: ['app/**', '.github/workflows/ci.yml']
 
 jobs:
   comprobar:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: app
@@ -26,3 +27,16 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+      - name: Instalar API de pruebas
+        run: npm ci --prefix ../backend
+      - name: Instalar Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Probar interfaz y permisos con API en memoria
+        run: npm run test:e2e
+      - name: Guardar capturas si falla el navegador
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultados-navegador
+          path: app/test-results/
+          retention-days: 3

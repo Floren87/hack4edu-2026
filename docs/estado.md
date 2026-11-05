@@ -8,6 +8,7 @@ Qué está pasando ahora mismo. Cada persona (o su IA) añade una línea al term
 | Cristina | Cómo vender a gobiernos y ONG; estructura de la presentación; TAM/SAM/SOM | En curso |
 | Cristina y Delia | Habilidades y fortalezas que se usan a nivel mundial para evaluar a niños | En curso |
 | Delia | Propuesta de pantallas del juego | En curso |
+| Miguel | Perfil docente / `feat/perfil-docente` desde `develop` | Cambia etiqueta de retorno en 5 idiomas y muestra el usuario actual solo en cabecera profesional y «Mis alumnos». Tipos y 18 tests frontend correctos; build/E2E en CI Linux pendientes antes del PR. |
 | Miguel | API Render + libSQL/Turso / `feat/backend` | Publicada y validada desde localhost; frontend apunta a Render por defecto. Entrega validada para PR contra `develop`. Tras integrar: autorizar origen exacto de Netlify y redesplegar API. |
 | Floren | Repo, reglas y coordinación de las IAs | En curso |
 

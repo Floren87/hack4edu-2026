@@ -46,7 +46,7 @@ VITE_API_BASE_URL=http://localhost:3001/api
 
 La API debe autorizar `http://localhost:3000` y, cuando se publique la interfaz, el origen HTTPS exacto de esa interfaz. No se comparte el token de BBDD con el frontend. En un despliegue estático, definir la variable antes del build y reconstruir al cambiarla.
 
-Crear una cuenta y un alumno con pseudónimos. Pulsar «Comenzar juego» para entregar el dispositivo al niño y «Volver al adulto» para introducir la contraseña. Las sesiones vigentes recuperan su modo al recargar. Una pestaña nueva independiente requiere login; una pestaña duplicada puede compartir la sesión y el bloqueo. Se necesita conexión; una partida sin confirmar muestra «Cambios sin guardar» y permite reintentar o descartar/cargar el estado del servidor.
+Crear una cuenta y un alumno con pseudónimos. El usuario de la cuenta aparece en «Mis alumnos» y en la cabecera profesional, bajo «Perfil Docente». Pulsar «Comenzar juego» para entregar el dispositivo al niño y «Volver al Perfil Docente» para introducir la contraseña. La identidad docente se oculta en modo niño. Las sesiones vigentes recuperan su modo al recargar. Una pestaña nueva independiente requiere login; una pestaña duplicada puede compartir la sesión y el bloqueo. Se necesita conexión; una partida sin confirmar muestra «Cambios sin guardar» y permite reintentar o descartar/cargar el estado del servidor.
 
 No hay recuperación de contraseña en esta demo. Las descargas son HTML imprimible; para obtener PDF usar «Imprimir / Guardar PDF» del navegador.
 
