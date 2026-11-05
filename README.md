@@ -78,7 +78,7 @@ Todos se ejecutan dentro de `app/`:
 - **La app no se actualiza después de instalarla como PWA:** borra la caché del sitio en el navegador.
 
 ## Despliegue
-La **API Render y BBDD Turso ya están publicadas** por Miguel. Seguir [despliegue de API y BBDD](docs/despliegue-demo.md) para configuración y operación. Floren/Delia publican el frontend estático; el build usa Render por defecto y admite `VITE_API_BASE_URL` como override público. **Tras integrar, Miguel debe añadir el origen HTTPS exacto de Netlify a `ALLOWED_ORIGINS` en Render y redesplegar la API.** No se necesita proxy ni secretos en el frontend. El workflow existente de **GitHub Pages** ([`pages.yml`](.github/workflows/pages.yml)) no ejecuta el backend; queda pendiente reconciliar el hosting al integrar. La CI actual comprueba tipos, tests unitarios y build de `app/` ([`ci.yml`](.github/workflows/ci.yml)); no ejecuta aún las pruebas del backend ni las E2E.
+La **API Render y BBDD Turso ya están publicadas** por Miguel. El frontend final se publica en **[GitHub Pages](https://floren87.github.io/hack4edu-2026/)** al integrar el PR #24 hacia `main`; el build usa Render por defecto y admite `VITE_API_BASE_URL` como override público. Render despliega la rama estable `develop` y permite `ALLOWED_ORIGINS=http://localhost:3000,https://floren87.github.io` (preflight 204 verificado). No usar la rama eliminada `feat/backend`, ni incluir `/hack4edu-2026/` en el origen. No se necesita proxy ni secretos en el frontend. La CI comprueba tipos, tests y build de [app](.github/workflows/ci.yml) y [backend](.github/workflows/backend.yml); las E2E se ejecutan aparte. Seguir [operación y despliegue](docs/despliegue-demo.md) para comprobar el commit y el límite de autenticación publicados.
 
 ## Estructura
 ```
