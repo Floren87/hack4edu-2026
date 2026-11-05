@@ -4,7 +4,7 @@ import { soundManager } from '../utils/soundEffects';
 import { speechManager } from '../utils/speech';
 import { translations } from '../i18n/translations';
 import { localizeEvidence, languages, direction } from '../i18n/localize';
-import { api, ApiError, setCsrfToken } from '../utils/api';
+import { api, ApiError, apiBaseUrl, setSessionCredential } from '../utils/api';
 export type ActiveView = 'child_hub' | 'worlds_map' | 'minigame' | 'world_activity' | 'teacher_dashboard' | 'family_portal' | 'passport' | 'profile_manager';
 export const EFFORT_BADGES: Record<string, Badge> = {
  perseverance: { id: 'perseverance', name: '💪 Gran Perseverancia', description: 'No te rendiste y probaste varias alternativas ante el reto.', icon: '💪', category: 'effort' },
@@ -13,7 +13,7 @@ export const EFFORT_BADGES: Record<string, Badge> = {
  creative: { id: 'creative', name: '🎨 Mente Original', description: 'Creaste combinaciones ingeniosas e inventos únicos.', icon: '🎨', category: 'creativity' },
  empathy: { id: 'empathy', name: '🤝 Compañero Solidario', description: 'Mostraste atención y cuidado hacia los demás.', icon: '🤝', category: 'empathy' },
 };
-interface Session { account: { id: string; username: string }; mode: 'professional' | 'child'; studentId: string | null; csrfToken: string }
+interface Session { account: { id: string; username: string }; mode: 'professional' | 'child'; studentId: string | null; expiresAt: number }
 interface Envelope { student: StudentProfile; version: number }
 function gameState(s: StudentProfile) {
  return { starsCount: s.starsCount, unlockedLevels: s.unlockedLevels, unlockedBadges: s.unlockedBadges, worldVisits: s.worldVisits, telemetryLog: s.telemetryLog };
@@ -57,7 +57,6 @@ function useModel() {
   try {
    const next = await api<Session>('/auth/me');
    if (gen !== generation.current) return;
-   setCsrfToken(next.csrfToken);
    const rows = next.mode === 'professional'
     ? (await api<{ students: Envelope[] }>('/students')).students
     : [await api<Envelope>(`/students/${next.studentId}`)];
@@ -69,7 +68,7 @@ function useModel() {
    setViewState(next.mode === 'child' ? 'child_hub' : 'profile_manager');
   } catch (e) {
    if (gen !== generation.current) return;
-   sessionRef.current = null; setSession(null); setCsrfToken('');
+   sessionRef.current = null; setSession(null);
    if (!(e instanceof ApiError && e.status === 401)) setConnectionError(true);
   } finally { if (gen === generation.current) setLoading(false); }
  }
@@ -77,10 +76,12 @@ function useModel() {
   // Discard only the legacy local demo's profile copies, never import them into an account.
   localStorage.removeItem('talento_sf_profiles_v1'); localStorage.removeItem('talento_sf_active_id_v1');
   void refresh();
-  channel.current = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('talento-session') : null;
+  channel.current = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(`talento-session:${apiBaseUrl}`) : null;
   const sync = () => { void refresh(); };
-  if (channel.current) channel.current.onmessage = sync;
   const focus = async () => { if(!sessionRef.current || pending.current.size || running.current) return; try { const current=await api<Session>('/auth/me'); if(current.mode!==sessionRef.current?.mode || current.account.id!==sessionRef.current?.account.id || current.studentId!==sessionRef.current?.studentId) await refresh(); } catch(e) { if(e instanceof ApiError && e.status===401) await refresh(); } };
+  // Notifications contain no token. Only tabs sharing this server session
+  // observe a mode change; independent tabs/accounts keep their own sessions.
+  if (channel.current) channel.current.onmessage = () => { void focus(); };
   window.addEventListener('session-invalid', sync); window.addEventListener('focus', focus);
   const unload = (e: BeforeUnloadEvent) => { if (pending.current.size || running.current) { e.preventDefault(); e.returnValue = ''; } };
   window.addEventListener('beforeunload', unload);
@@ -135,9 +136,9 @@ function useModel() {
  async function unlock(password: string) { await action(async()=>{ await flush(); await api('/mode/professional','POST',{password}); notify(); await refresh(); }); }
  async function login(username: string,password: string,register: boolean) { await action(async()=>{
   if(register) await api('/auth/register','POST',{username,password});
-  const next = await api<Session>('/auth/login','POST',{username,password}); setCsrfToken(next.csrfToken); notify(); await refresh();
+  const next = await api<Session & {token:string}>('/auth/login','POST',{username,password}); setSessionCredential({token:next.token,expiresAt:next.expiresAt}); notify(); await refresh();
  }); }
- async function logout() { await action(async()=>{ await flush(); await api('/auth/logout','POST',{}); notify(); await refresh(); }); }
+ async function logout() { await action(async()=>{ await flush(); await api('/auth/logout','POST',{}); setSessionCredential(null); notify(); await refresh(); }); }
  async function saveStudent(input: {nameOrAlias:string;avatar:string;preferredLanguage:Language;age:number}, id?: string) { await action(async()=>{
   await flush();
   if(id) { const result = await api<{version:number}>(`/students/${id}`, 'PUT', {...input,version:versions.current[id]}); versions.current[id] = result.version; await loadStudent(id); }

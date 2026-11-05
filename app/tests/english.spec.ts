@@ -53,7 +53,9 @@ test('login first, full student CRUD, child/professional separation, persistence
 });
 test('two accounts, synchronized child lock in another tab, all five login languages',async({page,browser})=>{
  await register(page,'isolate');await add(page,'Private Fox');
- const other=await page.context().newPage();await other.goto('/');await expect(other.getByRole('heading',{name:'My students'})).toBeVisible();
+ // A fresh tab has its own login; a duplicated/opened tab inherits sessionStorage.
+ const independent=await page.context().newPage();await independent.goto('/');await expect(independent.getByRole('heading',{name:'Sign in'})).toBeVisible();await independent.close();
+ const duplicate=page.waitForEvent('popup');await page.evaluate(()=>window.open('/', '_blank'));const other=await duplicate;await expect(other.getByRole('heading',{name:'My students'})).toBeVisible();
  await page.getByRole('button',{name:'Start playing'}).click();await expect(other.getByRole('button',{name:'Back to adult'})).toBeVisible();await expect(other.getByRole('button',{name:'My students',exact:true})).toHaveCount(0);
  await other.close();
  const context=await browser.newContext();const second=await context.newPage();await register(second,'second');await expect(second.getByText('Private Fox')).toHaveCount(0);await second.getByRole('button',{name:'Sign out'}).click();

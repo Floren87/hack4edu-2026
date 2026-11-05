@@ -1,34 +1,30 @@
 import Fastify, { type FastifyRequest } from 'fastify';
-import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import staticFiles from '@fastify/static';
 import type { Client, Row } from '@libsql/client';
-import { randomUUID, timingSafeEqual } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
 import { ZodError } from 'zod';
 import { credentials, passwordInput, newStudent, progress, review, enterChild, type Profile } from './schemas.js';
-import { digest, token, hashPassword, verifyPassword } from './security.js';
+import { bearerToken, digest, token, hashPassword, verifyPassword } from './security.js';
+import { validateOrigins } from './config.js';
 
-interface Options { db: Client; origin: string; production?: boolean; staticDir?: string; rateLimits?: boolean; sessionTtlMs?: number }
-interface Session { token_hash: string; account_id: string; csrf_token: string; mode: 'professional' | 'child'; student_id: string | null; expires_at: number }
+interface Options { db: Client; origins: string[]; production?: boolean; staticDir?: string; rateLimits?: boolean; sessionTtlMs?: number }
+interface Session { token_hash: string; account_id: string; mode: 'professional' | 'child'; student_id: string | null; expires_at: number }
 class ApiError extends Error { constructor(public statusCode: number, public code: string) { super(code); } }
 export async function buildApp(options: Options) {
-  const { db, origin, production = false } = options;
-  if (new URL(origin).origin !== origin || (production && !origin.startsWith('https://'))) throw new Error('APP_ORIGIN debe ser un origen exacto; HTTPS en producción');
+  const { db, production = false } = options;
+  const origins = validateOrigins(options.origins, production);
   const app = Fastify({ logger: false, trustProxy: (_address, hop) => production && hop === 0, bodyLimit: 256 * 1024 });
-  const cookieName = production ? '__Host-talento' : 'talento';
-  const cookieOptions = { path: '/', httpOnly: true, secure: production, sameSite: 'lax' as const };
   const ttl = options.sessionTtlMs ?? 8 * 3600_000;
-  await app.register(cookie);
-  await app.register(cors, { origin, credentials: true, methods: ['GET', 'POST', 'PUT', 'DELETE'], allowedHeaders: ['Content-Type', 'X-CSRF-Token'] });
-  await app.register(rateLimit, { global: true, max: options.rateLimits === false ? 100_000 : 300, timeWindow: '1 minute' });
   app.addHook('onRequest', async (request, reply) => {
     if (!request.url.startsWith('/api/')) return;
     reply.header('Cache-Control', 'no-store');
     reply.header('X-Content-Type-Options', 'nosniff');
-    // Same-origin production, or the one explicit development origin. No wildcards.
-    if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method) && request.headers.origin !== origin) throw new ApiError(403, 'ORIGIN_NOT_ALLOWED');
+    // Browser origins are allowlisted. CLI clients may omit Origin; protected
+    // routes always require a Bearer token, never ambient browser credentials.
+    if (request.headers.origin !== undefined && !origins.includes(request.headers.origin)) throw new ApiError(403, 'ORIGIN_NOT_ALLOWED');
   });
   app.setErrorHandler((error, _request, reply) => {
     if (error instanceof ZodError) return reply.code(400).send({ error: 'INVALID_INPUT', fields: error.issues.map(i => i.path.join('.')) });
@@ -36,17 +32,16 @@ export async function buildApp(options: Options) {
     const status = (error as { statusCode?: number }).statusCode;
     return reply.code(status && status < 500 ? status : 500).send({ error: status === 429 ? 'RATE_LIMITED' : status && status < 500 ? 'BAD_REQUEST' : 'INTERNAL_ERROR' });
   });
+  // Register after the error handler so OPTIONS routes inherit the same JSON contract.
+  await app.register(cors, { origin: origins, credentials: false, methods: ['GET', 'POST', 'PUT', 'DELETE'], allowedHeaders: ['Content-Type', 'Authorization'] });
+  await app.register(rateLimit, { global: true, max: options.rateLimits === false ? 100_000 : 300, timeWindow: '1 minute' });
   const query = (sql: string, args: (string | number | null)[] = []) => db.execute({ sql, args });
   async function session(request: FastifyRequest, professional = false): Promise<Session> {
-    const raw = request.cookies[cookieName];
-    if (!raw || !/^[a-f0-9]{64}$/.test(raw)) throw new ApiError(401, 'LOGIN_REQUIRED');
+    const raw = bearerToken(request.headers.authorization);
+    if (!raw) throw new ApiError(401, 'LOGIN_REQUIRED');
     const result = await query('SELECT * FROM sessions WHERE token_hash=? AND expires_at>?', [digest(raw), Date.now()]);
     const row = result.rows[0] as unknown as Session | undefined;
     if (!row) throw new ApiError(401, 'LOGIN_REQUIRED');
-    if (!['GET', 'HEAD'].includes(request.method)) {
-      const value = request.headers['x-csrf-token'];
-      if (typeof value !== 'string' || !/^[a-f0-9]{64}$/.test(value) || !timingSafeEqual(Buffer.from(value), Buffer.from(row.csrf_token))) throw new ApiError(403, 'CSRF_REQUIRED');
-    }
     if (professional && row.mode !== 'professional') throw new ApiError(403, 'PROFESSIONAL_REQUIRED');
     return row;
   }
@@ -81,30 +76,30 @@ export async function buildApp(options: Options) {
     }
     return reply.code(201).send({ registered: true });
   });
-  app.post('/api/auth/login', { config: authLimit }, async (request, reply) => {
+  app.post('/api/auth/login', { config: authLimit }, async request => {
     const input = credentials.parse(request.body);
     const result = await query('SELECT * FROM accounts WHERE username=?', [input.username]);
     const account = result.rows[0];
     const valid = await verifyPassword(input.password, account ? String(account.password_hash) : dummyHash);
     if (!valid || !account) throw new ApiError(401, 'INVALID_CREDENTIALS');
-    const raw = token(); const csrfToken = token(); const expires = Date.now() + ttl;
-    const previous = request.cookies[cookieName];
+    const raw = token(); const expires = Date.now() + ttl;
+    const previous = bearerToken(request.headers.authorization);
     await db.batch([
       { sql: 'DELETE FROM sessions WHERE expires_at<=? OR token_hash=?', args: [Date.now(), digest(previous ?? '')] },
-      { sql: 'INSERT INTO sessions(token_hash,account_id,csrf_token,mode,expires_at) VALUES(?,?,?,?,?)', args: [digest(raw), String(account.id), csrfToken, 'professional', expires] },
+      // Retain the unused legacy column so existing SQLite/libSQL databases
+      // need no destructive migration when upgrading from cookie sessions.
+      { sql: 'INSERT INTO sessions(token_hash,account_id,csrf_token,mode,expires_at) VALUES(?,?,?,?,?)', args: [digest(raw), String(account.id), '', 'professional', expires] },
     ], 'write');
-    reply.setCookie(cookieName, raw, { ...cookieOptions, maxAge: Math.floor(ttl / 1000) });
-    return { account: { id: account.id, username: account.username }, mode: 'professional', studentId: null, csrfToken };
+    return { account: { id: account.id, username: account.username }, mode: 'professional', studentId: null, token: raw, expiresAt: expires };
   });
   app.get('/api/auth/me', async request => {
     const s = await session(request);
     const result = await query('SELECT id,username FROM accounts WHERE id=?', [s.account_id]);
-    return { account: result.rows[0], mode: s.mode, studentId: s.student_id, csrfToken: s.csrf_token };
+    return { account: result.rows[0], mode: s.mode, studentId: s.student_id, expiresAt: s.expires_at };
   });
   app.post('/api/auth/logout', async (request, reply) => {
     const s = await session(request);
     await query('DELETE FROM sessions WHERE token_hash=?', [s.token_hash]);
-    reply.clearCookie(cookieName, cookieOptions);
     return { loggedOut: true };
   });
   app.get('/api/students', async request => {
