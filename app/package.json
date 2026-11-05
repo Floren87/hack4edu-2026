@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "lint": "tsc --noEmit",
     "test:e2e": "playwright test",
+    "test:live": "playwright test --config playwright.live.config.ts",
     "test": "node --import tsx --test tests/reports.test.ts tests/i18n.test.ts tests/api.test.ts"
   },
   "dependencies": {

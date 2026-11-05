@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { resolveApiBaseUrl } from '../src/utils/apiConfig';
+import { DEFAULT_API_BASE_URL, resolveApiBaseUrl } from '../src/utils/apiConfig';
 import { readCredential, writeCredential } from '../src/utils/session';
 import { api, ApiError, apiBaseUrl, setSessionCredential } from '../src/utils/api';
 
@@ -30,12 +30,15 @@ async function browser(run: (storage: MemoryStorage, events: EventTarget) => Pro
 }
 
 test('API URL is canonical, configurable and rejects credentials or mixed-content deployments', () => {
-  assert.equal(resolveApiBaseUrl(), 'http://localhost:3001/api');
+  assert.equal(DEFAULT_API_BASE_URL, 'https://hack4edu-2026.onrender.com/api');
+  assert.equal(resolveApiBaseUrl(), DEFAULT_API_BASE_URL);
+  assert.equal(resolveApiBaseUrl(undefined, 'https://frontend.example'), DEFAULT_API_BASE_URL);
+  assert.equal(resolveApiBaseUrl('http://localhost:3001/api'), 'http://localhost:3001/api');
   for (const value of ['https://api.example', 'https://api.example/', 'https://api.example/api', ' https://api.example/api/ ']) {
     assert.equal(resolveApiBaseUrl(value), 'https://api.example/api');
   }
   assert.equal(resolveApiBaseUrl('https://api.example/api', 'http://localhost:3000'), 'https://api.example/api');
-  for (const value of ['', '/api', 'not a URL', 'ftp://api.example', 'https://user:secret@api.example', 'https://api.example/api?token=x', 'https://api.example/#x', 'https://api.example/api/api']) {
+  for (const value of ['', '/api', 'not a URL', 'ftp://api.example', 'https://user:secret@api.example', 'https://api.example/api?token=x', 'https://api.example/#x', 'https://api.example/api/api', 'https://api.example/api/health']) {
     assert.throws(() => resolveApiBaseUrl(value), Error, value);
   }
   assert.throws(() => resolveApiBaseUrl('http://api.example/api', 'https://frontend.example'), /HTTPS/);
