@@ -67,7 +67,9 @@ async function download(page: Page, language: Language, family: boolean) {
   const html = await fs.readFile((await file.path())!, 'utf8');
   expect(html).toContain(`<html lang="${language}" dir="${direction(language)}">`);
   expect(html).toContain(text(language, family ? 'Resumen para la familia' : 'Informe profesional'));
-  expect(html).toContain(text(language, 'Imprimir / Guardar PDF'));
+  expect(html).toContain(text(language, 'Imprimir'));
+  expect(html).toContain(text(language, 'Guardar PDF'));
+  expect(html).toContain('window.html2pdf');
   const preview = await page.context().newPage();
   await preview.setContent(html);
   await noForeignCopy(preview, language);

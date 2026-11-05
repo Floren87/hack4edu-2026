@@ -566,7 +566,6 @@
   "Fortalezas observadas": "نقاط القوة الملحوظة",
   "Intereses": "الاهتمامات",
   "Ideas para casa": "أفكار للمنزل",
-  "Imprimir / Guardar PDF": "طباعة / حفظ PDF",
   "KoraMAP": "KoraMAP",
   "Edad": "العمر",
   "Insignias": "الشارات",
@@ -637,5 +636,8 @@
   "Borrar ahora": "احذف الآن",
   "Tal como lo escribió, sin traducir ni puntuar. No se guarda en el perfil: solo está en esta pestaña del navegador y se borra al cerrarla. Imprime o descarga el informe para conservarlo.": "كما كتبه الطفل، دون ترجمة أو تقييم. لا يُحفظ في الملف الشخصي: يبقى فقط في علامة التبويب هذه ويُحذف عند إغلاقها. اطبع التقرير أو نزّله للاحتفاظ به.",
   "Tal como lo escribió, sin traducir ni puntuar.": "كما كتبه الطفل، دون ترجمة أو تقييم.",
-  "Descubre las habilidades, intereses y fortalezas de cada niño o niña, sin etiquetas ni barreras de idioma.": "اكتشف مهارات كل طفل واهتماماته ونقاط قوته، دون تصنيفات ولا حواجز لغوية."
+  "Descubre las habilidades, intereses y fortalezas de cada niño o niña, sin etiquetas ni barreras de idioma.": "اكتشف مهارات كل طفل واهتماماته ونقاط قوته، دون تصنيفات ولا حواجز لغوية.",
+  "Imprimir": "طباعة",
+  "Guardar PDF": "حفظ PDF",
+  "Generando PDF…": "جارٍ إنشاء PDF…"
 }

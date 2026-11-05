@@ -566,7 +566,6 @@
   "Fortalezas observadas": "Forces observées",
   "Intereses": "Intérêts",
   "Ideas para casa": "Idées pour la maison",
-  "Imprimir / Guardar PDF": "Imprimer / Enregistrer en PDF",
   "KoraMAP": "KoraMAP",
   "Edad": "Âge",
   "Insignias": "Badges",
@@ -637,5 +636,8 @@
   "Borrar ahora": "Effacer maintenant",
   "Tal como lo escribió, sin traducir ni puntuar. No se guarda en el perfil: solo está en esta pestaña del navegador y se borra al cerrarla. Imprime o descarga el informe para conservarlo.": "Tel que l'enfant l'a écrit, sans traduction ni note. Ce n'est pas enregistré dans le profil : cela reste seulement dans cet onglet du navigateur et s'efface à sa fermeture. Imprime ou télécharge le rapport pour le conserver.",
   "Tal como lo escribió, sin traducir ni puntuar.": "Tel que l'enfant l'a écrit, sans traduction ni note.",
-  "Descubre las habilidades, intereses y fortalezas de cada niño o niña, sin etiquetas ni barreras de idioma.": "Découvrir les compétences, les intérêts et les forces de chaque enfant, sans étiquettes ni barrières de langue."
+  "Descubre las habilidades, intereses y fortalezas de cada niño o niña, sin etiquetas ni barreras de idioma.": "Découvrir les compétences, les intérêts et les forces de chaque enfant, sans étiquettes ni barrières de langue.",
+  "Imprimir": "Imprimer",
+  "Guardar PDF": "Enregistrer en PDF",
+  "Generando PDF…": "Création du PDF…"
 }
