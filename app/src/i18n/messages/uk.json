@@ -82,7 +82,6 @@
   "Tiempo dedicado a la experimentación visual: {0}s.": "Час зорового експериментування: {0}с.",
   "🎨 Minijuego 1: Creatividad": "🎨 Мінігра 1: Творчість",
   "🛠️ Mesa de Inventos": "🛠️ Стіл винаходів",
-  "(Toca las piezas para rotar o mover)": "(Торкайся деталей, щоб обертати або пересувати їх)",
   "Añade piezas desde la bandeja derecha para armar tu invento.": "Додавай деталі з лотка праворуч, щоб зібрати свій винахід.",
   "Girar 45°": "Повернути на 45°",
   "Quitar pieza": "Прибрати деталь",
@@ -576,5 +575,8 @@
   "sesiones": "сеансів",
   "Observaciones del juego; no constituye un diagnóstico. El profesional decide.": "Спостереження з гри; це не діагноз. Рішення ухвалює фахівець.",
   "El mapa de intereses aún está en fase de exploración inicial. Se recomienda invitar al estudiante a recorrer los diferentes mundos para conocer sus inclinaciones espontáneas.": "Карта інтересів перебуває на початковому етапі дослідження. Запросіть учня відвідати різні світи, щоб відкрити його вподобання.",
-  "Índice de perseverancia en observación. Se medirá de forma continua a medida que el alumno afronte retos con reintentos.": "Наполегливість спостерігається. Вона відстежуватиметься в міру виконання завдань із повторними спробами."
+  "Índice de perseverancia en observación. Se medirá de forma continua a medida que el alumno afronte retos con reintentos.": "Наполегливість спостерігається. Вона відстежуватиметься в міру виконання завдань із повторними спробами.",
+  "(Arrastra las piezas para moverlas; tócalas para girarlas o quitarlas)": "(Перетягуй деталі, щоб їх пересунути; торкнися, щоб повернути або прибрати)",
+  "Pieza {0}. Arrástrala o usa las flechas para moverla.": "Деталь {0}. Перетягни її або скористайся стрілками, щоб пересунути.",
+  "Recolocó piezas {0} veces para probar combinaciones.": "Переставляв деталі {0} разів, щоб спробувати різні поєднання."
 }

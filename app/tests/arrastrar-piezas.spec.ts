@@ -1,10 +1,19 @@
 import { expect, test, type Page } from '@playwright/test';
+import { ui } from '../src/i18n/account';
 
+// Recorrido real desde #19: cuenta profesional ficticia → alumno → modo niño → juego.
 async function openCreativityGame(page: Page) {
+  const t = ui('es');
   await page.goto('/');
-  await page.getByRole('textbox').fill('Zorro Azul');
-  await page.getByRole('button', { name: /Entrar|Enter/ }).first().click();
-  await page.getByRole('button', { name: /¿Qué Inventas\?|What Do You Invent\?/ }).first().click();
+  await page.getByRole('button', { name: t.register, exact: true }).click();
+  await page.getByLabel(t.username).fill(`arrastrar-${Date.now()}`);
+  await page.getByLabel(t.password, { exact: true }).fill('Demo-arrastrar-2026');
+  await page.getByRole('button', { name: t.register, exact: true }).click();
+  await page.getByRole('button', { name: t.newStudent, exact: true }).click();
+  await page.getByLabel(t.alias, { exact: true }).fill('Zorro Azul');
+  await page.getByRole('button', { name: t.save, exact: true }).click();
+  await page.getByRole('button', { name: t.play, exact: true }).click();
+  await page.getByRole('button', { name: /¿Qué Inventas\?/ }).filter({ hasText: 'Jugar ahora' }).click();
   await expect(page.locator('[data-piece-id]').first()).toBeVisible();
 }
 
@@ -63,8 +72,10 @@ test('Las piezas de «¿Qué inventas?» se arrastran con ratón y dedo, se muev
   expect(touched.x).toBeLessThan(g.x - 60);
 
   // Al guardar, las recolocaciones llegan como evidencia para el profesional (3 arrastres + 1 serie de flechas).
+  // Desde #19 la partida se guarda en la API: leemos el cuerpo del PUT de progreso.
+  const progress = page.waitForRequest(request => request.method() === 'PUT' && request.url().endsWith('/progress'));
   await page.getByRole('button', { name: 'Guardar mi invento' }).click();
-  const saved = await page.evaluate(() => Object.keys(localStorage).map(k => localStorage.getItem(k) ?? '').join('\n'));
+  const saved = (await progress).postData() ?? '';
   expect(saved).toContain('"repositionsCount":4');
   expect(saved).toContain('Recolocó piezas 4 veces para probar combinaciones.');
 });
