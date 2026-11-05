@@ -12,3 +12,13 @@ Una línea por decisión, la más reciente arriba. Las IAs del equipo leen este 
 | 2026-11-03 | Es una herramienta **de apoyo al psicólogo/orientador** en la inserción y adaptación del niño. Se basa en los instrumentos que ya se usan, **sin reemplazarlos**. Mide **habilidades, aptitudes, intereses y fortalezas, no personalidad**. | Equipo |
 | 2026-11-03 | **Reto 20** por votación del equipo: juego intuitivo, dinámico y visual, con niveles que identifican habilidades, intereses y fortalezas del niño. | Equipo |
 | 2026-11-04 | Repo público con licencia MIT; `main` protegida (PR + 1 aprobación). | Equipo |
+
+Nuevas tareas - incorporar a una version actualizada
+
+04Nov Preparar QR Code - Floren/MA
+04Nov Preparar presentacion - Cris
+04Nov Cambiar el nombre del juego a KoraMAP
+
+05Nov Asegurar que los 3 términos estan en la descripcion del producto: habilidades, intereses y fortalezas (dentro de la pagina que vi no estaba la palabra fortaleza)
+05 Nov Revisar README con los pasos concretos de la instalacion
+05
