@@ -552,7 +552,7 @@ export function generatePedagogicalAssessment(
   const pendingCount = pendingActivities.length;
   const topInterest = primaryInterests[0];
 
-  const overallSynthesis = text(lang, "El estudiante {0} cuenta actualmente con {1} actividad(es) realizada(s) con evidencias consolidadas y {2} pendiente(s) de realizar. La evaluación pedagógica es acumulativa y evolutiva (R1bis): cada partida nueva aporta evidencias adicionales sin penalizar los intentos anteriores ni aplicar etiquetas estáticas sobre su potencial.", [student.nameOrAlias, completedCount, pendingCount]);
+  const overallSynthesis = text(lang, "El estudiante {0} cuenta actualmente con {1} actividad(es) realizada(s) con evidencias consolidadas y {2} pendiente(s) de realizar. La evaluación pedagógica es acumulativa y evolutiva: cada partida nueva aporta evidencias adicionales sin penalizar los intentos anteriores ni aplicar etiquetas estáticas sobre su potencial.", [student.nameOrAlias, completedCount, pendingCount]);
 
   const interestSkillCorrelation = (topInterest && topInterest.visits > 0
         ? text(lang, "Se evidencia una fuerte sincronía entre su foco de interés voluntario en \"{0}\" ({1}% de sus elecciones) y su desempeño en habilidades manipulativas y visuales ({2}% de creatividad y {3}% de lógica). El estudiante aprende y se concentra con mayor intensidad cuando se le ofrecen canales de expresión táctil y espacial.", [topInterest.name, topInterest.percentage, skillsPercentages[0].percentage, skillsPercentages[1].percentage])

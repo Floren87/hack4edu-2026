@@ -115,7 +115,7 @@ export const WorldsMap: React.FC = () => {
         <div className="relative z-10">
           <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider mb-1">
             <Globe size={14} />
-            <span>{' '}{text(language, "Mapa de Intereses y Curiosidad (R2)")}{' '}</span>
+            <span>{' '}{text(language, "Mapa de Intereses y Curiosidad")}{' '}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-white">
             {t.worldsMapTitle}

@@ -168,7 +168,7 @@ export const translations: Record<Language, Translations> = {
 
     teacherPanelTitle: "Evaluación Pedagógica sin Etiquetas",
     teacherPanelSubtitle: "Perfil basado en evidencias de juego para orientar el aula",
-    teacherValidationNotice: "R15: La IA ofrece sugerencias preliminares. Por favor valida si coinciden con tu observación directa en el aula.",
+    teacherValidationNotice: "La IA ofrece sugerencias preliminares. Por favor valida si coinciden con tu observación directa en el aula.",
     btnValidateMatch: "Coincide con el aula",
     btnValidateObserve: "Aún no observado / Discrepa",
     teacherNotesPlaceholder: "Añadir observaciones cualitativas del docente...",
@@ -254,7 +254,7 @@ export const translations: Record<Language, Translations> = {
 
     teacherPanelTitle: "Label-Free Pedagogical Assessment",
     teacherPanelSubtitle: "Evidence-based strength profile to guide classroom learning",
-    teacherValidationNotice: "R15: AI suggestions are advisory. Validate against direct classroom observations before finalizing.",
+    teacherValidationNotice: "AI suggestions are advisory. Validate against direct classroom observations before finalizing.",
     btnValidateMatch: "Matches classroom behavior",
     btnValidateObserve: "Not yet observed / Differs",
     teacherNotesPlaceholder: "Add educator qualitative observations...",
@@ -340,7 +340,7 @@ export const translations: Record<Language, Translations> = {
 
     teacherPanelTitle: "Évaluation Pédagogique Positive",
     teacherPanelSubtitle: "Profil de forces et suggestions concrètes pour la classe",
-    teacherValidationNotice: "R15 : L'IA suggère des pistes. Validez chaque élément en fonction de votre observation.",
+    teacherValidationNotice: "L'IA suggère des pistes. Validez chaque élément en fonction de votre observation.",
     btnValidateMatch: "Conforme à l'observation",
     btnValidateObserve: "Non encore observé / Différent",
     teacherNotesPlaceholder: "Ajouter des notes qualitatives...",
@@ -426,7 +426,7 @@ export const translations: Record<Language, Translations> = {
 
     teacherPanelTitle: "التقييم التربوي الإيجابي بلا تصنيفات",
     teacherPanelSubtitle: "ملف مبني على شواهد اللعب لتوجيه التعلم داخل الصف",
-    teacherValidationNotice: "R15: يقترح الذكاء الاصطناعي ملاحظات استشارية. يرجى تأكيد ما يطابق مشاهداتكم المباشرة.",
+    teacherValidationNotice: "يقترح الذكاء الاصطناعي ملاحظات استشارية. يرجى تأكيد ما يطابق مشاهداتكم المباشرة.",
     btnValidateMatch: "يطابق المشاهدة في الصف",
     btnValidateObserve: "قيد الملاحظة / لم يُرَ بعد",
     teacherNotesPlaceholder: "إضافة ملاحظات نوعية من المعلم...",
@@ -512,7 +512,7 @@ export const translations: Record<Language, Translations> = {
 
     teacherPanelTitle: "Позитивна педагогічна оцінка без ярликів",
     teacherPanelSubtitle: "Профіль сильних сторін для організації навчання в класі",
-    teacherValidationNotice: "R15: ШІ пропонує орієнтири. Будь ласка, перевірте відповідність вашим спостереженням у класі.",
+    teacherValidationNotice: "ШІ пропонує орієнтири. Будь ласка, перевірте відповідність вашим спостереженням у класі.",
     btnValidateMatch: "Відповідає спостереженням у класі",
     btnValidateObserve: "Ще спостерігається / Відрізняється",
     teacherNotesPlaceholder: "Додати якісні спостереження педагога...",
