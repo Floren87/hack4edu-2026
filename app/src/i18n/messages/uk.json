@@ -566,7 +566,6 @@
   "Fortalezas observadas": "Помічені сильні сторони",
   "Intereses": "Інтереси",
   "Ideas para casa": "Ідеї для дому",
-  "Imprimir / Guardar PDF": "Друкувати / Зберегти PDF",
   "KoraMAP": "KoraMAP",
   "Edad": "Вік",
   "Insignias": "Значки",
@@ -637,5 +636,8 @@
   "Borrar ahora": "Видалити зараз",
   "Tal como lo escribió, sin traducir ni puntuar. No se guarda en el perfil: solo está en esta pestaña del navegador y se borra al cerrarla. Imprime o descarga el informe para conservarlo.": "Так, як написала дитина, без перекладу й оцінювання. Не зберігається в профілі: залишається лише в цій вкладці браузера й видаляється після її закриття. Роздрукуйте або завантажте звіт, щоб зберегти його.",
   "Tal como lo escribió, sin traducir ni puntuar.": "Так, як написала дитина, без перекладу й оцінювання.",
-  "Descubre las habilidades, intereses y fortalezas de cada niño o niña, sin etiquetas ni barreras de idioma.": "Відкривайте навички, інтереси та сильні сторони кожної дитини — без ярликів і мовних бар’єрів."
+  "Descubre las habilidades, intereses y fortalezas de cada niño o niña, sin etiquetas ni barreras de idioma.": "Відкривайте навички, інтереси та сильні сторони кожної дитини — без ярликів і мовних бар’єрів.",
+  "Imprimir": "Друкувати",
+  "Guardar PDF": "Зберегти PDF",
+  "Generando PDF…": "Створюємо PDF…"
 }
