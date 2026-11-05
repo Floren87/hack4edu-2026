@@ -8,14 +8,13 @@ Qué está pasando ahora mismo. Cada persona (o su IA) añade una línea al term
 | Cristina | Cómo vender a gobiernos y ONG; estructura de la presentación; TAM/SAM/SOM | En curso |
 | Cristina y Delia | Habilidades y fortalezas que se usan a nivel mundial para evaluar a niños | En curso |
 | Delia | Propuesta de pantallas del juego | En curso |
-| Miguel | API Render + libSQL/Turso / `fix/demo-api-render` | Render en `develop`, Live y CORS de Pages verificado (204). Ajuste de autenticación a 60/min probado en rama de corrección, pendiente integrar y desplegar; revisión PR #24 en curso. |
-| Miguel | Perfil docente / `feat/perfil-docente` desde `develop` | «Volver al Perfil Docente» en 5 idiomas; usuario actual visible solo en cabecera profesional y «Mis alumnos». Tipos, 18 tests unitarios, build y 18 E2E correctos en CI Linux. PR contra `develop` en preparación. |
+| Miguel | Logo y documentación final / `feat/logo-arquitectura-online` desde `main` | Documentación y logo completos. Tipos/build de ambos proyectos, 22 unitarios frontend, 10 API y 20 E2E correctos; capturas móvil/escritorio revisadas. Entrega lista para PR a `main` y revisión de Floren. |
 | Floren | Repo, reglas y coordinación de las IAs | En curso |
 
 ## Próximos pasos (hasta el 5 nov, 23:59)
-1. ✅ Mejoras integradas en `develop` y comprobadas (lint, tests, 15 e2e, build de producción como en Pages).
-2. ✅ Miguel: Render autoriza `https://floren87.github.io` y despliega `develop`; preflight real 204 comprobado. Pendiente integrar/desplegar el ajuste de autenticación a 60/min.
-3. PR #24 `develop` → `main` (1 aprobación), que publica la app en GitHub Pages.
+1. ✅ Integración de API, perfil docente y mejoras del equipo en `main` hasta #36. `develop` fue eliminada; esta entrega tiene autorización para PR a `main` desde una rama aparte.
+2. ✅ API pública: health 200, CORS de Pages y límite 60/min comprobados sin crear datos. Antes del próximo redeploy, Miguel debe verificar Branch=`main` en Render; no se modificó el servicio en este sprint.
+3. Revisar PR de logo/documentación final hacia `main`, comprobar publicación en Pages y probar desde la red del evento.
 4. QR a `https://floren87.github.io/hack4edu-2026/` (Floren y Miguel).
 5. Entrega: vídeo de 3 min, presentación de 5 min (Cristina) y formulario (#9) antes de las 23:59.
 
@@ -41,6 +40,7 @@ Qué está pasando ahora mismo. Cada persona (o su IA) añade una línea al term
 ## Diario
 | Fecha y hora (zona) | Quién | Qué hizo | Qué queda |
 |---|---|---|---|
+| 2026-11-05 (Bogotá) | Miguel + Codex | Desde `main` integrado (`c1a6802`), con autorización para PR hacia `main` porque `develop` fue eliminada. Corrige propuesta/README/política pública y documenta arquitectura online, tecnologías, límites, datos, scrypt y alcance del prototipo. Integra el JPEG aprobado en interfaz, favicon/iconos e informes autocontenidos, sin alterar el original. Tipos/build de ambos proyectos, 22 unitarios frontend, 10 API y 20 E2E correctos. CI frontend [42059961265](https://github.com/Floren87/hack4edu-2026/actions/runs/42059961265); capturas móvil/escritorio revisadas, logo y PDF exportado comprobados sin red. API pública: health 200, CORS de Pages y límite 60/min, sin crear datos. | Abrir PR de `feat/logo-arquitectura-online` a `main` para revisión de Floren y comprobar publicación del frontend. Verificar Branch=`main` en Render antes de su próximo redeploy; este sprint no cambió el servicio ni la BBDD. |
 | 2026-11-05 (Bogotá) | Miguel + Codex | Actualiza desde `develop` integrado. Miguel corrige Render a `develop` porque `feat/backend` ya no existe; Live confirmado y preflight real de Pages 204. Prepara `fix/demo-api-render`: auth 60/min por IP/ruta, 429/Retry-After conservados y prueba de clientes tras proxy sin confiar prefijos falsos. Backend lint, 10 tests y build correctos; frontend lint y 18 tests correctos. CI app/backend del PR #24 verde. Windows bloquea el módulo nativo de Tailwind; no se completan localmente build/E2E del frontend y no se cambian políticas de seguridad ni código UI. | Integrar y desplegar la corrección de 60/min (el servicio comprobado aún anuncia 10). Revisar/aprobar PR #24 y publicar Pages; probar QR/red de Madrid. |
 | 2026-11-05 (Bogotá) | Miguel + Codex | Desde `develop` actualizado, cambia retorno a «Perfil Docente» en ES/EN/FR/AR/UK y muestra el usuario existente en cabecera y «Mis alumnos», solo en profesional. Componente compartido, aislamiento visual del niño y contraseña conservados. CI de app incorpora build y E2E con API en memoria; validación en `fd3cc7d`: tipos, 18 tests unitarios y 18 E2E correctos. Windows bloquea Tailwind nativo; las pruebas completas se ejecutan en Ubuntu/Node 22/Chromium sin cambiar políticas locales. | Revisar PR de `feat/perfil-docente` contra `develop` con Floren, integrar y publicar el frontend. Descripción y recorrido en `docs/pr-perfil-docente.md`. |
 | 2026-11-05 (Madrid) | Floren + Claude | Integra #19 (backend), #21, #17, #22 y #23 en `develop` y lo comprueba completo (también el build de producción en subcarpeta). Renombra la app a KoraMAP. PR #24 `develop` → `main` preparado; la versión anterior queda en la etiqueta `v0-prototipo-delia`. | Render debe autorizar el origen de Pages; aprobar #24; QR. |

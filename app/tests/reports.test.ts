@@ -70,3 +70,16 @@ test('a pseudonym and professional notes that match dictionary entries remain ve
     assert.ok(html.includes('<p>Construir</p>'));
   }
 });
+
+test('both report audiences embed a supplied logo and reject remote or malformed image sources', () => {
+  const logo = 'data:image/jpeg;base64,a29yYW1hcA==';
+  const report = generatePedagogicalAssessment(profile, 'ar');
+  for (const audience of ['teacher', 'family'] as const) {
+    const html = printableReportHtml(profile, report, 'ar', audience, [], undefined, logo);
+    assert.ok(html.includes(`src="${logo}" alt="KoraMAP"`));
+    assert.ok(html.includes('dir="rtl"'));
+    for (const invalid of ['https://untrusted.example/logo.jpeg', 'data:image/jpeg;base64," onerror="example()']) {
+      assert.ok(!printableReportHtml(profile, report, 'ar', audience, [], undefined, invalid).includes(invalid));
+    }
+  }
+});

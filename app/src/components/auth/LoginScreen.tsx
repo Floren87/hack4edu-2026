@@ -5,7 +5,7 @@ import { ui } from '../../i18n/account';
 import { translations } from '../../i18n/translations';
 import { localizeText as text } from '../../i18n/localize';
 import { LanguagePicker } from '../common/LanguagePicker';
-import { WorldLogo } from '../common/WorldLogo';
+import { AppLogo } from '../common/AppLogo';
 
 export function LoginScreen() {
   const { language, login, busy } = useApp();
@@ -21,7 +21,7 @@ export function LoginScreen() {
       <header className="relative mx-auto flex w-full max-w-4xl flex-wrap items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-sky-400/30 bg-gradient-to-tr from-sky-500/20 via-indigo-600/30 to-emerald-500/20 shadow-md shadow-sky-500/10">
-            <WorldLogo size={34} />
+            <AppLogo size={34} />
           </div>
           <span className="bg-gradient-to-r from-white via-white to-indigo-300 bg-clip-text text-sm font-black tracking-tight text-transparent">{brand.appName}</span>
         </div>

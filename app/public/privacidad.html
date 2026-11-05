@@ -6,7 +6,7 @@
   <title>Política de privacidad · KoraMAP</title>
   <meta name="description" content="Qué datos guarda KoraMAP, para qué, dónde y cómo borrarlos." />
   <meta name="theme-color" content="#4f46e5" />
-  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <link rel="icon" type="image/png" href="./icon-192.png" />
   <style>
     :root { color-scheme: dark; }
     * { box-sizing: border-box; }
@@ -35,32 +35,34 @@
 <body>
 <header>
   <div class="wrap">
-    <a class="brand" href="./"><img src="./icon.svg" alt="" /> KoraMAP</a>
+    <a class="brand" href="./"><img src="./icon-192.png" alt="" /> KoraMAP</a>
     <h1>Política de privacidad</h1>
     <p class="meta">Última actualización: 5 de noviembre de 2026 · Prototipo presentado a #Hack4Edu 2026</p>
   </div>
 </header>
 <main class="wrap">
   <div class="summary">
-    <p><strong>En resumen:</strong> KoraMAP la usa un profesional (psicólogo, orientador o docente) con niños y niñas <strong>desde 7 años</strong>. Los niños no crean cuentas y se identifican <strong>solo con un pseudónimo</strong>. No pedimos nombres reales, datos de salud, fotos, voz ni ubicación. No hay anuncios, ni cookies, ni analítica, ni venta de datos.</p>
+    <p><strong>En resumen:</strong> KoraMAP es un <strong>prototipo web online: requiere Internet y no tiene modo offline</strong>. La usa un profesional (psicólogo, orientador o docente) con niños y niñas <strong>desde 7 años</strong>. Los niños no crean cuentas y se identifican <strong>con un pseudónimo</strong>. No pedimos nombres reales, datos de salud, fotos, voz ni ubicación. La aplicación no incluye anuncios, analítica de terceros ni cookies de autenticación.</p>
+    <p>Un pseudónimo reduce la identificación directa, pero no garantiza anonimización irreversible. Los datos educativos podrían vincularse con una persona mediante información adicional. Los campos libres no detectan datos personales automáticamente; para la demo se utilizan datos ficticios.</p>
   </div>
 
   <h2>1. Quién es el responsable</h2>
-  <p>KoraMAP es un prototipo de código abierto (licencia MIT) creado por un equipo del hackathon #Hack4Edu 2026. Para cualquier consulta sobre privacidad, abre una incidencia en <a href="https://github.com/Floren87/hack4edu-2026/issues">github.com/Floren87/hack4edu-2026/issues</a>.</p>
+  <p>KoraMAP es un prototipo de código abierto creado por un equipo del hackathon #Hack4Edu 2026, con código bajo licencia MIT. Las incidencias técnicas se comunican en <a href="https://github.com/Floren87/hack4edu-2026/issues">el repositorio público</a>, sin adjuntar expedientes, contraseñas ni datos personales. El canal privado para gestión de derechos está pendiente de formalizar.</p>
   <p class="todo">TODO: verificar. Antes de usarlo con niños reales o de publicarlo en una tienda de aplicaciones, hay que indicar aquí una entidad responsable y un correo de contacto.</p>
 
   <h2>2. Qué datos se guardan</h2>
   <table>
     <tr><th>Dato</th><th>Para qué</th><th>Dónde</th></tr>
-    <tr><td>Usuario del profesional y su contraseña, guardada solo como resumen cifrado (scrypt)</td><td>Iniciar sesión</td><td>Servidor</td></tr>
+    <tr><td>Usuario inventado del profesional y hash de contraseña con scrypt y sal aleatoria; no la contraseña original</td><td>Iniciar sesión</td><td>Base remota en Turso, a través de la API</td></tr>
     <tr><td>Pseudónimo del alumno, avatar, idioma preferido y edad (opcional, desde 7 años)</td><td>Identificar al alumno sin su nombre real</td><td>Servidor</td></tr>
     <tr><td>Progreso en los juegos: estrellas, niveles, insignias y registro de partidas (duración, intentos, aciertos y observaciones automáticas)</td><td>Generar el informe de habilidades, intereses y fortalezas</td><td>Servidor</td></tr>
     <tr><td>Validación y notas del profesional sobre el informe</td><td>Que el profesional confirme o corrija cada observación</td><td>Servidor</td></tr>
-    <tr><td>Sesión abierta (caduca a las 8 horas)</td><td>Mantener la sesión iniciada</td><td>Navegador (<code>sessionStorage</code>) y servidor, como resumen cifrado</td></tr>
+    <tr><td>Token y caducidad de sesión (8 horas)</td><td>Mantener la sesión iniciada</td><td>Token en <code>sessionStorage</code>; solo su hash SHA-256, modo y propietario en el servidor</td></tr>
     <tr><td>Idioma elegido</td><td>Recordar el idioma de la interfaz</td><td>Navegador (<code>localStorage</code>)</td></tr>
     <tr><td>Comentarios que escribe el niño sobre sus inventos</td><td>Mostrarlos en el informe</td><td><strong>Solo en el navegador</strong>. Nunca se envían al servidor y se borran al iniciar o cerrar sesión.</td></tr>
   </table>
   <p><strong>Nunca</strong> se piden ni se deben escribir nombres reales, datos de salud, diagnósticos, documentos de identidad ni situación administrativa.</p>
+  <p>La web se sirve desde GitHub Pages, utiliza una API externa en Render y conserva los perfiles y resultados en Turso. Sin conexión no se puede garantizar el guardado, iniciar sesión ni salir al Perfil Docente. Añadir la web a la pantalla de inicio no habilita un modo offline.</p>
 
   <h2>3. Los informes</h2>
   <ul>
@@ -83,13 +85,14 @@
 
   <h2>6. Cuánto tiempo se guardan y cómo borrarlos</h2>
   <ul>
-    <li>Los datos de un alumno se guardan hasta que el profesional lo elimina desde «Alumnos». Al eliminarlo se borran su perfil, su progreso y sus sesiones.</li>
-    <li>Las sesiones caducan a las 8 horas y se borran al cerrar sesión.</li>
-    <li>Para borrar una cuenta profesional completa, de momento hay que pedirlo por el canal de contacto del punto 1. <span class="todo">TODO: añadir un botón para borrar la cuenta.</span></li>
+    <li>Los datos de un alumno se guardan hasta que el profesional lo elimina desde «Mis alumnos». Al eliminarlo se borran su perfil/progreso/revisión y las sesiones ligadas a ese alumno. No se borran las copias de informes descargadas ni los posibles respaldos del proveedor.</li>
+    <li>Las sesiones dejan de ser válidas a las 8 horas. Logout elimina su token y login limpia sesiones expiradas; no hay un proceso de borrado de filas justo al vencer.</li>
+    <li>El borrado de una cuenta profesional requiere un procedimiento administrativo privado. <span class="todo">TODO: establecer ese canal y añadir el borrado por autoservicio antes de un uso real.</span></li>
   </ul>
 
   <h2>7. Seguridad</h2>
-  <p>Las conexiones van cifradas (HTTPS), las contraseñas se guardan solo como resumen cifrado, cada profesional solo puede ver a sus propios alumnos y hay límites de intentos de inicio de sesión. Las contraseñas no se pueden recuperar: si se pierden, hay que crear una cuenta nueva.</p>
+  <p>La demo pública usa HTTPS; las contraseñas se guardan como hash scrypt con sal aleatoria, no como cifrado reversible. Cada profesional solo puede ver a sus propios alumnos y hay límites de intentos de autenticación. Las contraseñas no se pueden recuperar. El token del navegador es accesible al JavaScript del origen y el prototipo no ha pasado una auditoría ni certificación de seguridad/cumplimiento.</p>
+  <p>El uso de pseudónimos es una medida de reducción de riesgos; no equivale por sí solo a eliminar toda posibilidad de identificación. Referencia: <a href="https://www.edpb.europa.eu/topics/ai-and-technology/anonymisation-pseudonymisation_en">distinción del Comité Europeo de Protección de Datos</a>.</p>
 
   <h2>8. Cambios</h2>
   <p>Si esta política cambia, se actualizará la fecha de arriba. El historial completo está en el repositorio público.</p>

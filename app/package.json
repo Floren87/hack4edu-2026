@@ -4,13 +4,14 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "brand:generate": "node scripts/brand-assets.mjs",
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "tsc --noEmit",
     "test:e2e": "playwright test",
     "test:live": "playwright test --config playwright.live.config.ts",
-    "test": "node --import tsx --test tests/reports.test.ts tests/i18n.test.ts tests/api.test.ts"
+    "test": "node --import tsx --test tests/reports.test.ts tests/i18n.test.ts tests/api.test.ts tests/brand.test.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",

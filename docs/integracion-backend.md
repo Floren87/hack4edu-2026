@@ -1,6 +1,6 @@
-# Integración frontend/API desacoplada · feat/backend
+# Integración frontend/API online
 
-Implementada en esta rama por autorización de Miguel. La API ya está publicada en Render con BBDD Turso; esta rama la utiliza por defecto. Miguel autoriza preparar el PR contra `develop` después de validar. Floren realiza la reconciliación con las demás ramas y el merge. Contexto acumulado: [traspaso-floren.md](traspaso-floren.md). Publicación: [despliegue-demo.md](despliegue-demo.md).
+Implementación integrada en `main`, con API externa en Render y BBDD en Turso. **Requiere conexión; no hay modo offline.** Arquitectura final, tecnologías y límites: [arquitectura.md](arquitectura.md); datos/contraseñas y alcance del prototipo: [datos-y-seguridad.md](datos-y-seguridad.md). `develop` fue eliminada tras el PR #36; Miguel autoriza esta entrega desde `main` y PR hacia `main`, con revisión de Floren. Contexto histórico: [traspaso-floren.md](traspaso-floren.md). Publicación: [despliegue-demo.md](despliegue-demo.md).
 
 ## Contrato de conexión
 

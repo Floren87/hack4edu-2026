@@ -1,5 +1,7 @@
 # Despliegue de API y BBDD · Miguel
 
+**Estado final después del PR #36 (5 nov):** frontend en Pages y API/BBDD externas, **solo online**. `main` contiene la integración y `develop` ya no existe. En esta sesión: `/api/health` responde 200 con CORS para Pages y una petición vacía de login devuelve 400 con `X-RateLimit-Limit: 60`, sin crear datos. Antes del próximo redeploy de Render, verificar Branch=`main`; no se modifica Render en esta entrega de documentación/logo. Los pasos de integración con `develop` de abajo son históricos. Arquitectura vigente: [arquitectura.md](arquitectura.md); límites de protección de datos: [datos-y-seguridad.md](datos-y-seguridad.md).
+
 **Arquitectura vigente:** API TypeScript/Fastify en Render + base **libSQL** en Turso. El frontend lo publica Floren/Delia de forma independiente; no necesita proxy. También se puede usar el frontend de localhost contra la API pública.
 
 **Estado al 4 de noviembre de 2026:** Miguel ya creó la BBDD Turso y publicó la API en **`https://hack4edu-2026.onrender.com/api`**. [Healthcheck público](https://hack4edu-2026.onrender.com/api/health) responde `200 {"ok":true}`. Esta rama usa esa API por defecto, sin `.env.local`. La prueba real en navegador desde `http://localhost:3000` validó cuentas, CRUD, persistencia tras recarga/nuevo login, modo niño, aislamiento y exportaciones árabes. Ver [traspaso y pruebas](traspaso-floren.md).
@@ -32,7 +34,7 @@ Crear un **Web Service** desde el repositorio. Ver [despliegue Node](https://ren
 
 | Campo | Valor |
 |---|---|
-| Branch | **`develop`** (integrada y estable). No usar `feat/backend`: fue eliminada. `main` solo después de que incluya el backend y se coordine el cambio con Floren. |
+| Branch | **`main`** tras integrar el PR #36. Verificar en Render antes del próximo redeploy; `develop` y `feat/backend` fueron eliminadas. |
 | Runtime | Node |
 | Root Directory | `backend` |
 | Build Command | `npm ci --include=dev && npm run build` |
@@ -110,7 +112,7 @@ Para **GitHub Pages**, el workflow del repositorio compila `app/` y publica su `
 
 ### Rama eliminada o deploy que no aplica Environment
 
-En el servicio de Render: **Settings → Build & Deploy → Branch → `develop` → Save**, y después **Manual Deploy → Deploy latest commit**. La variable guardada no cambia un proceso anterior hasta que se despliega correctamente; un deploy fallido deja el servicio previo atendiendo. Mantener `Root Directory=backend`, build y start de la tabla, y todas las credenciales de Turso existentes. No recrear `feat/backend` para corregir el servicio.
+En el servicio de Render: **Settings → Build & Deploy → Branch → `main` → Save**, y después **Manual Deploy → Deploy latest commit**. La variable guardada no cambia un proceso anterior hasta que se despliega correctamente; un deploy fallido deja el servicio previo atendiendo. Mantener `Root Directory=backend`, build y start de la tabla, y todas las credenciales de Turso existentes. No recrear ramas eliminadas para corregir el servicio. Este ajuste se coordina con Miguel; no se ha ejecutado desde este sprint de logo/documentación.
 
 Comprobación mínima sin datos ni contraseñas:
 

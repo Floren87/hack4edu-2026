@@ -1,4 +1,6 @@
-# Propuesta de producto · v2
+# Propuesta de producto · alcance final del prototipo
+
+**Actualización 5 de noviembre de 2026:** la demo implementada es **online**, con frontend en GitHub Pages, API TypeScript/Fastify externa en Render y datos persistentes en Turso. No funciona offline ni llama a modelos de IA externos. Referencias vigentes: [arquitectura, tecnologías y límites](arquitectura.md) y [datos y seguridad](datos-y-seguridad.md).
 
 > **KoraMAP**: un juego visual, sin necesidad de leer ni de hablar el idioma del país, que ayuda al psicólogo, orientador o docente a **descubrir las fortalezas e intereses de niños y niñas que llegan desplazados a otro país**: creatividad, lógica, comunicación, colaboración y resolución de problemas. Los talentos que no salen en las notas.
 
@@ -26,8 +28,8 @@ Texto oficial: *«…identificar habilidades, intereses y fortalezas que muchas 
 | R2 | **Intereses** | «Mapa de mundos»: el niño elige a dónde viajar (construir, explorar, crear, ayudar, organizar, contar) | Inicio del juego y perfil |
 | R3 | Fortalezas | El perfil solo habla en positivo: «destaca en…», «aún no observado» (nunca «bajo» ni «suspenso») | Panel del profesional |
 | R4 | Que no aparecen en evaluaciones tradicionales | Se mide **cómo** juega (estrategias, intentos, ideas originales), no respuestas de examen ni contenidos del currículo | Panel: «evidencias» |
-| R5 | Contextos vulnerables | Sin leer, sin idioma común, en móvil barato, **sin conexión**, multidioma (ES, EN, FR, AR, UK) | Cambio de idioma en directo |
-| R6 | Actividades, retos prácticos, juegos **o IA** | Juegos + IA que redacta el informe y las sugerencias (sección 5) | Panel |
+| R5 | Contextos vulnerables | Interfaz visual y multidioma (ES, EN, FR, AR, UK). **La demo requiere Internet; offline queda fuera del alcance.** No se ha medido rendimiento en todos los móviles de bajo coste. | Cambio de idioma en directo y prueba de red |
+| R6 | Actividades, retos prácticos, juegos **o IA** | Juegos y reglas locales que generan el informe y las sugerencias (sección 5) | Panel |
 | R7 | **Creatividad** | Minijuego «¿Qué inventas?» | ✅ |
 | R8 | **Pensamiento lógico** | Minijuego «Patrones» | ✅ |
 | R9 | **Comunicación** | Minijuego «Cuenta la historia» | ✅ |
@@ -35,7 +37,7 @@ Texto oficial: *«…identificar habilidades, intereses y fortalezas que muchas 
 | R11 | **Resolución de problemas** | Se mide en todos los juegos: reintentos, cambio de estrategia, perseverancia | ✅ |
 | R12 | Información **al docente** | Panel con perfil, evidencias y lo que la IA sugiere | ✅ |
 | R13 | **Orientar y personalizar** el aprendizaje | 3 sugerencias concretas para el aula por niño («proponle ser el encargado de…», «trabaja mejor con material manipulativo») | ✅ |
-| R14 | **Evitar etiquetas** | Sin puntuaciones numéricas ni rankings, sin palabras como «superdotado» o «déficit». Cada fortaleza enlaza con la evidencia que la apoya | ✅ |
+| R14 | **Evitar etiquetas** | Métricas descriptivas del juego, sin rankings ni etiquetas clínicas. Los porcentajes no son puntuaciones psicométricas validadas; cada fortaleza enlaza con su evidencia. | ✅ |
 | R15 | **Evitar decisiones automatizadas** | La IA **sugiere**; el profesional marca cada observación como «coincide / no coincide con lo que veo» y solo entonces se guarda. Nada se decide solo | ✅ Botones de validación |
 
 ## 3. Comprobación de los criterios del jurado
@@ -45,7 +47,7 @@ Texto oficial: *«…identificar habilidades, intereses y fortalezas que muchas 
 | Creatividad e innovación | 40 % | Evaluar sin idioma común y a través del juego, para niños desplazados. Mide el proceso, no solo el resultado |
 | Grado de acabado | 20 % | Demo que funciona de punta a punta en el móvil desde un QR |
 | Transferencia al mercado | 20 % | Gratis para niños, familias y ONG; licencias para administraciones y servicios de acogida (lo investiga Cristina: TAM/SAM/SOM) |
-| IA en países desfavorecidos | 20 % | Funciona sin conexión y en móviles baratos; idiomas de las rutas reales (árabe, francés, ucraniano); pensado para campos y escuelas de acogida en América Latina, África y Europa |
+| IA en países desfavorecidos | 20 % | Diseño visual y cinco idiomas, incluidos árabe, francés y ucraniano; reglas locales interpretables sin llamadas a un modelo de pago. La demo es online: necesita conectividad y hosting disponible. Offline y validación de campo quedan pendientes. |
 | ⚠️ Evidencias del 3 al 5 de noviembre | −20 % si faltan | Commits y PR fechados en este repo |
 
 **Premio Retos ProFuturo** (⚠️ hay que confirmar si el Reto 20 lleva la etiqueta «Reto ProFuturo» en la web):
@@ -84,35 +86,34 @@ Cada uno dura 1-2 min, tiene instrucciones con voz y animación y **ninguna resp
 Diseño propio: **no se copia ningún ítem de tests con derechos**. Los marcos de inspiración son las áreas del MP-R y CASEL, y el modelo RIASEC para los intereses.
 
 ## 5. Dónde está la IA
-1. **Informe para el profesional:** la IA (Claude) recibe solo las **evidencias agregadas y anónimas** (ningún nombre ni pseudónimo) y redacta el perfil en lenguaje claro, citando la evidencia de cada afirmación, con 3 sugerencias para el aula.
-2. **Resumen para la familia** en su idioma, en positivo.
-3. **Originalidad en «¿Qué inventas?»:** valora qué ideas son poco habituales.
-4. **Sin conexión:** si no hay internet, el informe se genera con plantillas y reglas en el propio móvil y se marca «generado sin IA». La app nunca deja de funcionar.
+Los informes profesional y familiar se generan **solo con reglas locales interpretables** en `app/src/utils/aiPedagogy.ts`, usando las evidencias del juego. Se muestran en el idioma elegido, con sugerencias y revisión del profesional. No se envían expedientes a Claude ni a ningún modelo externo y no se calcula una rareza estadística frente a una población validada.
 
-> **Estado actual (app en `app/`):** los informes se generan **solo con reglas locales** (`app/src/utils/aiPedagogy.ts`); todavía no se llama a ningún modelo de IA. Los puntos 1-3 son la mejora prevista.
+Integrar en el futuro un modelo que redacte sugerencias requeriría definir datos mínimos, proveedor, evaluación y protección de datos. Es una mejora propuesta, no una función entregada.
+
+**Las reglas locales no hacen offline a la aplicación:** login, carga, permisos y guardado dependen de la API remota. Un HTML ya descargado puede abrirse posteriormente; no permite usar toda la app sin Internet.
 
 ## 6. Lo que NO hace (IA ética)
 - ❌ No diagnostica ni da un CI ni etiquetas clínicas. No sustituye los tests profesionales.
 - ❌ No decide curso, grupo ni ubicación: lo decide el profesional.
 - ❌ No usa cámara, reconocimiento facial ni grabación de voz del niño.
-- ✅ Pseudónimo («Zorro Azul 🦊») elegido por el niño; los datos se quedan **en el dispositivo**; el profesional puede borrarlos con un botón.
+- ✅ Alumnos mediante pseudónimo («Zorro Azul 🦊»), sin solicitar nombre real. Perfil, progreso y notas educativas se guardan en Turso a través de la API y se pueden borrar desde el panel. Los pseudónimos no garantizan anonimización irreversible; ver [datos y seguridad](datos-y-seguridad.md).
 - ⏳ Consentimiento de la familia en la primera pantalla (con voz y en su idioma). **Pendiente:** la app aún no lo tiene.
 - ✅ Cada frase del informe se puede comprobar con su evidencia; la IA explica sus límites («basado en 10 minutos de juego; contrástalo con tu observación»).
 
 ## 7. Arquitectura y alcance para el hackathon
-- **App (`app/`):** el prototipo de Delia en React 19 + TypeScript + Vite + Tailwind, como PWA que funciona sin conexión. Datos en el navegador (`localStorage`). Publicada en **GitHub Pages**, que es el destino del QR. Instalación: `README.md`.
-- **Idiomas:** ES, EN, FR, AR (de derecha a izquierda) y UK en `app/src/i18n/`; audio con la síntesis de voz del navegador. El inglés está completo; el resto cubre los textos del prototipo original.
-- **IA:** de momento, reglas locales interpretables. La IA real (un endpoint que reciba solo evidencias agregadas y anónimas, con la clave en el servidor) es una mejora. La IA es un **complemento, no una dependencia**: las reglas funcionan siempre.
-- **Backend:** ninguno. La propuesta de cuentas profesionales e historial con FastAPI + SQLite está en `backend-profesionales.md`, sin implementar.
+- **App (`app/`):** React 19 + TypeScript + Vite + Tailwind. Web **online** en GitHub Pages; el QR abre esa web. Sin service worker de caché, expedientes en localStorage ni sincronización offline. El manifiesto permite acceso directo/pantalla completa cuando el navegador lo ofrece.
+- **Idiomas:** ES/EN/FR/AR/UK en acceso, gestión, juegos e informes; árabe RTL y voz según las voces disponibles en el dispositivo.
+- **Reglas:** informe calculado localmente, con evidencias y sugerencias orientativas; sin modelo externo ni diagnóstico. Los datos que necesita se cargan mediante la API.
+- **Backend (`backend/`):** TypeScript + Fastify + Zod, sesiones Bearer y SQLite/libSQL. API en Render y base remota en Turso. Cuentas con usuario inventado y hash scrypt, alumnos aislados por propietario y estado actual con revisión profesional. FastAPI fue una propuesta histórica sustituida.
 
 | Prioridad | Qué entra | Estado |
 |---|---|---|
-| **Imprescindible** (demo de punta a punta) | Pseudónimo + avatar → mapa de mundos (intereses) → 4 minijuegos con niveles, estrellas e insignias → panel del profesional con evidencias y validación → resumen para la familia · Modo sin IA · ES + EN | ✅ En `app/` |
-| **Si da tiempo** | Consentimiento de la familia · IA real en el informe · completar FR, AR y UK · publicar en GitHub Pages con QR | ⏳ |
-| **Después del hackathon** | Cuentas e historial con FastAPI + SQLite (panel desde otro dispositivo), panel por centro, más niveles generados con IA, estudios de validez con psicólogos | — |
+| **Entregado** (demo online de punta a punta) | Login/registro → alumnos con pseudónimos → juegos → guardado remoto → salida con contraseña → resultados/revisión → resumen familiar y exportación HTML/PDF. Cinco idiomas y frontend publicado en Pages. | ✅ `app/` + `backend/` |
+| **Pendiente operativo de cierre** | Revisar PR final, comprobar publicación del logo/documentación y la red del evento; QR, vídeo y presentación del equipo | Revisar `estado.md` |
+| **Después del hackathon** | Consentimiento/gestión de derechos, recuperación y borrado de cuentas, historial versionado, panel por centro, evaluación de IA externa, estudios de validez y posible diseño offline | Fuera del MVP |
 
 ## 8. Respuestas de Delia (4 nov)
-1. **Edad:** un solo rango, **desde los 7 años** (7-14), entre otras cosas por las políticas de Google Play. ⚠️ Al ser menores de 13, si se publica en Google Play aplica su política de familias (sin anuncios inadecuados y con datos mínimos), que ya cumplimos.
+1. **Edad:** un solo rango, **desde los 7 años** (7-14 en la validación de la API). La publicación en tiendas no forma parte de la demo y requeriría revisar sus políticas; no se declara una certificación para Google Play.
 2. **Capacidades:** las 5 del reto. Otras, en futuras actualizaciones.
 3. **Informes:** uno **técnico para el psicólogo o psicopedagogo** y otro **sencillo para el docente y la familia** → hecho: informe técnico en el panel profesional y resumen en el espacio familiar.
 4. **Rutas del vídeo:** Sudán → Chad (Amira; árabe y francés), Venezuela → Colombia (español) y Ucrania → España (ucraniano).

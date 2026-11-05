@@ -12,14 +12,16 @@ Este fichero lo leen las IAs de los 4 miembros del equipo (Claude Code, Copilot,
 - Idea y decisiones vigentes: ver `docs/decisiones.md` (manda sobre cualquier otra cosa). Quién hace qué ahora: `docs/estado.md`.
 
 ## Stack
-- **App (`app/`):** React 19 + TypeScript + Vite + Tailwind, Online, sin service worker de caché. Datos de alumnos en el backend, informes con reglas locales (`src/utils/aiPedagogy.ts`). Necesita **Node 22.12+**. Instalación y comandos: `README.md`.
+- **App (`app/`):** React 19 + TypeScript + Vite + Tailwind. **Solo online; no funciona offline**, ni por instalar un acceso directo. Sin service worker de caché. Datos de alumnos en el backend, informes con reglas locales (`src/utils/aiPedagogy.ts`). Necesita **Node 22.12+**. Arquitectura final y límites: `docs/arquitectura.md`; datos y seguridad: `docs/datos-y-seguridad.md`.
 - **Backend (`backend/`):** TypeScript + Fastify + SQLite/libSQL. API independiente con Bearer y sesiones de servidor. Frontend: `VITE_API_BASE_URL`; backend: `ALLOWED_ORIGINS` (incluye localhost si se prueba contra API pública). Sin proxy ni cookies de autenticación. Contrato en `backend/README.md`, integración en `docs/integracion-backend.md`, despliegue API/BBDD en `docs/despliegue-demo.md`. Sin sincronización offline ni historial de evaluaciones.
 - **Traspaso de `feat/backend`:** antes de integrar con el equipo, leer `docs/traspaso-floren.md` (cambios acumulados, pruebas y pendientes) y `docs/i18n.md` (catálogos completos ES/EN/FR/AR/UK). La integración y el merge quedan a Floren; los commits de esta rama no implican su aprobación.
-- **Demo publicada:** frontend apunta por defecto a `https://hack4edu-2026.onrender.com/api` (Render + Turso de Miguel). Override local: `VITE_API_BASE_URL=http://localhost:3001/api`. Frontend final en GitHub Pages: `https://floren87.github.io/hack4edu-2026/`; Render ya permite el origen `https://floren87.github.io` y despliega `develop` (la antigua `feat/backend` se eliminó). `npm run test:e2e` usa memoria; `npm run test:live` es opt-in y crea cuentas QA en la API pública, no ejecutarlo como comprobación rutinaria ni en CI.
+- **Demo publicada:** frontend en GitHub Pages (`https://floren87.github.io/hack4edu-2026/`), API en `https://hack4edu-2026.onrender.com/api` y base en Turso. Override local: `VITE_API_BASE_URL=http://localhost:3001/api`. CORS de Pages y límite de 60/min comprobados. `develop` se eliminó al integrar el PR #36: verificar Branch=`main` en Render antes de su próximo redeploy. `test:e2e` usa memoria; `test:live` es opt-in y no debe ejecutarse en CI ni como revisión rutinaria.
+- **Datos:** usuarios inventados/pseudónimos reducen identificadores, pero no garantizan anonimización irreversible. Contraseñas con hash scrypt/sal, tokens con SHA-256 en servidor; no declarar cumplimiento/auditoría de privacidad completa ni «nunca se almacenan datos personales». Campos libres y proveedores tienen límites descritos en la documentación.
+- **Marca:** archivo aprobado `app/public/koramap-logo.jpeg`, sin alterar sus bytes; `npm run brand:generate` deriva los iconos. Usar `AppLogo` y conservar los cinco idiomas.
 
 ## 🌿 Ramas
-- `main`: versión entregable. **No se toca** hasta que `develop` esté comprobada; entonces se fusiona `develop` → `main` con un PR.
-- `develop`: rama de trabajo del equipo. Todas las ramas de tarea salen de `develop` y vuelven a ella con un PR.
+- `main`: versión entregable y única rama remota tras integrar/eliminar `develop` en el PR #36. **Nunca commit/push directo.**
+- Mientras `develop` no exista, Miguel autoriza esta entrega en una rama de tarea desde `origin/main` y PR hacia `main`, con revisión de Floren. No recrear `develop` sin coordinarlo; si el equipo la restaura, documentar de nuevo la base vigente.
 
 ## 👥 Equipo (para saber con quién hablas)
 | Persona | Usuario de GitHub | Zona | Fuerte en |
@@ -34,7 +36,7 @@ Para saber quién eres: `gh api user -q .login`. Si `gh` no está instalado, pre
 ## 🧭 Cuando la persona pregunte «¿con qué sigo?» (o empiece la sesión)
 La persona pregunta y **tú recomiendas**. No le devuelvas la pregunta: haz lo siguiente y dale **una pista clara**.
 
-1. **Sincronizar:** `git status`. Si hay cambios sin guardar, avisa y resuélvelo primero. Después `git checkout develop && git pull`.
+1. **Sincronizar:** `git status`. Si hay cambios sin guardar, avisa y resuélvelo primero. Consultar la base vigente de «Ramas»; ahora `git checkout main && git pull --ff-only`, después crear una rama de tarea.
 2. **Ponerte al día:** lee `docs/estado.md`, `docs/decisiones.md` y `docs/propuesta.md`.
 3. **Ver qué hay pendiente** (con `gh`; si no está instalado, pide a la persona que te pegue las listas de Issues y Pull requests):
    - `gh pr list` → PR abiertos y quién debe revisarlos
@@ -55,11 +57,11 @@ La persona pregunta y **tú recomiendas**. No le devuelvas la pregunta: haz lo s
 Si la persona acepta, asígnale la issue (`gh issue edit N --add-assignee @me`), apunta en `docs/estado.md` que está con ella y empieza. Si elige otra, respeta su decisión.
 
 ## ⬆️ Antes de SUBIR algo (`git push` o abrir un PR)
-Mientras trabajabas, otro compañero puede haber cambiado `develop`. Antes de subir:
-1. `git pull origin develop` **en tu rama**: trae lo último de `develop` a tu trabajo.
+Mientras trabajabas, otro compañero puede haber cambiado la base. Antes de subir:
+1. `git pull origin main` **en tu rama de tarea** mientras `develop` no exista; trae la base vigente sin hacer commits directos en ella.
 2. Si hay **conflictos**, explícale a la persona qué choca y resuélvelo con ella; no borres el trabajo de otros.
 3. Comprueba que todo sigue funcionando (en `app/`: `npm run lint`, `npm test` y `npm run build`).
-4. Ahora sí: `git push` y, si no existe, abre el PR **contra `develop`** (`gh pr create --base develop`).
+4. Ahora sí: `git push` de la rama de tarea y PR a la base vigente: **`main`** mientras no exista `develop` (`gh pr create --base main`).
 
 ## 🔚 Protocolo al TERMINAR la sesión
 1. Sigue los pasos de «Antes de SUBIR algo» y haz `git push` de la rama, aunque el trabajo esté a medias (si está a medias, abre el PR como borrador: `gh pr create --draft`).
@@ -67,7 +69,7 @@ Mientras trabajabas, otro compañero puede haber cambiado `develop`. Antes de su
 3. Recuerda a la persona pedir revisión a alguien de la otra zona horaria.
 
 ## Reglas para la IA
-1. **Nunca hagas commit ni push a `main` ni directamente a `develop`.** Trabaja en una rama `tipo/descripcion-corta` (`feat/`, `fix/`, `docs/`) creada desde `develop` y abre un Pull Request contra `develop`.
+1. **Nunca hagas commit ni push directo a `main` ni a `develop`.** Usa una rama `feat/`, `fix/` o `docs/` desde la base vigente y abre PR para revisión. Base actual autorizada: `main`, porque `develop` fue integrada y eliminada.
 2. Commits pequeños y frecuentes, con mensaje claro en español. El historial de commits es nuestra prueba de trabajo durante el hackathon.
 3. Antes de empezar, lee la Issue de la tarea y `docs/decisiones.md`. Si tomas una decisión de diseño, propón añadirla a `docs/decisiones.md` en el mismo PR.
 4. **No inventes datos** (cifras, currículos, estudios). Si algo no tiene fuente, márcalo como `TODO: verificar`.
