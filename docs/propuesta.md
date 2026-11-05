@@ -58,6 +58,17 @@ Texto oficial: *«…identificar habilidades, intereses y fortalezas que muchas 
 
 **Entregables (5 nov, 23:59):** ☐ vídeo de 3 min (niño → familia → profesional, QR al final) ☐ presentación de 5 min (reutiliza el guion del vídeo) ☐ enlace a este repo ☐ código con licencia libre ✅
 
+## 3 bis. Marco de referencia
+
+**1. Diseño Universal para el Aprendizaje (DUA / UDL).** Autores: David Rose y Anne Meyer, CAST (Center for Applied Special Technology). Fuente: [udlguidelines.cast.org](https://udlguidelines.cast.org/).
+KoraMAP aplica el **tercer principio del DUA, «Múltiples formas de acción y expresión»**: el niño demuestra lo que sabe y sus habilidades jugando, sin la barrera de las evaluaciones tradicionales en papel o con texto.
+
+**2. ODS 4 – Educación de calidad, meta 4.a (entornos de aprendizaje inclusivos y seguros).** Fuente: [Naciones Unidas, ODS 4](https://www.un.org/sustainabledevelopment/es/education/).
+Texto oficial: «Construir y adecuar instalaciones educativas que tengan en cuenta las necesidades de los niños y las personas con discapacidad y las diferencias de género, y que ofrezcan entornos de aprendizaje seguros, no violentos, inclusivos y eficaces para todos».
+
+**3. ODS 4 – meta 4.5 (igualdad y no discriminación en la educación).** Es la meta más directamente ligada al Reto 20.
+Texto oficial: «De aquí a 2030, eliminar las disparidades de género en la educación y asegurar el acceso igualitario a todos los niveles de la enseñanza y la formación profesional para las personas vulnerables, incluidas las personas con discapacidad, los pueblos indígenas y los niños en situaciones de vulnerabilidad».
+
 ## 4. Los minijuegos
 Cada uno dura 1-2 min, tiene instrucciones con voz y animación y **ninguna respuesta es «incorrecta»** para el niño (siempre hay refuerzo positivo).
 

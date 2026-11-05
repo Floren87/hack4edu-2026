@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de privacidad · KoraMAP</title>
+  <meta name="description" content="Qué datos guarda KoraMAP, para qué, dónde y cómo borrarlos." />
+  <meta name="theme-color" content="#4f46e5" />
+  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #020617; color: #e2e8f0; font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    header { background: linear-gradient(135deg, #312e81, #0f172a 70%); border-bottom: 1px solid #1e293b; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+    header .wrap { padding-top: 36px; padding-bottom: 28px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; color: #c7d2fe; font-weight: 800; letter-spacing: .02em; text-decoration: none; }
+    .brand img { width: 32px; height: 32px; }
+    h1 { margin: 18px 0 6px; font-size: clamp(1.6rem, 4vw, 2.2rem); color: #fff; }
+    .meta { margin: 0; color: #94a3b8; font-size: .9rem; }
+    main { padding: 28px 0 48px; }
+    .summary { background: #0f172a; border: 1px solid #312e81; border-radius: 16px; padding: 18px 22px; margin-bottom: 28px; }
+    .summary strong { color: #fbbf24; }
+    h2 { margin: 32px 0 8px; font-size: 1.15rem; color: #a5b4fc; }
+    ul { padding-left: 1.2em; } li { margin: 4px 0; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: .95rem; }
+    th, td { text-align: left; vertical-align: top; padding: 9px 10px; border-bottom: 1px solid #1e293b; }
+    th { color: #c7d2fe; background: #0f172a; }
+    code { background: #1e293b; padding: 1px 6px; border-radius: 6px; font-size: .9em; }
+    a { color: #a5b4fc; }
+    .todo { color: #fbbf24; font-size: .9em; }
+    footer { border-top: 1px solid #1e293b; color: #64748b; font-size: .85rem; padding: 18px 0 28px; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="brand" href="./"><img src="./icon.svg" alt="" /> KoraMAP</a>
+    <h1>Política de privacidad</h1>
+    <p class="meta">Última actualización: 5 de noviembre de 2026 · Prototipo presentado a #Hack4Edu 2026</p>
+  </div>
+</header>
+<main class="wrap">
+  <div class="summary">
+    <p><strong>En resumen:</strong> KoraMAP la usa un profesional (psicólogo, orientador o docente) con niños y niñas <strong>desde 7 años</strong>. Los niños no crean cuentas y se identifican <strong>solo con un pseudónimo</strong>. No pedimos nombres reales, datos de salud, fotos, voz ni ubicación. No hay anuncios, ni cookies, ni analítica, ni venta de datos.</p>
+  </div>
+
+  <h2>1. Quién es el responsable</h2>
+  <p>KoraMAP es un prototipo de código abierto (licencia MIT) creado por un equipo del hackathon #Hack4Edu 2026. Para cualquier consulta sobre privacidad, abre una incidencia en <a href="https://github.com/Floren87/hack4edu-2026/issues">github.com/Floren87/hack4edu-2026/issues</a>.</p>
+  <p class="todo">TODO: verificar. Antes de usarlo con niños reales o de publicarlo en una tienda de aplicaciones, hay que indicar aquí una entidad responsable y un correo de contacto.</p>
+
+  <h2>2. Qué datos se guardan</h2>
+  <table>
+    <tr><th>Dato</th><th>Para qué</th><th>Dónde</th></tr>
+    <tr><td>Usuario del profesional y su contraseña, guardada solo como resumen cifrado (scrypt)</td><td>Iniciar sesión</td><td>Servidor</td></tr>
+    <tr><td>Pseudónimo del alumno, avatar, idioma preferido y edad (opcional, desde 7 años)</td><td>Identificar al alumno sin su nombre real</td><td>Servidor</td></tr>
+    <tr><td>Progreso en los juegos: estrellas, niveles, insignias y registro de partidas (duración, intentos, aciertos y observaciones automáticas)</td><td>Generar el informe de habilidades, intereses y fortalezas</td><td>Servidor</td></tr>
+    <tr><td>Validación y notas del profesional sobre el informe</td><td>Que el profesional confirme o corrija cada observación</td><td>Servidor</td></tr>
+    <tr><td>Sesión abierta (caduca a las 8 horas)</td><td>Mantener la sesión iniciada</td><td>Navegador (<code>sessionStorage</code>) y servidor, como resumen cifrado</td></tr>
+    <tr><td>Idioma elegido</td><td>Recordar el idioma de la interfaz</td><td>Navegador (<code>localStorage</code>)</td></tr>
+    <tr><td>Comentarios que escribe el niño sobre sus inventos</td><td>Mostrarlos en el informe</td><td><strong>Solo en el navegador</strong>. Nunca se envían al servidor y se borran al iniciar o cerrar sesión.</td></tr>
+  </table>
+  <p><strong>Nunca</strong> se piden ni se deben escribir nombres reales, datos de salud, diagnósticos, documentos de identidad ni situación administrativa.</p>
+
+  <h2>3. Los informes</h2>
+  <ul>
+    <li>Se generan en el navegador con reglas locales. <strong>No se envían datos a servicios externos de inteligencia artificial.</strong></li>
+    <li>El informe es una orientación para el profesional: <strong>no es un diagnóstico</strong> ni sustituye sus pruebas. La decisión final siempre es del profesional.</li>
+    <li>Cuando el profesional descarga un informe (HTML o PDF), el archivo queda en su dispositivo y es responsable de guardarlo de forma segura y de compartirlo solo con quien corresponda, como la familia o el equipo del centro.</li>
+  </ul>
+
+  <h2>4. Menores y consentimiento</h2>
+  <p>El niño o la niña solo juega en el «modo niño», que abre el profesional y que no da acceso a los datos ni a los informes; para salir hace falta la contraseña del profesional. El profesional o su centro deben contar con el consentimiento de la familia o del tutor legal, según la normativa de protección de datos que se aplique en su país.</p>
+
+  <h2>5. Proveedores que alojan el servicio</h2>
+  <ul>
+    <li><strong>GitHub Pages:</strong> sirve la web.</li>
+    <li><strong>Render:</strong> ejecuta el servidor (API).</li>
+    <li><strong>Turso:</strong> base de datos.</li>
+  </ul>
+  <p>Como cualquier servidor web, estos proveedores pueden registrar datos técnicos de conexión, como la dirección IP, según sus propias políticas.</p>
+  <p class="todo">TODO: verificar la región de los servidores de Render y Turso.</p>
+
+  <h2>6. Cuánto tiempo se guardan y cómo borrarlos</h2>
+  <ul>
+    <li>Los datos de un alumno se guardan hasta que el profesional lo elimina desde «Alumnos». Al eliminarlo se borran su perfil, su progreso y sus sesiones.</li>
+    <li>Las sesiones caducan a las 8 horas y se borran al cerrar sesión.</li>
+    <li>Para borrar una cuenta profesional completa, de momento hay que pedirlo por el canal de contacto del punto 1. <span class="todo">TODO: añadir un botón para borrar la cuenta.</span></li>
+  </ul>
+
+  <h2>7. Seguridad</h2>
+  <p>Las conexiones van cifradas (HTTPS), las contraseñas se guardan solo como resumen cifrado, cada profesional solo puede ver a sus propios alumnos y hay límites de intentos de inicio de sesión. Las contraseñas no se pueden recuperar: si se pierden, hay que crear una cuenta nueva.</p>
+
+  <h2>8. Cambios</h2>
+  <p>Si esta política cambia, se actualizará la fecha de arriba. El historial completo está en el repositorio público.</p>
+</main>
+<footer><div class="wrap">KoraMAP · Código abierto con licencia MIT · <a href="./">Volver a la app</a></div></footer>
+</body>
+</html>

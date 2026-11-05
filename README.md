@@ -25,6 +25,17 @@ Proyecto del equipo para el **#Hack4Edu 2026** (ProFuturo + UPSA), **Reto 20**. 
 
 [API y configuración](backend/README.md) · [Integración realizada](docs/integracion-backend.md) · [Despliegue gratuito](docs/despliegue-demo.md) · [Traspaso para Floren y Claude Code](docs/traspaso-floren.md)
 
+## Marco de referencia
+
+- **Diseño Universal para el Aprendizaje (DUA / UDL)**, de David Rose y Anne Meyer (CAST): aplicamos su tercer principio, **«Múltiples formas de acción y expresión»**. El niño demuestra sus habilidades jugando, no con pruebas en papel o con texto.
+- **ODS 4 – Educación de calidad:**
+  - **Meta 4.5:** acceso igualitario a la educación para las personas vulnerables, incluidos los niños en situaciones de vulnerabilidad. Es la más ligada al Reto 20.
+  - **Meta 4.a:** entornos de aprendizaje seguros, no violentos, inclusivos y eficaces para todos.
+
+Textos completos y fuentes en [`docs/propuesta.md`](docs/propuesta.md#3-bis-marco-de-referencia).
+
+**Privacidad:** [política de privacidad](https://floren87.github.io/hack4edu-2026/privacidad.html). Solo pseudónimos, sin nombres reales ni datos de salud, y para niños y niñas desde 7 años.
+
 ## Instalación y uso
 **Requisitos:** [Node.js](https://nodejs.org/) **22.12 o posterior** (con npm) y Git. Con Node 18 o 20 el build falla.
 

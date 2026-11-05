@@ -65,7 +65,7 @@ export function LoginScreen() {
         </section>
       </main>
       <footer className="relative mx-auto flex max-w-2xl items-start justify-center gap-2 text-center text-[11px] leading-relaxed text-slate-500">
-        <ShieldCheck size={14} className="shrink-0 text-indigo-400" /><span>{t.privacy}</span>
+        <ShieldCheck size={14} className="shrink-0 text-indigo-400" /><span>{t.privacy}{' '}<a href="./privacidad.html" target="_blank" rel="noopener" className="font-semibold text-indigo-300 underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-amber-400">{text(language, "Política de privacidad")}</a></span>
       </footer>
     </div>
   );
