@@ -17,7 +17,7 @@ export const WorldLogo: React.FC<WorldLogoProps> = ({ className = '', size = 32 
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={`shrink-0 ${className}`}
-      aria-label={text(language, "Mundo Talento sin Fronteras")}
+      aria-label={text(language, "Mundo KoraMAP")}
     >
       <defs>
         {/* Planet sphere gradient */}

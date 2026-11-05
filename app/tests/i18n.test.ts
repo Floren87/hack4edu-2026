@@ -25,7 +25,7 @@ test('all three namespaces have exactly the same keys, nonempty messages and val
       }
     }
   }
-  for (const language of languages) assert.equal(messageCatalogs[language]['Talento sin Fronteras'], translations[language].appName);
+  for (const language of languages) assert.equal(messageCatalogs[language]['KoraMAP'], translations[language].appName);
 });
 
 test('literal message calls in components and report generators must exist in the shared catalog', () => {

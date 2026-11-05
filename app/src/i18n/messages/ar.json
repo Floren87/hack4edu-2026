@@ -1,5 +1,5 @@
 {
-  "Talento sin Fronteras • Evaluación sin etiquetas ni barreras de idioma": "موهبة بلا حدود • اكتشاف نقاط القوة دون تصنيفات أو حواجز لغوية",
+  "KoraMAP • Evaluación sin etiquetas ni barreras de idioma": "KoraMAP • اكتشاف نقاط القوة دون تصنيفات أو حواجز لغوية",
   "Pensamiento Lógico": "التفكير المنطقي",
   "Comunicación": "التواصل",
   "Colaboración": "التعاون",
@@ -46,9 +46,9 @@
   "(icono de cuadrado con flecha hacia arriba) en la barra de Safari.": "(مربع بسهم إلى الأعلى) في شريط Safari.",
   "2. Baja un poco y selecciona": "2. مرّر إلى الأسفل واختر",
   "«Añadir a la pantalla de inicio»": "«إضافة إلى الشاشة الرئيسية»",
-  "3. Podrás usar Talento sin Fronteras a pantalla completa. Se necesita conexión a Internet.": "3. يمكنك فتح موهبة بلا حدود بملء الشاشة. يظل الاتصال بالإنترنت ضرورياً.",
+  "3. Podrás usar KoraMAP a pantalla completa. Se necesita conexión a Internet.": "3. يمكنك فتح KoraMAP بملء الشاشة. يظل الاتصال بالإنترنت ضرورياً.",
   "Entendido": "فهمت",
-  "Mundo Talento sin Fronteras": "عالم موهبة بلا حدود",
+  "Mundo KoraMAP": "عالم KoraMAP",
   "Descargando resumen para la familia...": "جارٍ تنزيل ملخص العائلة…",
   "¡Resumen familiar descargado listo para imprimir!": "تم تنزيل ملخص العائلة، وهو جاهز للطباعة!",
   "Resumen adaptado para familias": "ملخص مناسب للعائلات",
@@ -567,7 +567,7 @@
   "Intereses": "الاهتمامات",
   "Ideas para casa": "أفكار للمنزل",
   "Imprimir / Guardar PDF": "طباعة / حفظ PDF",
-  "Talento sin Fronteras": "موهبة بلا حدود",
+  "KoraMAP": "KoraMAP",
   "Edad": "العمر",
   "Insignias": "الشارات",
   "actividades completadas": "أنشطة مكتملة",
@@ -636,5 +636,6 @@
   "En palabras del niño o la niña": "بكلمات الطفل أو الطفلة",
   "Borrar ahora": "احذف الآن",
   "Tal como lo escribió, sin traducir ni puntuar. No se guarda en el perfil: solo está en esta pestaña del navegador y se borra al cerrarla. Imprime o descarga el informe para conservarlo.": "كما كتبه الطفل، دون ترجمة أو تقييم. لا يُحفظ في الملف الشخصي: يبقى فقط في علامة التبويب هذه ويُحذف عند إغلاقها. اطبع التقرير أو نزّله للاحتفاظ به.",
-  "Tal como lo escribió, sin traducir ni puntuar.": "كما كتبه الطفل، دون ترجمة أو تقييم."
+  "Tal como lo escribió, sin traducir ni puntuar.": "كما كتبه الطفل، دون ترجمة أو تقييم.",
+  "Descubre las habilidades, intereses y fortalezas de cada niño o niña, sin etiquetas ni barreras de idioma.": "اكتشف مهارات كل طفل واهتماماته ونقاط قوته، دون تصنيفات ولا حواجز لغوية."
 }

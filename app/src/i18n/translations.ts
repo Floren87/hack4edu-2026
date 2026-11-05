@@ -94,7 +94,7 @@ export interface Translations {
 
 export const translations: Record<Language, Translations> = {
   es: {
-    appName: "Talento sin Fronteras",
+    appName: "KoraMAP",
     tagline: "Descubriendo habilidades y fortalezas sin barreras de idioma",
     roleChild: "Zona de Juegos",
     roleTeacher: "Panel Profesional",
@@ -180,7 +180,7 @@ export const translations: Record<Language, Translations> = {
     evidenceCount: "Evidencias registradas:"
   },
   en: {
-    appName: "Talent Without Borders",
+    appName: "KoraMAP",
     tagline: "Discovering skills, interests, and strengths beyond language barriers",
     roleChild: "Play Zone",
     roleTeacher: "Professional Dashboard",
@@ -266,7 +266,7 @@ export const translations: Record<Language, Translations> = {
     evidenceCount: "Recorded evidence points:"
   },
   fr: {
-    appName: "Talent Sans Frontières",
+    appName: "KoraMAP",
     tagline: "Révéler les compétences et forces sans barrières linguistiques",
     roleChild: "Espace Jeux",
     roleTeacher: "Espace Professionnel",
@@ -352,7 +352,7 @@ export const translations: Record<Language, Translations> = {
     evidenceCount: "Faits observables enregistrés :"
   },
   ar: {
-    appName: "موهبة بلا حدود",
+    appName: "KoraMAP",
     tagline: "اكتشاف المهارات والقدرات والاهتمامات دون حواجز لغوية",
     roleChild: "منطقة الألعاب",
     roleTeacher: "لوحة المعلم والمرشد",
@@ -438,7 +438,7 @@ export const translations: Record<Language, Translations> = {
     evidenceCount: "الشواهد المسجلة:"
   },
   uk: {
-    appName: "Талант без кордонів",
+    appName: "KoraMAP",
     tagline: "Розкриваємо здібності та сильні сторони без мовних бар'єрів",
     roleChild: "Ігрова зона",
     roleTeacher: "Панель фахівця",

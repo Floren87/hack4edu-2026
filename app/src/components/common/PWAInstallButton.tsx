@@ -87,7 +87,7 @@ export const PWAInstallButton: React.FC = () => {
             <div className="w-full max-w-sm rounded-2xl bg-slate-900 border border-slate-700 p-6 shadow-2xl text-slate-100">
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <span>📲</span>{' '}{text(language, "Instalar en iPhone / iPad")}{' '}</h3>
-              <p className="mt-3 text-xs leading-relaxed text-slate-300">{' '}{text(language, "1. Toca el botón")}{' '}<strong>{' '}{text(language, "Compartir")}{' '}</strong> {' '}{text(language, "(icono de cuadrado con flecha hacia arriba) en la barra de Safari.")}{' '}<br />{' '}{text(language, "2. Baja un poco y selecciona")}{' '}<strong>{' '}{text(language, "«Añadir a la pantalla de inicio»")}{' '}</strong>.<br />{' '}{text(language, "3. Podrás usar Talento sin Fronteras a pantalla completa. Se necesita conexión a Internet.")}{' '}</p>
+              <p className="mt-3 text-xs leading-relaxed text-slate-300">{' '}{text(language, "1. Toca el botón")}{' '}<strong>{' '}{text(language, "Compartir")}{' '}</strong> {' '}{text(language, "(icono de cuadrado con flecha hacia arriba) en la barra de Safari.")}{' '}<br />{' '}{text(language, "2. Baja un poco y selecciona")}{' '}<strong>{' '}{text(language, "«Añadir a la pantalla de inicio»")}{' '}</strong>.<br />{' '}{text(language, "3. Podrás usar KoraMAP a pantalla completa. Se necesita conexión a Internet.")}{' '}</p>
               <button
                 onClick={() => setShowIOSGuide(false)}
                 className="mt-5 w-full rounded-xl bg-indigo-600 py-2.5 text-xs font-semibold text-white hover:bg-indigo-500"

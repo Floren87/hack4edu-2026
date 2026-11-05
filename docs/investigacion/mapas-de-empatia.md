@@ -1,6 +1,6 @@
 # Mapas de empatía
 
-Herramienta de *design thinking* sugerida por el mentor (4 nov). Un mapa por cada usuario de TalentoSinFronteras.
+Herramienta de *design thinking* sugerida por el mentor (4 nov). Un mapa por cada usuario de KoraMAP.
 
 **Leyenda de fuentes:**
 - 🟢 **Evidencia:** sale de una entrevista o de un dato publicado (se indica cuál).
@@ -63,7 +63,7 @@ Herramienta de *design thinking* sugerida por el mentor (4 nov). Un mapa por cad
 ---
 
 ## Lo que tienen en común
-Los tres mapas dicen lo mismo con palabras distintas: **el idioma esconde el talento**. El niño no puede demostrar lo que sabe, la familia no puede explicarlo y el profesional no puede verlo. **TalentoSinFronteras hace visible ese talento a través del juego, sin necesidad de idioma común.** → Frase candidata para el pitch.
+Los tres mapas dicen lo mismo con palabras distintas: **el idioma esconde el talento**. El niño no puede demostrar lo que sabe, la familia no puede explicarlo y el profesional no puede verlo. **KoraMAP hace visible ese talento a través del juego, sin necesidad de idioma común.** → Frase candidata para el pitch.
 
 ## Preguntas para validar (próximas entrevistas)
 **A una familia que llegó con un hijo de 9 años o más:**

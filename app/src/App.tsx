@@ -90,7 +90,7 @@ const AppContent: React.FC = () => {
       {/* Subtle Accessible Footer */}
       <footer className="border-t border-slate-900 py-4 px-4 text-center text-[11px] text-slate-500 print:hidden">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>{text(language, "Talento sin Fronteras • Evaluación sin etiquetas ni barreras de idioma")}</span>
+          <span>{text(language, "KoraMAP • Evaluación sin etiquetas ni barreras de idioma")}</span>
 
         </div>
       </footer>
