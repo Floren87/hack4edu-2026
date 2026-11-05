@@ -1,4 +1,4 @@
-import { localizeData } from '../i18n/localize';
+import { localizeText as text, localizeEvidence } from '../i18n/localize';
 import { 
   ComprehensiveAssessmentReport, 
   GameTelemetry, 
@@ -172,8 +172,8 @@ export function generatePedagogicalAssessment(
 
       return {
         id: cat.id,
-        name: cat.name,
-        subtitle: cat.subtitle,
+        name: text(lang, cat.name),
+        subtitle: text(lang, cat.subtitle),
         category: cat.category,
         worldId: cat.worldId,
         type: cat.type,
@@ -184,14 +184,14 @@ export function generatePedagogicalAssessment(
         attemptsCount: totalAttempts,
         originalMovesCount: totalMoves,
         scorePercent: calculatedScore,
-        notesObserved: notesList.length > 0 ? Array.from(new Set(notesList)) : ['Actividad completada satisfactoriamente con respuesta participativa.']
+        notesObserved: notesList.length > 0 ? Array.from(new Set(notesList.map(note => localizeEvidence(lang, note)))) : [text(lang, "Actividad completada satisfactoriamente con respuesta participativa.")]
       };
     } else {
       // Activity is pending! MUST NOT show fake observations!
       return {
         id: cat.id,
-        name: cat.name,
-        subtitle: cat.subtitle,
+        name: text(lang, cat.name),
+        subtitle: text(lang, cat.subtitle),
         category: cat.category,
         worldId: cat.worldId,
         type: cat.type,
@@ -199,9 +199,7 @@ export function generatePedagogicalAssessment(
         status: 'pendiente',
         scorePercent: 0,
         notesObserved: [
-          lang === 'es' 
-            ? '⏳ Pendiente de realizar por el estudiante en próximas sesiones formativas.'
-            : '⏳ Pending completion by student in upcoming learning sessions.'
+          text(lang, "⏳ Pendiente de realizar por el estudiante en próximas sesiones formativas.")
         ]
       };
     }
@@ -252,68 +250,58 @@ export function generatePedagogicalAssessment(
   const skillsPercentages: SkillsPercentageItem[] = [
     {
       category: 'creativity',
-      name: lang === 'es' ? 'Creatividad e Innovación Divergente' : 'Creativity & Divergent Thinking',
+      name: text(lang, "Creatividad e Innovación Divergente"),
       icon: '🎨',
       percentage: creativityPct,
       status: creativityLogs.length > 0 ? 'evaluada' : 'pendiente',
-      description: lang === 'es' 
-        ? 'Capacidad para combinar objetos, imaginar usos no convencionales y proyectar soluciones alternativas.'
-        : 'Ability to combine elements, envision alternative purposes, and innovate freely.',
+      description: text(lang, "Capacidad para combinar objetos, imaginar usos no convencionales y proyectar soluciones alternativas."),
       evidenceSummary: creativityLogs.length > 0
-        ? (lang === 'es' ? `${creativityMoves} combinaciones originales registradas en ${creativityLogs.length} partida(s).` : `${creativityMoves} original combinations recorded.`)
-        : (lang === 'es' ? 'Pendiente de realizar el minijuego "¿Qué inventas?".' : 'Pending completion of the creativity game.')
+        ? (text(lang, "{0} combinaciones originales registradas en {1} partida(s).", [creativityMoves, creativityLogs.length]))
+        : (text(lang, "Pendiente de realizar el minijuego \"¿Qué inventas?\"."))
     },
     {
       category: 'logic',
-      name: lang === 'es' ? 'Pensamiento Lógico e Inductivo' : 'Logical & Inductive Reasoning',
+      name: text(lang, "Pensamiento Lógico e Inductivo"),
       icon: '🧩',
       percentage: logicPct,
       status: logicLogs.length > 0 ? 'evaluada' : 'pendiente',
-      description: lang === 'es'
-        ? 'Detección de regularidades, rotaciones visuales y relaciones causa-efecto sin intermediación de idioma.'
-        : 'Detecting pattern regularities, spatial turns, and cause-effect links without language barriers.',
+      description: text(lang, "Detección de regularidades, rotaciones visuales y relaciones causa-efecto sin intermediación de idioma."),
       evidenceSummary: logicLogs.length > 0
-        ? (lang === 'es' ? `Tasa de acierto del ${logicPct}% en matrices visuales y series.` : `${logicPct}% accuracy in visual pattern solving.`)
-        : (lang === 'es' ? 'Pendiente de realizar el minijuego de secuencias y matrices.' : 'Pending pattern game evaluation.')
+        ? (text(lang, "Tasa de acierto del {0}% en matrices visuales y series.", [logicPct]))
+        : (text(lang, "Pendiente de realizar el minijuego de secuencias y matrices."))
     },
     {
       category: 'communication',
-      name: lang === 'es' ? 'Comunicación Visual y Narrativa' : 'Visual Communication & Storytelling',
+      name: text(lang, "Comunicación Visual y Narrativa"),
       icon: '📖',
       percentage: commPct,
       status: communicationLogs.length > 0 ? 'evaluada' : 'pendiente',
-      description: lang === 'es'
-        ? 'Capacidad para secuenciar temporalmente acontecimientos y atribuir estados emocionales a personajes.'
-        : 'Sequencing chronological story frames and expressing character emotional states.',
+      description: text(lang, "Capacidad para secuenciar temporalmente acontecimientos y atribuir estados emocionales a personajes."),
       evidenceSummary: communicationLogs.length > 0
-        ? (lang === 'es' ? `Construcción coherente de historias con precisión del ${commPct}%.` : `Coherent story flow with ${commPct}% accuracy.`)
-        : (lang === 'es' ? 'Pendiente de realizar el minijuego "Cuenta la Historia".' : 'Pending storytelling challenge.')
+        ? (text(lang, "Construcción coherente de historias con precisión del {0}%.", [commPct]))
+        : (text(lang, "Pendiente de realizar el minijuego \"Cuenta la Historia\"."))
     },
     {
       category: 'collaboration',
-      name: lang === 'es' ? 'Colaboración y Empatía No Verbal' : 'Non-Verbal Collaboration & Empathy',
+      name: text(lang, "Colaboración y Empatía No Verbal"),
       icon: '🤖',
       percentage: collabPct,
       status: collaborationLogs.length > 0 ? 'evaluada' : 'pendiente',
-      description: lang === 'es'
-        ? 'Sintonía ante necesidades ajenas, escucha de señales gestuales y reparto proactivo de recursos.'
-        : 'Attunement to peer cues, non-verbal listening, and proactive sharing of tools/energy.',
+      description: text(lang, "Sintonía ante necesidades ajenas, escucha de señales gestuales y reparto proactivo de recursos."),
       evidenceSummary: collaborationLogs.length > 0
-        ? (lang === 'es' ? `Respuesta colaborativa registrada con ${collaborationLogs.length} interacciones prosociales.` : `Cooperative warmth observed across ${collaborationLogs.length} sessions.`)
-        : (lang === 'es' ? 'Pendiente de realizar el reto de cooperación con Bobi.' : 'Pending robot partner challenge.')
+        ? (text(lang, "Respuesta colaborativa registrada con {0} interacciones prosociales.", [collaborationLogs.length]))
+        : (text(lang, "Pendiente de realizar el reto de cooperación con Bobi."))
     },
     {
       category: 'problem_solving',
-      name: lang === 'es' ? 'Resolución de Problemas y Perseverancia' : 'Problem Solving & Resilience',
+      name: text(lang, "Resolución de Problemas y Perseverancia"),
       icon: '💪',
       percentage: problemSolvingPct,
       status: telemetry.length > 0 ? 'evaluada' : 'pendiente',
-      description: lang === 'es'
-        ? 'Tolerancia al ensayo-error, flexibilidad ante obstáculos y persistencia constructiva sin frustración.'
-        : 'Constructive trial-and-error, resilience when facing setbacks, and continuous strategic adjustment.',
+      description: text(lang, "Tolerancia al ensayo-error, flexibilidad ante obstáculos y persistencia constructiva sin frustración."),
       evidenceSummary: telemetry.length > 0
-        ? (lang === 'es' ? `Índice de persistencia del ${problemSolvingPct}% medido a lo largo de ${telemetry.length} sesiones.` : `${problemSolvingPct}% resilience index across ${telemetry.length} sessions.`)
-        : (lang === 'es' ? 'Pendiente de registrar intentos de resolución en juegos.' : 'Pending session records.')
+        ? (text(lang, "Índice de persistencia del {0}% medido a lo largo de {1} sesiones.", [problemSolvingPct, telemetry.length]))
+        : (text(lang, "Pendiente de registrar intentos de resolución en juegos."))
     }
   ];
 
@@ -340,12 +328,8 @@ export function generatePedagogicalAssessment(
       percentage: pct,
       status: visits > 0 ? 'explorado' : 'pendiente',
       description: visits > 0
-        ? (lang === 'es' 
-            ? `Elegido ${visits} vez/veces espontáneamente (${pct}% de su atención intrínseca).`
-            : `Chosen ${visits} time(s) spontaneously (${pct}% of intrinsic focus).`)
-        : (lang === 'es' 
-            ? 'Pendiente de explorar. Aún no visitado por el alumno.'
-            : 'Pending exploration. Not yet visited by the student.')
+        ? (text(lang, "Elegido {0} vez/veces espontáneamente ({1}% de su atención intrínseca).", [visits, pct]))
+        : (text(lang, "Pendiente de explorar. Aún no visitado por el alumno."))
     };
   });
 
@@ -358,10 +342,8 @@ export function generatePedagogicalAssessment(
     visits: i.visits,
     percentage: i.percentage,
     description: i.visits > 0
-      ? (lang === 'es' 
-          ? `Concentra el ${i.percentage}% de las preferencias de juego del alumno (${i.visits} accesos directos).`
-          : `Accounts for ${i.percentage}% of the student's natural choices (${i.visits} visits).`)
-      : (lang === 'es' ? 'Pendiente de explorar en próximas actividades.' : 'Pending exploration in future sessions.')
+      ? (text(lang, "Concentra el {0}% de las preferencias de juego del alumno ({1} accesos directos).", [i.percentage, i.visits]))
+      : (text(lang, "Pendiente de explorar en próximas actividades."))
   }));
 
   // ==========================================
@@ -374,22 +356,20 @@ export function generatePedagogicalAssessment(
     strengths.push({
       id: 'str_creativity',
       category: 'creativity',
-      title: lang === 'es' ? 'Pensamiento Divergente y Recombinación Creativa' : 'Divergent Thinking & Creative Recombination',
+      title: text(lang, "Pensamiento Divergente y Recombinación Creativa"),
       levelDescription: creativityMoves >= 4 ? 'destaca' : 'destreza_solida',
-      description: lang === 'es'
-        ? 'Demuestra fluidez para concebir ideas inusuales y transformar piezas simples en soluciones funcionales completas.'
-        : 'Exhibits fluent idea generation, repurposing simple materials into novel functional creations.',
+      description: text(lang, "Demuestra fluidez para concebir ideas inusuales y transformar piezas simples en soluciones funcionales completas."),
       evidenceItems: [
-        `Registró ${creativityMoves} asociaciones de objetos no convencionales en el taller "¿Qué inventas?".`,
-        'Asignó una finalidad original y utilitaria a su creación sin requerir indicaciones textuales.',
-        `Dedicó tiempo voluntario a ensayar diferentes distribuciones de piezas.`
+        text(lang, "Registró {0} asociaciones de objetos no convencionales en el taller \"¿Qué inventas?\".", [creativityMoves]),
+        text(lang, "Asignó una finalidad original y utilitaria a su creación sin requerir indicaciones textuales."),
+        text(lang, "Dedicó tiempo voluntario a ensayar diferentes distribuciones de piezas.")
       ],
       classroomSuggestions: [
-        lang === 'es' ? 'Asignarle el rol de diseñador o modelador en maquetas, collages y proyectos STEM.' : 'Offer visual design or model-making roles in hands-on science and art projects.',
-        lang === 'es' ? 'Permitirle responder a preguntas complejas mediante dibujos o esquemas visuales antes del texto escrito.' : 'Allow communicating initial ideas through sketches or visual diagrams prior to requiring written text.'
+        text(lang, "Asignarle el rol de diseñador o modelador en maquetas, collages y proyectos STEM."),
+        text(lang, "Permitirle responder a preguntas complejas mediante dibujos o esquemas visuales antes del texto escrito.")
       ],
       familyHomeTips: [
-        lang === 'es' ? 'Reinventar cajas de cartón y tubos reciclados en casa para fabricar ciudades o naves fantásticas.' : 'Build imaginary spaceships and city models together using recycled household cardboard.'
+        text(lang, "Reinventar cajas de cartón y tubos reciclados en casa para fabricar ciudades o naves fantásticas.")
       ],
       confidence: 'alta'
     });
@@ -397,21 +377,17 @@ export function generatePedagogicalAssessment(
     strengths.push({
       id: 'str_creativity',
       category: 'creativity',
-      title: lang === 'es' ? 'Pensamiento Divergente y Creatividad Visual' : 'Divergent Thinking & Visual Creativity',
+      title: text(lang, "Pensamiento Divergente y Creatividad Visual"),
       levelDescription: 'en_observacion',
-      description: lang === 'es' 
-        ? 'Área abierta a la observación del docente una vez que el alumno participe en los retos creativos.' 
-        : 'Open for teacher observation once the student participates in creativity challenges.',
+      description: text(lang, "Área abierta a la observación del docente una vez que el alumno participe en los retos creativos."),
       evidenceItems: [
-        lang === 'es' 
-          ? '⏳ Pendiente de realizar: Esta habilidad no ha sido observada todavía porque el alumno aún no ha jugado al reto de creatividad.'
-          : '⏳ Pending: This strength has not been observed yet as the student has not completed the creativity game.'
+        text(lang, "⏳ Pendiente de realizar: Esta habilidad no ha sido observada todavía porque el alumno aún no ha jugado al reto de creatividad.")
       ],
       classroomSuggestions: [
-        lang === 'es' ? 'Invitar al estudiante a participar en el minijuego "¿Qué inventas?" para recoger las primeras evidencias.' : 'Invite the student to play "What Do You Invent?" to gather initial baseline evidence.'
+        text(lang, "Invitar al estudiante a participar en el minijuego \"¿Qué inventas?\" para recoger las primeras evidencias.")
       ],
       familyHomeTips: [
-        lang === 'es' ? 'Fomentar el dibujo libre sin juzgar el resultado en casa.' : 'Encourage free drawing and imaginative play at home.'
+        text(lang, "Fomentar el dibujo libre sin juzgar el resultado en casa.")
       ],
       confidence: 'inicial'
     });
@@ -423,22 +399,20 @@ export function generatePedagogicalAssessment(
     strengths.push({
       id: 'str_logic',
       category: 'logic',
-      title: lang === 'es' ? 'Razonamiento Inductivo y Descubrimiento de Patrones' : 'Inductive Reasoning & Visual Pattern Discovery',
+      title: text(lang, "Razonamiento Inductivo y Descubrimiento de Patrones"),
       levelDescription: isHighLogic ? 'destaca' : 'destreza_solida',
-      description: lang === 'es'
-        ? 'Facilidad notable para descifrar matrices abstractas, comprender secuencias temporales y detectar regularidades espaciales.'
-        : 'High aptitude for deciphering abstract matrices, spotting spatial sequences, and deductive logic.',
+      description: text(lang, "Facilidad notable para descifrar matrices abstractas, comprender secuencias temporales y detectar regularidades espaciales."),
       evidenceItems: [
-        `Completó matrices lógicas con un porcentaje de acierto del ${logicPct}%.`,
-        'Descubrió giros de rotación y progresiones de color sin necesidad de instrucciones verbales.',
-        'Mantuvo la concentración reflexiva al seleccionar las piezas candidatas.'
+        text(lang, "Completó matrices lógicas con un porcentaje de acierto del {0}%.", [logicPct]),
+        text(lang, "Descubrió giros de rotación y progresiones de color sin necesidad de instrucciones verbales."),
+        text(lang, "Mantuvo la concentración reflexiva al seleccionar las piezas candidatas.")
       ],
       classroomSuggestions: [
-        lang === 'es' ? 'Utilizar regletas Cuisenaire, bloques lógicos y ábacos como puente facilitador a la matemática formal.' : 'Incorporate color rods, attribute blocks, and visual math manipulatives.',
-        lang === 'es' ? 'Involucrarle en la organización sistemática del material didáctico y calendarios visuales del aula.' : 'Involve the student in organizing classroom materials and visual sequence schedules.'
+        text(lang, "Utilizar regletas Cuisenaire, bloques lógicos y ábacos como puente facilitador a la matemática formal."),
+        text(lang, "Involucrarle en la organización sistemática del material didáctico y calendarios visuales del aula.")
       ],
       familyHomeTips: [
-        lang === 'es' ? 'Practicar secuencias cotidianas en casa (ordenar cubiertos, calcetines por parejas o botones por tamaño).' : 'Practice sorting games at home: pairing socks, sorting cutlery, or assembling visual puzzles.'
+        text(lang, "Practicar secuencias cotidianas en casa (ordenar cubiertos, calcetines por parejas o botones por tamaño).")
       ],
       confidence: 'alta'
     });
@@ -446,21 +420,17 @@ export function generatePedagogicalAssessment(
     strengths.push({
       id: 'str_logic',
       category: 'logic',
-      title: lang === 'es' ? 'Razonamiento Lógico y Patrones' : 'Logical Reasoning & Patterns',
+      title: text(lang, "Razonamiento Lógico y Patrones"),
       levelDescription: 'en_observacion',
-      description: lang === 'es'
-        ? 'Competencia lógica deductiva en espera de ser evaluada mediante el juego de secuencias.'
-        : 'Deductive logic awaiting evaluation through the sequence game.',
+      description: text(lang, "Competencia lógica deductiva en espera de ser evaluada mediante el juego de secuencias."),
       evidenceItems: [
-        lang === 'es'
-          ? '⏳ Pendiente de realizar: El alumno todavía no ha realizado la actividad de patrones y series lógicas.'
-          : '⏳ Pending: The student has not yet completed the logic pattern challenge.'
+        text(lang, "⏳ Pendiente de realizar: El alumno todavía no ha realizado la actividad de patrones y series lógicas.")
       ],
       classroomSuggestions: [
-        lang === 'es' ? 'Proponer una breve sesión en el juego "Patrones y Secuencias".' : 'Suggest a brief session in the pattern challenge game.'
+        text(lang, "Proponer una breve sesión en el juego \"Patrones y Secuencias\".")
       ],
       familyHomeTips: [
-        lang === 'es' ? 'Jugar a dominó o laberintos sencillos en familia.' : 'Play dominoes or simple visual mazes at home.'
+        text(lang, "Jugar a dominó o laberintos sencillos en familia.")
       ],
       confidence: 'inicial'
     });
@@ -471,22 +441,20 @@ export function generatePedagogicalAssessment(
     strengths.push({
       id: 'str_resilience',
       category: 'problem_solving',
-      title: lang === 'es' ? 'Perseverancia Estratégica y Flexibilidad Adaptativa' : 'Strategic Perseverance & Adaptive Resilience',
+      title: text(lang, "Perseverancia Estratégica y Flexibilidad Adaptativa"),
       levelDescription: problemSolvingPct >= 80 ? 'destaca' : 'destreza_solida',
-      description: lang === 'es'
-        ? 'Afronta los retos con curiosidad calmada; experimenta de forma persistente y asume el error como paso hacia el éxito.'
-        : 'Approaches challenges with calm curiosity; persists through setbacks with adaptive adjustments.',
+      description: text(lang, "Afronta los retos con curiosidad calmada; experimenta de forma persistente y asume el error como paso hacia el éxito."),
       evidenceItems: [
-        `Índice de persistencia del ${problemSolvingPct}% mantenido a través de ${telemetry.length} sesiones de juego.`,
-        'Realizó reintentos constructivos sin manifestar bloqueo conductual ni desánimo ante tareas complejas.',
-        'Ajustó su forma de actuar tras ensayos previos, demostrando flexibilidad cognitiva.'
+        text(lang, "Índice de persistencia del {0}% mantenido a través de {1} sesiones de juego.", [problemSolvingPct, telemetry.length]),
+        text(lang, "Realizó reintentos constructivos sin manifestar bloqueo conductual ni desánimo ante tareas complejas."),
+        text(lang, "Ajustó su forma de actuar tras ensayos previos, demostrando flexibilidad cognitiva.")
       ],
       classroomSuggestions: [
-        lang === 'es' ? 'Elogiar explícitamente el proceso de ensayo y búsqueda ("¡Qué buena estrategia estás probando!") en lugar del resultado rápido.' : 'Praise the exploratory trial process rather than mere speed of answer.',
-        lang === 'es' ? 'Dividir tareas escolares amplias en micro-hitos visibles para acompañar su perseverancia.' : 'Segment broad classroom tasks into clear sequential micro-goals.'
+        text(lang, "Elogiar explícitamente el proceso de ensayo y búsqueda (\"¡Qué buena estrategia estás probando!\") en lugar del resultado rápido."),
+        text(lang, "Dividir tareas escolares amplias en micro-hitos visibles para acompañar su perseverancia.")
       ],
       familyHomeTips: [
-        lang === 'es' ? 'Valorar el esfuerzo en casa diciendo: "Me gusta ver cómo no te rindes y buscas otra solución".' : 'Praise daily persistence at home: "I love how you keep finding new ways to solve it!".'
+        text(lang, "Valorar el esfuerzo en casa diciendo: \"Me gusta ver cómo no te rindes y buscas otra solución\".")
       ],
       confidence: 'alta'
     });
@@ -494,21 +462,17 @@ export function generatePedagogicalAssessment(
     strengths.push({
       id: 'str_resilience',
       category: 'problem_solving',
-      title: lang === 'es' ? 'Resolución de Problemas y Perseverancia' : 'Problem Solving & Resilience',
+      title: text(lang, "Resolución de Problemas y Perseverancia"),
       levelDescription: 'en_observacion',
-      description: lang === 'es' 
-        ? 'La tolerancia al error y perseverancia se calculará automáticamente al realizar las actividades.'
-        : 'Resilience metrics will be calculated automatically as games are played.',
+      description: text(lang, "La tolerancia al error y perseverancia se calculará automáticamente al realizar las actividades."),
       evidenceItems: [
-        lang === 'es'
-          ? '⏳ Pendiente de realizar: No hay sesiones registradas aún para estimar la perseverancia.'
-          : '⏳ Pending: No sessions logged yet to evaluate trial-and-error persistence.'
+        text(lang, "⏳ Pendiente de realizar: No hay sesiones registradas aún para estimar la perseverancia.")
       ],
       classroomSuggestions: [
-        lang === 'es' ? 'Acompañar al estudiante en su primera partida para observar cómo interactúa con el juego.' : 'Guide the student during their first session to observe engagement.'
+        text(lang, "Acompañar al estudiante en su primera partida para observar cómo interactúa con el juego.")
       ],
       familyHomeTips: [
-        lang === 'es' ? 'Animar con paciencia ante cualquier dificultad cotidiana.' : 'Encourage patience with daily puzzles.'
+        text(lang, "Animar con paciencia ante cualquier dificultad cotidiana.")
       ],
       confidence: 'inicial'
     });
@@ -519,22 +483,20 @@ export function generatePedagogicalAssessment(
     strengths.push({
       id: 'str_collaboration',
       category: 'collaboration',
-      title: lang === 'es' ? 'Sensibilidad Empática y Cooperación No Verbal' : 'Empathetic Sensitivity & Non-Verbal Cooperation',
+      title: text(lang, "Sensibilidad Empática y Cooperación No Verbal"),
       levelDescription: 'destaca',
-      description: lang === 'es'
-        ? 'Sintonía afectiva ante gestos y necesidades del prójimo sin requerir mediación lingüística. Disposición natural de ayuda.'
-        : 'Attunement to peer needs and non-verbal cues without requiring language mediation.',
+      description: text(lang, "Sintonía afectiva ante gestos y necesidades del prójimo sin requerir mediación lingüística. Disposición natural de ayuda."),
       evidenceItems: [
-        `Completó ${collaborationLogs.length} retos cooperativos asistiendo de forma oportuna a las peticiones del compañero.`,
-        'Demostró generosidad en el reparto de recursos y herramientas de apoyo.',
-        'Atención continua a las expresiones faciales y gestos de necesidad.'
+        text(lang, "Completó {0} retos cooperativos asistiendo de forma oportuna a las peticiones del compañero.", [collaborationLogs.length]),
+        text(lang, "Demostró generosidad en el reparto de recursos y herramientas de apoyo."),
+        text(lang, "Atención continua a las expresiones faciales y gestos de necesidad.")
       ],
       classroomSuggestions: [
-        lang === 'es' ? 'Emparejarle con un compañero/a tutor para proyectos prácticos de ciencias o arte que no dependan del habla continua.' : 'Pair with a warm peer buddy for hands-on, non-verbal collaborative science or art tasks.',
-        lang === 'es' ? 'Proponerle ser el "asistente de bienvenida" o "encargado de equipos" en el aula.' : 'Invite the student to be a welcome assistant or team materials manager in classroom routines.'
+        text(lang, "Emparejarle con un compañero/a tutor para proyectos prácticos de ciencias o arte que no dependan del habla continua."),
+        text(lang, "Proponerle ser el \"asistente de bienvenida\" o \"encargado de equipos\" en el aula.")
       ],
       familyHomeTips: [
-        lang === 'es' ? 'Asignarle responsabilidades de cuidado en casa (cuidar plantas, alimentar mascotas o ayudar a poner la mesa).' : 'Involve the child in caring for family pets, garden plants, or preparing family dinners.'
+        text(lang, "Asignarle responsabilidades de cuidado en casa (cuidar plantas, alimentar mascotas o ayudar a poner la mesa).")
       ],
       confidence: 'alta'
     });
@@ -542,21 +504,17 @@ export function generatePedagogicalAssessment(
     strengths.push({
       id: 'str_collaboration',
       category: 'collaboration',
-      title: lang === 'es' ? 'Colaboración y Cooperación No Verbal' : 'Cooperation & Non-Verbal Empathy',
+      title: text(lang, "Colaboración y Cooperación No Verbal"),
       levelDescription: 'en_observacion',
-      description: lang === 'es' 
-        ? 'Competencia socioemocional pendiente de observar en el reto del robot Bobi o Santuario.'
-        : 'Socio-emotional competency awaiting observation in the robot challenge.',
+      description: text(lang, "Competencia socioemocional pendiente de observar en el reto del robot Bobi o Santuario."),
       evidenceItems: [
-        lang === 'es'
-          ? '⏳ Pendiente de realizar: El alumno aún no ha interactuado con los retos de ayuda cooperativa.'
-          : '⏳ Pending: The student has not yet engaged with cooperative partner challenges.'
+        text(lang, "⏳ Pendiente de realizar: El alumno aún no ha interactuado con los retos de ayuda cooperativa.")
       ],
       classroomSuggestions: [
-        lang === 'es' ? 'Proponerle jugar a "Ayuda al Robot Bobi" para evaluar su disposición cooperativa espontánea.' : 'Invite the child to play "Help Robot Bobi" to observe spontaneous prosocial behavior.'
+        text(lang, "Proponerle jugar a \"Ayuda al Robot Bobi\" para evaluar su disposición cooperativa espontánea.")
       ],
       familyHomeTips: [
-        lang === 'es' ? 'Fomentar juegos de mesa colaborativos sin perdedores.' : 'Play cooperative board games together.'
+        text(lang, "Fomentar juegos de mesa colaborativos sin perdedores.")
       ],
       confidence: 'inicial'
     });
@@ -594,32 +552,22 @@ export function generatePedagogicalAssessment(
   const pendingCount = pendingActivities.length;
   const topInterest = primaryInterests[0];
 
-  const overallSynthesis = lang === 'es'
-    ? `El estudiante ${student.nameOrAlias} cuenta actualmente con ${completedCount} actividad(es) realizada(s) con evidencias consolidadas y ${pendingCount} pendiente(s) de realizar. La evaluación pedagógica es acumulativa y evolutiva (R1bis): cada partida nueva aporta evidencias adicionales sin penalizar los intentos anteriores ni aplicar etiquetas estáticas sobre su potencial.`
-    : `Student ${student.nameOrAlias} has completed ${completedCount} activity/ies with solid evidence and ${pendingCount} pending completion. This assessment is cumulative and growth-oriented.`;
+  const overallSynthesis = text(lang, "El estudiante {0} cuenta actualmente con {1} actividad(es) realizada(s) con evidencias consolidadas y {2} pendiente(s) de realizar. La evaluación pedagógica es acumulativa y evolutiva (R1bis): cada partida nueva aporta evidencias adicionales sin penalizar los intentos anteriores ni aplicar etiquetas estáticas sobre su potencial.", [student.nameOrAlias, completedCount, pendingCount]);
 
-  const interestSkillCorrelation = lang === 'es'
-    ? (topInterest && topInterest.visits > 0
-        ? `Se evidencia una fuerte sincronía entre su foco de interés voluntario en "${topInterest.name}" (${topInterest.percentage}% de sus elecciones) y su desempeño en habilidades manipulativas y visuales (${skillsPercentages[0].percentage}% de creatividad y ${skillsPercentages[1].percentage}% de lógica). El estudiante aprende y se concentra con mayor intensidad cuando se le ofrecen canales de expresión táctil y espacial.`
-        : 'El mapa de intereses aún está en fase de exploración inicial. Se recomienda invitar al estudiante a recorrer los diferentes mundos para conocer sus inclinaciones espontáneas.')
-    : 'Interest and skill correlation analysis is progressing as more worlds are explored.';
+  const interestSkillCorrelation = (topInterest && topInterest.visits > 0
+        ? text(lang, "Se evidencia una fuerte sincronía entre su foco de interés voluntario en \"{0}\" ({1}% de sus elecciones) y su desempeño en habilidades manipulativas y visuales ({2}% de creatividad y {3}% de lógica). El estudiante aprende y se concentra con mayor intensidad cuando se le ofrecen canales de expresión táctil y espacial.", [topInterest.name, topInterest.percentage, skillsPercentages[0].percentage, skillsPercentages[1].percentage])
+        : text(lang, "El mapa de intereses aún está en fase de exploración inicial. Se recomienda invitar al estudiante a recorrer los diferentes mundos para conocer sus inclinaciones espontáneas."));
 
-  const resilienceEvaluation = lang === 'es'
-    ? (telemetry.length > 0
-        ? `Su índice de perseverancia se sitúa en el ${problemSolvingPct}%. El estudiante muestra tolerancia al ensayo-error cuando no está expuesto a la ansiedad del idioma hablado ni a la presión de tiempos cronometrados, utilizando el feedback visual inmediato para autorregular su respuesta.`
-        : 'Índice de perseverancia en observación. Se medirá de forma continua a medida que el alumno afronte retos con reintentos.')
-    : `Resilience index stands at ${problemSolvingPct}%.`;
+  const resilienceEvaluation = (telemetry.length > 0
+        ? text(lang, "Su índice de perseverancia se sitúa en el {0}%. El estudiante muestra tolerancia al ensayo-error cuando no está expuesto a la ansiedad del idioma hablado ni a la presión de tiempos cronometrados, utilizando el feedback visual inmediato para autorregular su respuesta.", [problemSolvingPct])
+        : text(lang, "Índice de perseverancia en observación. Se medirá de forma continua a medida que el alumno afronte retos con reintentos."));
 
-  const activitiesProgressSummary = lang === 'es'
-    ? `Progreso de actividades: ${completedCount} de 10 completadas (${Math.round((completedCount / 10) * 100)}%). Solo las actividades completadas alimentan las evidencias cualitativas, garantizando rigor ético y evitando inferencias sobre retos aún no realizados (${pendingCount} pendientes).`
-    : `Progress: ${completedCount} of 10 completed (${Math.round((completedCount / 10) * 100)}%).`;
+  const activitiesProgressSummary = text(lang, "Progreso de actividades: {0} de 10 completadas ({1}%). Solo las actividades completadas alimentan las evidencias cualitativas, garantizando rigor ético y evitando inferencias sobre retos aún no realizados ({2} pendientes).", [completedCount, Math.round((completedCount / 10) * 100), pendingCount]);
 
-  const classroomDifferentiationAdvice = lang === 'es'
-    ? `Para el aula ordinaria se sugiere: 1) Priorizar apoyos visuales y manipulativos sobre explicaciones verbales densas; 2) Aprovechar su interés predominante (${topInterest?.name || 'construcción y arte'}) para engancharlo en tareas curriculares; 3) Proponer roles de aula donde sus talentos prácticos sean reconocidos por sus compañeros sin necesidad de hablar fluidamente castellano.`
-    : 'Classroom advice: prioritize visual manipulatives, leverage top interests, and offer non-verbal leadership roles.';
+  const classroomDifferentiationAdvice = text(lang, "Para el aula ordinaria se sugiere: 1) Priorizar apoyos visuales y manipulativos sobre explicaciones verbales densas; 2) Aprovechar su interés predominante ({0}) para engancharlo en tareas curriculares; 3) Proponer roles de aula donde sus talentos prácticos sean reconocidos por sus compañeros sin necesidad de hablar fluidamente castellano.", [topInterest?.name || text(lang, "construcción y arte")]);
 
   const pedagogicalAnalysis: PedagogicalAnalysis = {
-    title: lang === 'es' ? 'Análisis Pedagógico Integral de Habilidades, Intereses y Fortalezas' : 'Comprehensive Pedagogical Analysis',
+    title: text(lang, "Análisis Pedagógico Integral de Habilidades, Intereses y Fortalezas"),
     overallSynthesis,
     interestSkillCorrelation,
     resilienceEvaluation,
@@ -633,27 +581,21 @@ export function generatePedagogicalAssessment(
   const classroomRecommendations = [
     {
       id: 'rec_1',
-      headline: lang === 'es' ? '1. Apoyos visuales y material manipulativo preferencial' : '1. Hands-on manipulatives & visual cues',
-      actionableDetail: lang === 'es' 
-        ? 'El estudiante procesa la información con notable agilidad cuando se le presentan diagramas, colores y objetos físicos manipulables, sorteando eficazmente la barrera del idioma castellano.'
-        : 'The student learns with remarkable speed when presented with diagrams, color tags, and physical objects, bypassing verbal barriers.',
-      evidenceContext: lang === 'es' ? 'Respaldado por evidencias observadas en actividades de Construcción y Patrones.' : 'Supported by observations in Building and Pattern games.'
+      headline: text(lang, "1. Apoyos visuales y material manipulativo preferencial"),
+      actionableDetail: text(lang, "El estudiante procesa la información con notable agilidad cuando se le presentan diagramas, colores y objetos físicos manipulables, sorteando eficazmente la barrera del idioma castellano."),
+      evidenceContext: text(lang, "Respaldado por evidencias observadas en actividades de Construcción y Patrones.")
     },
     {
       id: 'rec_2',
-      headline: lang === 'es' ? '2. Rol de protagonismo en proyectos prácticos y espaciales' : '2. Leadership in hands-on / spatial tasks',
-      actionableDetail: lang === 'es'
-        ? 'Asignarle responsabilidades donde pueda brillar de inmediato frente a sus compañeros (ej. montaje de maquetas, distribución espacial de materiales o robótica educativa).'
-        : 'Assign classroom responsibilities where they can shine directly in front of peers (e.g. robotics kits, model building, art displays).',
-      evidenceContext: lang === 'es' ? 'Reflejado en su persistencia e inventiva en el reto de Creatividad y Mundos.' : 'Grounded in high inventiveness during the Creativity challenge.'
+      headline: text(lang, "2. Rol de protagonismo en proyectos prácticos y espaciales"),
+      actionableDetail: text(lang, "Asignarle responsabilidades donde pueda brillar de inmediato frente a sus compañeros (ej. montaje de maquetas, distribución espacial de materiales o robótica educativa)."),
+      evidenceContext: text(lang, "Reflejado en su persistencia e inventiva en el reto de Creatividad y Mundos.")
     },
     {
       id: 'rec_3',
-      headline: lang === 'es' ? '3. Emparejamiento cooperativo sin exigencia lingüística' : '3. Non-verbal peer collaboration pairings',
-      actionableDetail: lang === 'es'
-        ? 'Fomentar dinámicas por parejas basadas en gestos y resolución conjunta de problemas táctiles (ej. juegos de mesa, experimentos de ciencias) para tejer vínculos sociales seguros.'
-        : 'Promote partner activities based on gestures and joint hands-on problem solving to foster social bonds without language anxiety.',
-      evidenceContext: lang === 'es' ? 'Basado en su interacción prosocial en el reto de Bobi y el Santuario.' : 'Evidenced in prosocial warmth during Bobi Robot and Creature Sanctuary.'
+      headline: text(lang, "3. Emparejamiento cooperativo sin exigencia lingüística"),
+      actionableDetail: text(lang, "Fomentar dinámicas por parejas basadas en gestos y resolución conjunta de problemas táctiles (ej. juegos de mesa, experimentos de ciencias) para tejer vínculos sociales seguros."),
+      evidenceContext: text(lang, "Basado en su interacción prosocial en el reto de Bobi y el Santuario.")
     }
   ];
 
@@ -661,21 +603,17 @@ export function generatePedagogicalAssessment(
   // 7. WARM FAMILY LETTER
   // ==========================================
   const familyLetter = {
-    greeting: lang === 'es' ? `Estimada familia de ${student.nameOrAlias}:` : `Dear family of ${student.nameOrAlias}:`,
-    positiveSummary: lang === 'es'
-      ? `Queremos compartir con ustedes que ${student.nameOrAlias} ha participado en actividades lúdicas donde ha demostrado un ingenio maravilloso, gran curiosidad para explorar y una hermosa perseverancia para resolver retos por sí mismo/a. Nos llena de orgullo ver su entusiasmo.`
-      : `We are delighted to share that ${student.nameOrAlias} took part in playful challenges where they demonstrated wonderful ingenuity, curiosity, and steadfast perseverance.`,
+    greeting: text(lang, "Estimada familia de {0}:", [student.nameOrAlias]),
+    positiveSummary: text(lang, "Queremos compartir con ustedes que {0} ha participado en actividades lúdicas donde ha demostrado un ingenio maravilloso, gran curiosidad para explorar y una hermosa perseverancia para resolver retos por sí mismo/a. Nos llena de orgullo ver su entusiasmo.", [student.nameOrAlias]),
     homeActivities: [
-      lang === 'es' ? 'Cocinar juntos una receta tradicional familiar, contando ingredientes y decorando el plato con formas creativas.' : 'Cook a family recipe together, counting ingredients and arranging shapes on the plate.',
-      lang === 'es' ? 'Mirar fotos o pasear buscando formas y colores curiosos en la calle o en el parque.' : 'Look at family photos or walk around the park spotting curious colors and shapes.',
-      lang === 'es' ? 'Jugar a inventar historias a partir de objetos sencillos de casa.' : 'Play making up stories together using everyday household items.'
+      text(lang, "Cocinar juntos una receta tradicional familiar, contando ingredientes y decorando el plato con formas creativas."),
+      text(lang, "Mirar fotos o pasear buscando formas y colores curiosos en la calle o en el parque."),
+      text(lang, "Jugar a inventar historias a partir de objetos sencillos de casa.")
     ],
-    closing: lang === 'es' 
-      ? '¡Su talento y esfuerzo son un tesoro que florece cada día!' 
-      : 'Their talent and dedication are a treasure that blossoms every day!'
+    closing: text(lang, "¡Su talento y esfuerzo son un tesoro que florece cada día!")
   };
 
-  return localizeData({
+  return {
     studentId: student.id,
     generatedAt: new Date().toISOString(),
     skillsPercentages,
@@ -691,11 +629,11 @@ export function generatePedagogicalAssessment(
     familyLetter,
     totalSessionsAnalyzed: telemetry.length,
     neurodivergentAccommodations: [
-      lang === 'es' ? 'Permitir pausas sensoriales y descansos de bajo estímulo durante la jornada escolar.' : 'Allow quiet sensory breathers throughout the school day.',
-      lang === 'es' ? 'Respetar su tiempo de procesamiento visual sin apresurar respuestas orales frente al grupo.' : 'Respect visual processing time without rushing oral answers in front of the whole group.',
-      lang === 'es' ? 'Proporcionar anticipación de las rutinas mediante iconos secuenciales en su pupitre.' : 'Provide predictable daily routines using visual sequence cards on their desk.'
+      text(lang, "Permitir pausas sensoriales y descansos de bajo estímulo durante la jornada escolar."),
+      text(lang, "Respetar su tiempo de procesamiento visual sin apresurar respuestas orales frente al grupo."),
+      text(lang, "Proporcionar anticipación de las rutinas mediante iconos secuenciales en su pupitre.")
     ]
-  }, lang);
+  };
 }
 
 function totalActivitiesCompletedCount(completed: ActivityStatusItem[]): number {

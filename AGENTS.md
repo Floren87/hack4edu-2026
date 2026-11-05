@@ -12,8 +12,10 @@ Este fichero lo leen las IAs de los 4 miembros del equipo (Claude Code, Copilot,
 - Idea y decisiones vigentes: ver `docs/decisiones.md` (manda sobre cualquier otra cosa). Quién hace qué ahora: `docs/estado.md`.
 
 ## Stack
-- **App (`app/`):** React 19 + TypeScript + Vite + Tailwind, PWA sin conexión. Datos en el navegador (`localStorage`), informes con reglas locales (`src/utils/aiPedagogy.ts`). Necesita **Node 22.12+**. Instalación y comandos: `README.md`.
-- **Backend:** no hay. FastAPI + SQLite es una propuesta sin implementar (`docs/backend-profesionales.md`).
+- **App (`app/`):** React 19 + TypeScript + Vite + Tailwind, Online, sin service worker de caché. Datos de alumnos en el backend, informes con reglas locales (`src/utils/aiPedagogy.ts`). Necesita **Node 22.12+**. Instalación y comandos: `README.md`.
+- **Backend (`backend/`):** TypeScript + Fastify + SQLite/libSQL. API independiente con Bearer y sesiones de servidor. Frontend: `VITE_API_BASE_URL`; backend: `ALLOWED_ORIGINS` (incluye localhost si se prueba contra API pública). Sin proxy ni cookies de autenticación. Contrato en `backend/README.md`, integración en `docs/integracion-backend.md`, despliegue API/BBDD en `docs/despliegue-demo.md`. Sin sincronización offline ni historial de evaluaciones.
+- **Traspaso de `feat/backend`:** antes de integrar con el equipo, leer `docs/traspaso-floren.md` (cambios acumulados, pruebas y pendientes) y `docs/i18n.md` (catálogos completos ES/EN/FR/AR/UK). La integración y el merge quedan a Floren; los commits de esta rama no implican su aprobación.
+- **Demo publicada:** frontend apunta por defecto a `https://hack4edu-2026.onrender.com/api` (Render + Turso de Miguel). Override local: `VITE_API_BASE_URL=http://localhost:3001/api`. Pendiente tras integrar: autorizar el origen exacto de Netlify en `ALLOWED_ORIGINS` de Render. `npm run test:e2e` usa memoria; `npm run test:live` es opt-in y crea cuentas QA en la API pública, no ejecutarlo como comprobación rutinaria ni en CI.
 
 ## 🌿 Ramas
 - `main`: versión entregable. **No se toca** hasta que `develop` esté comprobada; entonces se fusiona `develop` → `main` con un PR.
@@ -23,7 +25,7 @@ Este fichero lo leen las IAs de los 4 miembros del equipo (Claude Code, Copilot,
 | Persona | Usuario de GitHub | Zona | Fuerte en |
 |---|---|---|---|
 | Floren | `Floren87` | Madrid (UTC+1) | Programación, coordinación del repo |
-| Miguel | `XxMigue03xX` | Colombia (UTC−5) | Programación, backend (FastAPI) |
+| Miguel | `XxMigue03xX` | Colombia (UTC−5) | Programación, backend (TypeScript/Fastify) |
 | Delia | `deliainclusiveapps` | Ecuador (UTC−5) | Diseño de pantallas, accesibilidad |
 | Cristina | _pendiente_ | Madrid (UTC+1) | Mercado, presentación, vídeo, investigación |
 

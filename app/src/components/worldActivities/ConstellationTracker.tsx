@@ -154,6 +154,7 @@ export const ConstellationTracker: React.FC = () => {
               {c.starsCoords.map((coord, idx) => (
                 <button
                   key={idx}
+                  aria-label={`${text(language, "Toca para despertar la constelación")}: ${text(language, c.name)}`}
                   onClick={() => handleDiscoverConstellation(c.id)}
                   style={{ left: `${coord.x}%`, top: `${coord.y}%` }}
                   className={`absolute transform -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-300 ${

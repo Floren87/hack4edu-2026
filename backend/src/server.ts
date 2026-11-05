@@ -1,0 +1,14 @@
+import { openDatabase } from './db.js';
+import { buildApp } from './app.js';
+import { readOrigins } from './config.js';
+const production = process.env.NODE_ENV === 'production';
+const url = process.env.DATABASE_URL ?? 'file:./demo.db';
+if (production && !url.startsWith('libsql://')) throw new Error('En producción configura DATABASE_URL libsql:// persistente; no uses el disco efímero');
+if (production && !process.env.DATABASE_AUTH_TOKEN) throw new Error('Falta DATABASE_AUTH_TOKEN');
+const origins = readOrigins(process.env);
+const db = await openDatabase(url, process.env.DATABASE_AUTH_TOKEN || undefined);
+const app = await buildApp({ db, production, origins, staticDir: process.env.STATIC_DIR || undefined });
+app.addHook('onClose', async () => { db.close(); });
+await app.listen({ port: Number(process.env.PORT ?? 3001), host: process.env.HOST ?? '127.0.0.1' });
+console.log(`Backend disponible en puerto ${process.env.PORT ?? 3001}`);
+for (const signal of ['SIGINT', 'SIGTERM'] as const) process.once(signal, () => { void app.close(); });
