@@ -2,7 +2,9 @@
 
 **Arquitectura vigente:** API TypeScript/Fastify en Render + base **libSQL** en Turso. El frontend lo publica Floren/Delia de forma independiente; no necesita proxy. También se puede usar el frontend de localhost contra la API pública.
 
-Documentación oficial consultada el **4 de noviembre de 2026**. Se verifica el código y el flujo entre orígenes distintos en pruebas locales; **este sprint no crea cuentas de proveedores ni realiza un despliegue remoto**. Las URLs que aparecen abajo son ejemplos para reemplazar.
+**Estado al 4 de noviembre de 2026:** Miguel ya creó la BBDD Turso y publicó la API en **`https://hack4edu-2026.onrender.com/api`**. [Healthcheck público](https://hack4edu-2026.onrender.com/api/health) responde `200 {"ok":true}`. Esta rama usa esa API por defecto, sin `.env.local`. La prueba real en navegador desde `http://localhost:3000` validó cuentas, CRUD, persistencia tras recarga/nuevo login, modo niño, aislamiento y exportaciones árabes. Ver [traspaso y pruebas](traspaso-floren.md).
+
+**Pendiente de mañana tras la integración:** Floren/Delia despliegan el frontend y comunican su origen HTTPS; Miguel lo añade a `ALLOWED_ORIGINS` en Render y redespliega la API. Después se repite el flujo desde Netlify antes de distribuir el QR. No se necesita recrear la BBDD ni implementar un proxy. Las secciones 1 y 2 conservan las instrucciones de aprovisionamiento/republicación; los valores `TU-…` siguen siendo ejemplos, nunca secretos reales. Documentación oficial consultada el **4 de noviembre de 2026**.
 
 ## 1. Crear la base en Turso
 
@@ -66,17 +68,17 @@ Son orígenes exactos, sin `/` final ni rutas. `localhost` y `127.0.0.1`, o dos 
 Después de publicar, comprobar:
 
 ```powershell
-Invoke-RestMethod https://TU-API.onrender.com/api/health
+Invoke-RestMethod https://hack4edu-2026.onrender.com/api/health
 ```
 
 Debe devolver `ok: true`; esto comprueba también acceso a BBDD. La raíz `/` puede devolver 404: es correcto en un servicio que solo sirve API. Si falta la configuración remota, el servidor de producción se niega a usar SQLite local deliberadamente.
 
 ## 3. Usar tu frontend local contra la API desplegada
 
-Editar **`app/.env.local`**; si todavía no existe, puedes partir de `app/.env.example`. No sobrescribir otras variables de un archivo existente.
+**No es necesario crear variables para la demo:** el valor predeterminado centralizado en `app/src/utils/apiConfig.ts` es la API publicada. `app/.env.example` también refleja su URL correcta. Si ya existe un **`app/.env.local`**, comprobar que no conserve un override antiguo a localhost ni termine en `/api/health`. Para fijar explícitamente el destino o usar otra API, editar ese archivo sin sobrescribir sus demás variables:
 
 ```dotenv
-VITE_API_BASE_URL=https://TU-API.onrender.com/api
+VITE_API_BASE_URL=https://hack4edu-2026.onrender.com/api
 ```
 
 Desde `app/`:
@@ -86,21 +88,23 @@ npm ci
 npm run dev
 ```
 
-Abrir `http://localhost:3000`. Tras cambiar la variable hay que reiniciar Vite. No hay proxy: DevTools debe mostrar llamadas directas a `https://TU-API.onrender.com/api/…` y preflight `OPTIONS` cuando corresponda. La URL también puede especificarse sin `/api`; el cliente lo añade una sola vez.
+Abrir `http://localhost:3000` (origen remoto ya comprobado). Tras cambiar la variable hay que reiniciar Vite. No hay proxy: DevTools debe mostrar llamadas directas a `https://hack4edu-2026.onrender.com/api/…` y preflight `OPTIONS` cuando corresponda. La URL también puede especificarse sin `/api`; el cliente lo añade una sola vez. Para volver al backend local, usar `VITE_API_BASE_URL=http://localhost:3001/api` e iniciar `backend/`.
 
 Login devuelve una sesión Bearer que el cliente conserva en `sessionStorage`, nunca la contraseña. Sobrevive a recargar; una pestaña independiente requiere login. Cerrar sesión revoca el token en servidor. Las sesiones previas con cookie requieren volver a iniciar sesión tras actualizar; cuentas y alumnos existentes se conservan.
 
 ## 4. Lo único que necesita Floren para conectar su frontend
 
-Entregar la **URL pública de la API**, sin ningún secreto. En su build del frontend definir:
+La URL pública ya está incorporada en la rama: **`https://hack4edu-2026.onrender.com/api`**. Floren puede compilar sin variables adicionales. Si prefiere definir explícitamente el destino en su build, usar:
 
 ```dotenv
-VITE_API_BASE_URL=https://TU-API.onrender.com/api
+VITE_API_BASE_URL=https://hack4edu-2026.onrender.com/api
 ```
 
 La variable es pública y se incorpora al compilar. Cambiarla requiere reconstruir/republicar; no se modifica un bundle ya generado. Con base de proyecto `app`, el build es `npm run build` y el directorio publicado `dist`. No hace falta una regla de proxy para `/api`. Nunca configurar `DATABASE_AUTH_TOKEN` en Netlify.
 
 Miguel añade el origen del frontend a `ALLOWED_ORIGINS` en Render. El frontend público y la API deben usar HTTPS. Para previsualizar un build local con `npm run preview` (habitualmente puerto 4173), añadir ese origen al backend; no asumir que comparte el origen de desarrollo.
+
+Secuencia de cierre tras integrar: obtener la URL de Netlify → Miguel configura `ALLOWED_ORIGINS=http://localhost:3000,https://ORIGEN-REAL.netlify.app` en Render → redesplegar la API → probar registro, juego, guardado, recarga e informes desde ese dominio. Es un cambio de configuración del backend, sin cambios de código del frontend. No autorizar una URL inventada ni `*`; cada preview adicional exige su origen exacto.
 
 ## 5. Validación antes de entregar el QR
 
@@ -112,6 +116,8 @@ Miguel añade el origen del frontend a `ALLOWED_ORIGINS` en Render. El frontend 
 6. En DevTools confirmar `Authorization: Bearer …`, ausencia de cookies de autenticación y ninguna respuesta de API en caché. No incluir tokens en las capturas.
 
 Errores frecuentes: `NETWORK` puede ser CORS, URL equivocada o servicio arrancando; revisar Network y `OPTIONS`. `ORIGIN_NOT_ALLOWED` requiere corregir la lista de orígenes. `401 LOGIN_REQUIRED` implica sesión ausente/caducada: volver a entrar. `409 VERSION_CONFLICT` exige cargar el estado remoto. `429` requiere esperar, no repetir peticiones en bucle.
+
+**Automatización:** `npm run test:live` desde `app/` reproduce una prueba remota con datos ficticios y frontend en localhost:3000. Es opt-in, crea dos cuentas `qa-*` por ejecución completa, borra únicamente su alumno de prueba y revoca sus sesiones; quedan cuentas QA vacías porque no hay borrado de cuentas. `npm run test:e2e` se mantiene aislado en memoria y no escribe en Render. No se forzó un reinicio del servicio remoto durante esta validación; la comprobación de supervivencia a redeploy y la red de Madrid siguen siendo verificaciones operativas antes del QR.
 
 ## 6. Presentación y límites del plan gratuito
 

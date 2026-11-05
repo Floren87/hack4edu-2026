@@ -1,10 +1,11 @@
 # Integración frontend/API desacoplada · feat/backend
 
-Implementada en esta rama por autorización de Miguel. Floren realiza la reconciliación con las demás ramas y el merge; no se abre PR durante este sprint. Contexto acumulado: [traspaso-floren.md](traspaso-floren.md). Publicación: [despliegue-demo.md](despliegue-demo.md).
+Implementada en esta rama por autorización de Miguel. La API ya está publicada en Render con BBDD Turso; esta rama la utiliza por defecto. Miguel autoriza preparar el PR contra `develop` después de validar. Floren realiza la reconciliación con las demás ramas y el merge. Contexto acumulado: [traspaso-floren.md](traspaso-floren.md). Publicación: [despliegue-demo.md](despliegue-demo.md).
 
 ## Contrato de conexión
 
-- Frontend: `VITE_API_BASE_URL`, por ejemplo `http://localhost:3001/api` o `https://TU-API.onrender.com/api`. Se acepta también el origen sin `/api`; se normaliza una vez. La URL se valida en la configuración de Vite y en el cliente. No admite credenciales, query ni fragmentos; un frontend HTTPS rechaza una API HTTP.
+- Frontend: por defecto **`https://hack4edu-2026.onrender.com/api`**, centralizada en `app/src/utils/apiConfig.ts`. `VITE_API_BASE_URL` permite cambiarla, por ejemplo a `http://localhost:3001/api` para desarrollo local. `.env.example` es una referencia: Vite no lo carga automáticamente. Un `.env.local` anterior puede sobrescribir el destino; revisarlo si se siguen viendo llamadas a localhost.
+- Se acepta también el origen sin `/api`; se normaliza una vez. La URL se valida en la configuración de Vite y en el cliente. No admite credenciales, query, fragmentos ni `/api/health` como base; un frontend HTTPS rechaza una API HTTP.
 - Backend: `ALLOWED_ORIGINS`, lista explícita separada por comas. Se puede autorizar localhost y el frontend público al mismo tiempo, sin comodines. `APP_ORIGIN` se mantiene solo como alias de compatibilidad; la lista nueva tiene prioridad.
 - No hay proxy de Vite ni requisito de proxy en Netlify. `BACKEND_URL` dejó de utilizarse. Las llamadas del navegador van directamente a la API configurada.
 - Cambiar la URL requiere reiniciar Vite o reconstruir el frontend. Añadir un origen nuevo requiere actualizar la configuración del backend y reiniciarlo/republicarlo; no exige un cambio de código.
@@ -53,4 +54,6 @@ Actualizar frontend y backend a este contrato antes de probarlos juntos. Cliente
 
 Las E2E usan **frontend `http://localhost:3100` y API `http://127.0.0.1:3101`**, sin proxy, con base en memoria. Cubren CORS real, login, reload, revocación, pestañas, CRUD, niño, guardado/conflictos y juegos/informes en los cinco idiomas. Instalar dependencias de ambos directorios y dejar libres ambos puertos.
 
-Antes de entregar la URL pública, repetir el recorrido contra Render/Turso y el dominio definitivo. Las pruebas locales no certifican que se hayan configurado correctamente esas cuentas de hosting ni la red de la presentación.
+Además existe **`npm run test:live`** en `app/`: opt-in, separado de `npm run test:e2e`, inicia/reutiliza frontend en `http://localhost:3000` y usa el destino público predeterminado, sin iniciar backend local. Validó registro, CRUD, progreso, recarga/nuevo login, permisos niño/profesional, contraseña de salida, aislamiento entre dos cuentas y ambos HTML en árabe RTL contra Render/Turso. Crea cuentas ficticias `qa-*`, elimina su propio alumno y revoca las sesiones. Quedan cuentas QA vacías porque no existe endpoint de borrado de cuentas. No usar datos reales ni ejecutar esta suite automáticamente en CI; las E2E normales usan memoria y no escriben en Render. No se guardan trazas con credenciales.
+
+**Pendiente tras integrar:** Miguel añade el origen HTTPS exacto de Netlify a `ALLOWED_ORIGINS` en Render y redespliega la API. Floren/Delia verifican el flujo desde el dominio publicado y la red de presentación. La prueba pública actual se realizó desde localhost; no se forzó un reinicio remoto ni se certificó aún el frontend final.

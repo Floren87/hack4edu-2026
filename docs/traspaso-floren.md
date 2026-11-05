@@ -5,11 +5,19 @@
 ## Rama y alcance acordado
 
 - Rama: **`feat/backend`**, creada desde `develop` en `d9b5040`. No se ha fusionado posteriormente `develop` ni se ha modificado `main`.
-- El usuario autorizó continuar frontend e idiomas en esta rama y subir sus commits. **La integración con las ramas del equipo y el merge los hará Floren.** El PR se preparará al terminar el día; este sprint no lo abre.
+- Miguel autorizó continuar frontend e idiomas en esta rama y subir sus commits; ahora autoriza preparar el **PR `feat/backend` → `develop`**, tras validar la conexión pública y documentarla. **La integración con las ramas del equipo y el merge los hará Floren.** No se fusionan aquí las ramas concurrentes.
 - Decisión vigente: TypeScript, demo conectada, cuenta con usuario inventado y contraseña, alumnos con pseudónimos y **estado actual**. Sin offline, historial de evaluaciones, recuperación por email ni IA externa.
 - Referencia completa: [decisiones](decisiones.md), [API](../backend/README.md), [integración frontend](integracion-backend.md), [despliegue](despliegue-demo.md).
 
 **Actualización posterior al sprint de idiomas:** Miguel aprobó el desacoplamiento. El contrato vigente es **Bearer + `VITE_API_BASE_URL` + `ALLOWED_ORIGINS`**, sin proxy ni cookies. Leer las guías enlazadas antes de publicar: el frontend ya puede apuntar desde localhost a una API remota. Las versiones antiguas de frontend con cookie/CSRF requieren actualizarse y volver a iniciar sesión; no borrar las cuentas ni los alumnos.
+
+## Demo remota ya disponible · entrega a Floren
+
+- **API base:** `https://hack4edu-2026.onrender.com/api`. **Salud:** [GET /api/health](https://hack4edu-2026.onrender.com/api/health), comprobado `200 {"ok":true}`. Miguel la desplegó en Render y la conectó a libSQL/Turso siguiendo la guía. La BBDD, credenciales y operación de la API quedan con Miguel.
+- **Esta rama apunta allí por defecto**, también al compilar sin variables. El valor se centraliza en `app/src/utils/apiConfig.ts`; `app/.env.example` lo documenta. `/api/health` no es una URL base. Si existe un `.env.local` anterior apuntando a localhost, quitar/corregir ese override y reiniciar Vite o reconstruir. `.env.example` no se carga automáticamente.
+- **Comprobación real aprobada:** navegador en `http://localhost:3000` → API pública → BBDD remota. Registro/login de dos cuentas ficticias, alta/edición/borrado de alumno, nota profesional, partida y progreso persistido tras recarga y nuevo login, bloqueo niño, contraseña incorrecta/correcta, aislamiento entre propietarios y ambos HTML en árabe RTL. Las llamadas observadas van solo al host de Render, sin cookies de autenticación ni errores JavaScript. Se borró el alumno creado y se revocaron las sesiones; quedaron dos cuentas QA vacías, sin datos reales ni contraseñas guardadas en archivos.
+- **Único ajuste de conexión pendiente tras integrar:** Floren/Delia comunican el origen final de Netlify; Miguel añade ese origen HTTPS exacto a `ALLOWED_ORIGINS` en Render, conservando `http://localhost:3000` si se necesita, y redespliega la API. No se requiere proxy, nueva BBDD ni secretos en Netlify. Aún no conocemos ni autorizamos ese dominio.
+- **Cierre de demo:** repetir desde Netlify el recorrido login → alumno → niño → juego → «Guardado» → recarga → salida con contraseña → resultados/exportación. Comprobar también el arranque tras inactividad y la red de Madrid antes de compartir el QR. Esta sesión no forzó un reinicio de Render; la persistencia a reinicio remoto sigue pendiente de comprobación operativa.
 
 ## Qué cambió desde develop
 
@@ -32,6 +40,8 @@ El sprint de traducción y sus pruebas están en **`df17544`**, y el traspaso in
 
 El cambio de transporte, configuración y pruebas de desacoplamiento está en **`87f484a`**. Publicar conjuntamente su frontend y backend; no combinar el cliente antiguo de cookies con la API Bearer.
 
+El destino público predeterminado de Render y el smoke de navegador contra la API desplegada están en **`9dade81`**. Descripción completa preparada para el PR: [pr-backend.md](pr-backend.md).
+
 Al actualizar únicamente las referencias remotas durante el sprint, `origin/develop` seguía en `d9b5040`. Se observaron cambios **no incorporados aquí** en `feature-arrastrar-piezas` (`36ca241`), `feature-parejas-creativas` (`4ca0733`) y `fix/selector-idioma` (`82daada`). Las dos primeras afectan al juego de creatividad; la última también retira referencias visibles a requisitos Rxx. Revisar especialmente esos cruces al integrar: los IDs y catálogos de textos deben mantenerse coherentes en los cinco idiomas.
 
 ## Mapa para revisar el código
@@ -41,22 +51,13 @@ Al actualizar únicamente las referencias remotas durante el sprint, `origin/dev
 - **Acceso y navegación:** `app/src/App.tsx`, `components/auth/LoginScreen.tsx`, `components/common/Navbar.tsx`, `components/profiles/ProfileManager.tsx`.
 - **Informes:** `app/src/utils/aiPedagogy.ts`, `printReport.ts`, `components/teacher/TeacherDashboard.tsx`, `components/family/FamilyPortal.tsx`.
 - **Idiomas:** `app/src/i18n/`; mantenimiento y pruebas en [i18n.md](i18n.md).
-- **Pruebas:** `backend/tests/`, `app/tests/reports.test.ts`, `i18n.test.ts`, `english.spec.ts`, `i18n.spec.ts`.
+- **Pruebas:** `backend/tests/`, `app/tests/reports.test.ts`, `i18n.test.ts`, `api.test.ts`, `english.spec.ts`, `i18n.spec.ts`, `decoupled.spec.ts`; smoke remoto opt-in en `render.live.spec.ts`.
 
 ## Arranque reproducible
 
 Node **22.12+**. Comprobado en esta sesión con Node 26.13 en Windows/Edge. No sobrescribir un `.env` que ya exista.
 
-Terminal 1, desde la raíz:
-
-```powershell
-cd backend
-npm ci
-Copy-Item .env.example .env # solo la primera vez
-npm run dev
-```
-
-Terminal 2:
+Para probar la demo pública, desde la raíz solo hace falta:
 
 ```powershell
 cd app
@@ -64,7 +65,9 @@ npm ci
 npm run dev
 ```
 
-Abrir **http://localhost:3000/**; la API escucha en 127.0.0.1:3001 y el cliente conecta directamente a `http://localhost:3001/api` por defecto. `ALLOWED_ORIGINS` debe incluir el origen del navegador. Para una API pública, editar `app/.env.local` con `VITE_API_BASE_URL=https://TU-API.onrender.com/api` y reiniciar Vite. No hace falta que la API sirva el frontend. Una cuenta nueva no tiene alumnos: crearlos con datos ficticios.
+Abrir **http://localhost:3000/**; el cliente conecta directamente a Render, sin backend local ni `.env.local`. No hace falta que la API sirva el frontend. Una cuenta nueva no tiene alumnos: crearlos con datos ficticios.
+
+Para desarrollar todo localmente, iniciar también `backend/` según su [README](../backend/README.md), definir `VITE_API_BASE_URL=http://localhost:3001/api` en `app/.env.local` y reiniciar Vite. `ALLOWED_ORIGINS` de esa API debe incluir el origen del navegador. No sobrescribir configuraciones existentes ni copiar secretos al frontend.
 
 ## Validación del sprint
 
@@ -87,12 +90,14 @@ npm run build
 
 Las E2E levantan API y Vite temporales en **3101/3100**, con base **en memoria**; frontend en `localhost` y API en `127.0.0.1`, sin proxy. No usan la SQLite del desarrollador. Requieren dependencias de ambos directorios y puertos libres. Windows usa Edge; Linux necesita `npx playwright install chromium`. En Windows una prueba de reapertura/limpieza de SQLite tarda unos 30 s.
 
+**Validación pública adicional: 1 E2E remota aprobada** mediante `npm run test:live` desde `app/` (34,7 s en esta ejecución). Inicia/reutiliza Vite en `http://localhost:3000`, no inicia backend local y verifica el destino predeterminado de la rama. Tiene su configuración separada `playwright.live.config.ts`; la suite E2E habitual excluye `*.live.spec.ts`, por lo que no escribe en producción. La suite remota crea cuentas ficticias y borra su alumno; quedan cuentas QA vacías por diseño. No ejecutarla automáticamente en CI ni guardar trazas con credenciales.
+
 ## Pruebas de integración que quedan a Floren
 
 1. Comparar la rama con el `develop` vigente y resolver con el equipo cualquier cambio concurrente; no sustituir archivos completos sin revisar sus diferencias.
 2. Repetir login → alumno → modo niño → juego → guardado → recarga → contraseña de salida → resultados, con dos cuentas aisladas y dos pestañas. Confirmar que notas y selector de alumnos no llegan al niño.
 3. Recorrer ES/EN/FR/AR/UK en móvil y escritorio; cambiar idioma durante la partida y revisar ambos HTML descargados. Pseudónimos, notas libres y nombres nativos del selector permanecen intactos deliberadamente.
-4. Probar la URL pública y la persistencia remota después de reiniciar el servicio. **No se ha desplegado a Render/Turso ni se han creado cuentas de proveedores.** Seguir `despliegue-demo.md` antes de distribuir el QR.
+4. Publicar frontend en Netlify, comunicar su origen a Miguel para autorizarlo en Render y repetir la prueba desde el dominio final. API/BBDD **ya publicadas y validadas desde localhost**. Comprobar persistencia después de un reinicio/redeploy y ensayar con la red de Madrid. Seguir `despliegue-demo.md` antes de distribuir el QR.
 5. Revisar el workflow de Pages y la CI al integrar. El workflow actual de Pages publica un frontend estático: **no ejecuta esta API**. La CI existente valida `app/`, pero aún no incorpora los tests del backend ni las E2E. No se cambiaron esos workflows en esta rama.
 
 ## Límites deliberados que no deben confundirse con regresiones
@@ -106,4 +111,4 @@ Las E2E levantan API y Vite temporales en **3101/3100**, con base **en memoria**
 - Las observaciones de juego se guardan en español canónico para poder mostrarlas en cualquier idioma; **no es un fallo de traducción en la base**. Las antiguas observaciones reconocidas en cualquiera de los cinco idiomas también se traducen al mostrarlas. Texto libre o desconocido se conserva.
 - La voz depende de las voces instaladas en el dispositivo. Los porcentajes son reglas del prototipo, no puntuaciones psicométricas validadas; el profesional decide.
 
-La API no cambió durante el sprint de traducción; el sprint posterior de desacoplamiento cambió su transporte de autenticación y CORS, conservando los datos y permisos. Quedan a Floren la integración, la revisión entre zonas horarias y el merge; este documento no presupone su aprobación. Miguel publica API/BBDD y entrega solo la URL pública; Floren configura esa URL en su build y comunica su origen para autorizarlo en la API.
+La API no cambió durante el sprint de traducción; el sprint posterior de desacoplamiento cambió su transporte de autenticación y CORS, conservando los datos y permisos. Esta última entrega solo cambia el destino predeterminado del frontend, añade la prueba remota y actualiza documentación; no altera el backend desplegado ni sus tablas. Quedan a Floren la integración, la revisión entre zonas horarias y el merge; este documento no presupone su aprobación. Miguel ya publicó API/BBDD; Floren compila con el destino incorporado (o un override explícito) y comunica su origen para autorizarlo en la API.

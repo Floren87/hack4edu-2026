@@ -53,6 +53,8 @@ Las pruebas crean bases temporales, no utilizan datos reales ni el `.env` de des
 
 La configuración local presupone abrir la UI en **localhost:3000**. `127.0.0.1:3000` es otro origen: añadirlo explícitamente si se necesita. El frontend conecta directamente mediante `VITE_API_BASE_URL`; no requiere proxy. Solo esa URL es pública: no usar `VITE_DATABASE_AUTH_TOKEN`, ni añadir secretos al bundle. `ALLOWED_ORIGINS` autoriza también localhost contra una API pública HTTPS.
 
+**Demo publicada por Miguel:** `https://hack4edu-2026.onrender.com/api`, con base libSQL en Turso. Es el destino predeterminado del frontend en esta rama. Para probar contra el backend local anterior, definir `VITE_API_BASE_URL=http://localhost:3001/api` en `app/.env.local` y reiniciar Vite. El healthcheck público es `/api/health`, pero esa ruta no es una URL base. Tras integrar, añadir el origen HTTPS exacto de Netlify a `ALLOWED_ORIGINS` de Render y redesplegar la API; conservar localhost si se desea seguir probando desde él. No hace falta crear de nuevo la base ni sus tablas.
+
 ## API
 
 Prefijo `/api`. Cuerpos JSON. Los errores devuelven `{ "error": "CODIGO" }`. Las fechas de expedientes son ISO 8601 UTC; `expiresAt` es un timestamp Unix en **milisegundos**, no segundos.

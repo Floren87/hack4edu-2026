@@ -26,32 +26,20 @@ Proyecto del equipo para el **#Hack4Edu 2026** (ProFuturo + UPSA), **Reto 20**. 
 ## Instalación y uso
 **Requisitos:** [Node.js](https://nodejs.org/) **22.12 o posterior** (con npm) y Git. Con Node 18 o 20 el build falla.
 
-Desde la raíz del repositorio, abrir dos terminales:
-
-Terminal 1 — API:
-
-```powershell
-cd backend
-npm ci
-Copy-Item .env.example .env # solo la primera vez; no sobrescribir una configuración existente
-npm run dev
-```
-
-Terminal 2 — interfaz:
+Para usar la API de la demo, solo hace falta iniciar la interfaz:
 
 ```powershell
 cd app
 npm ci
-Copy-Item .env.example .env.local # solo la primera vez; opcional para usar los valores locales
 npm run dev
 ```
 
-Abrir **http://localhost:3000/**. La interfaz llama directamente a `http://localhost:3001/api` por defecto; no hay proxy. El origen del frontend debe estar en `ALLOWED_ORIGINS` de la API. `127.0.0.1` y otros puertos son orígenes diferentes: añadirlos expresamente si se necesitan. Sin backend se muestra error de conexión, nunca datos de muestra.
+Abrir **http://localhost:3000/**. Esta rama apunta por defecto a **`https://hack4edu-2026.onrender.com/api`**, publicada por Miguel en Render con libSQL/Turso. No requiere `.env.local` ni backend local. [Comprobar disponibilidad](https://hack4edu-2026.onrender.com/api/health); el arranque del servicio gratuito puede tardar. La URL base termina en `/api`, nunca en `/api/health`.
 
-Para usar localhost contra una API publicada, cambiar **solo `app/.env.local`** y reiniciar Vite:
+Para desarrollar con una API local, iniciar también `backend/` siguiendo su [README](backend/README.md), definir en **`app/.env.local`** y reiniciar Vite:
 
 ```dotenv
-VITE_API_BASE_URL=https://TU-API.onrender.com/api
+VITE_API_BASE_URL=http://localhost:3001/api
 ```
 
 La API debe autorizar `http://localhost:3000` y, cuando se publique la interfaz, el origen HTTPS exacto de esa interfaz. No se comparte el token de BBDD con el frontend. En un despliegue estático, definir la variable antes del build y reconstruir al cambiarla.
@@ -77,7 +65,7 @@ Todos se ejecutan dentro de `app/`:
 - **La app no se actualiza después de instalarla como PWA:** borra la caché del sitio en el navegador.
 
 ## Despliegue
-Seguir [despliegue de API y BBDD](docs/despliegue-demo.md): Miguel publica API en Render y base libSQL en Turso. Floren/Delia publican el frontend estático con `VITE_API_BASE_URL`; ambos pueden estar en dominios distintos, usando HTTPS. El workflow existente de **GitHub Pages** ([`pages.yml`](.github/workflows/pages.yml)) no ejecuta el backend ni configura todavía esa URL pública; queda pendiente reconciliarlo al integrar con el equipo. La CI actual comprueba tipos, tests unitarios y build de `app/` ([`ci.yml`](.github/workflows/ci.yml)); no ejecuta aún las pruebas del backend ni las E2E.
+La **API Render y BBDD Turso ya están publicadas** por Miguel. Seguir [despliegue de API y BBDD](docs/despliegue-demo.md) para configuración y operación. Floren/Delia publican el frontend estático; el build usa Render por defecto y admite `VITE_API_BASE_URL` como override público. **Tras integrar, Miguel debe añadir el origen HTTPS exacto de Netlify a `ALLOWED_ORIGINS` en Render y redesplegar la API.** No se necesita proxy ni secretos en el frontend. El workflow existente de **GitHub Pages** ([`pages.yml`](.github/workflows/pages.yml)) no ejecuta el backend; queda pendiente reconciliar el hosting al integrar. La CI actual comprueba tipos, tests unitarios y build de `app/` ([`ci.yml`](.github/workflows/ci.yml)); no ejecuta aún las pruebas del backend ni las E2E.
 
 ## Estructura
 ```
