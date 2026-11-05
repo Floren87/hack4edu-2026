@@ -9,24 +9,28 @@
 - Decisión vigente: TypeScript, demo conectada, cuenta con usuario inventado y contraseña, alumnos con pseudónimos y **estado actual**. Sin offline, historial de evaluaciones, recuperación por email ni IA externa.
 - Referencia completa: [decisiones](decisiones.md), [API](../backend/README.md), [integración frontend](integracion-backend.md), [despliegue](despliegue-demo.md).
 
+**Actualización posterior al sprint de idiomas:** Miguel aprobó el desacoplamiento. El contrato vigente es **Bearer + `VITE_API_BASE_URL` + `ALLOWED_ORIGINS`**, sin proxy ni cookies. Leer las guías enlazadas antes de publicar: el frontend ya puede apuntar desde localhost a una API remota. Las versiones antiguas de frontend con cookie/CSRF requieren actualizarse y volver a iniciar sesión; no borrar las cuentas ni los alumnos.
+
 ## Qué cambió desde develop
 
 | Bloque | Implementación y puntos de revisión |
 |---|---|
 | API nueva | `backend/`: TypeScript + Fastify, Zod, SQLite/libSQL mediante `@libsql/client`. Inicializa `accounts`, `sessions`, `students`. Estado del alumno en JSON, propietario y versión separados; sin ORM ni migraciones complejas. |
-| Cuentas y protección | Registro sin datos reales; contraseña con scrypt, sesión de 8 h con cookie HttpOnly, CSRF y comprobación de Origin. Cookie Secure en producción, consultas parametrizadas, límites de peticiones y sin cuerpos sensibles en logs. |
+| Cuentas y protección | Registro sin datos reales, scrypt y sesión opaca de 8 h vía Authorization Bearer; SHA-256 en servidor. Token/caducidad en sessionStorage por API y pestaña; sin cookies ni CSRF. CORS/orígenes explícitos, consultas parametrizadas, límites y sin cuerpos sensibles en logs. |
 | Alumnos | CRUD aislado por propietario. Progreso y última revisión profesional separados; versión optimista: una escritura obsoleta recibe 409. El progreso nuevo conserva notas, pero vuelve a marcar la revisión pendiente. |
 | Profesional / niño | El modo se guarda y autoriza en servidor. Niño solo accede al alumno seleccionado, sin listado ni notas profesionales; no puede crear/borrar/revisar alumnos. Salir exige la contraseña del profesional. No son cuentas de niño independientes. |
 | Frontend conectado | `AppContext.tsx` + `api.ts`: login inicial, recuperación de sesión, alumnos remotos, guardado agrupado/serializado e indicadores de éxito/error. No hay perfiles de ejemplo ni expedientes persistidos en el navegador. Solo se conserva la preferencia de idioma. |
 | Pantallas | Login/registro, gestión profesional y resultados/resumen familiar. Niño solo ve juegos; sin accesos profesionales ni selector de alumno. El bloqueo también se conserva al recargar. BroadcastChannel y consulta de sesión al recuperar foco actualizan las otras pestañas. |
 | Estilos recuperados | Se conservaron los estilos del prototipo de Delia: selector de idioma, avatares, tarjetas, degradados y formularios. «Resultados» y «Resumen familiar» se resaltan según la vista activa. Distribución móvil revisada. |
-| Aplicación conectada | Vite hace proxy de `/api`. Se retira el service worker anterior y su caché; no se instala otro worker de caché. Producción: frontend y API desde el mismo origen HTTPS. |
+| Aplicación conectada | Cliente HTTP directo a `VITE_API_BASE_URL`; la API permite orígenes mediante `ALLOWED_ORIGINS`. Frontend y backend pueden estar en dominios distintos; no se necesita proxy de Vite/Netlify. Service worker anterior y caché retirados. |
 | Informes | Reglas locales en `aiPedagogy.ts`; no se consulta un modelo externo. Dos audiencias, impresión del navegador y descarga de HTML imprimible; PDF mediante «Imprimir / Guardar PDF». Contenido dinámico escapado, incluidas notas y pseudónimos. |
 | Sprint de idiomas | ES/EN/FR/AR/UK en controles, juegos, mensajes, observaciones y ambos informes. Se eliminó el traductor exclusivamente inglés y los condicionales español/inglés del generador y de las exportaciones. Catálogos completos, fechas por idioma y `lang`/`dir` correctos, incluido árabe RTL. |
 
 Commits de referencia previos al sprint: `d778a78` (API), `5aa3d70` (documentación), `fea4b0f` (build de despliegue), `534dff1` (integración frontend), `76fd3b0` (estilos). Consultar `git log develop..feat/backend` para el listado actualizado, sin asumir que la rama remota de integración sigue en el mismo punto.
 
-El sprint de traducción y sus pruebas están en **`df17544`**. Este documento y la actualización del contexto compartido se guardan en el commit siguiente.
+El sprint de traducción y sus pruebas están en **`df17544`**, y el traspaso inicial en `588ec12`. Los commits posteriores incorporan el desacoplamiento de API documentado aquí.
+
+El cambio de transporte, configuración y pruebas de desacoplamiento está en **`87f484a`**. Publicar conjuntamente su frontend y backend; no combinar el cliente antiguo de cookies con la API Bearer.
 
 Al actualizar únicamente las referencias remotas durante el sprint, `origin/develop` seguía en `d9b5040`. Se observaron cambios **no incorporados aquí** en `feature-arrastrar-piezas` (`36ca241`), `feature-parejas-creativas` (`4ca0733`) y `fix/selector-idioma` (`82daada`). Las dos primeras afectan al juego de creatividad; la última también retira referencias visibles a requisitos Rxx. Revisar especialmente esos cruces al integrar: los IDs y catálogos de textos deben mantenerse coherentes en los cinco idiomas.
 
@@ -60,7 +64,7 @@ npm ci
 npm run dev
 ```
 
-Abrir **http://localhost:3000/**; la API escucha en 127.0.0.1:3001. `APP_ORIGIN` debe coincidir exactamente con el origen del navegador. No alternar localhost y 127.0.0.1. Una cuenta nueva no tiene alumnos: crearlos con datos ficticios.
+Abrir **http://localhost:3000/**; la API escucha en 127.0.0.1:3001 y el cliente conecta directamente a `http://localhost:3001/api` por defecto. `ALLOWED_ORIGINS` debe incluir el origen del navegador. Para una API pública, editar `app/.env.local` con `VITE_API_BASE_URL=https://TU-API.onrender.com/api` y reiniciar Vite. No hace falta que la API sirva el frontend. Una cuenta nueva no tiene alumnos: crearlos con datos ficticios.
 
 ## Validación del sprint
 
@@ -79,9 +83,9 @@ npm run test:e2e
 npm run build
 ```
 
-**Resultado antes de subir:** lint y build de ambos proyectos correctos; **10 pruebas unitarias del frontend, 6 de API y 9 E2E correctas**. Las cinco E2E multilingües completan **los diez juegos en cada idioma** (50 recorridos), comprueban guardado, cambios de idioma con estado, informes pendientes/completados y ambos HTML descargados con nombre localizado. Las otras cuatro cubren CRUD, aislamiento, errores/conflictos, controles y distribución. Capturas de resultados/resumen a 390 y 1366 px; revisión visual adicional de francés, árabe RTL y alta de alumno en ucraniano. No hay cambios de CSS en este sprint. El build de Vite avisa del tamaño del bundle principal (aprox. 712 kB / 224 kB gzip); compila correctamente.
+**Resultado vigente, incluido desacoplamiento:** lint y build de ambos proyectos correctos; **18 pruebas unitarias del frontend, 9 de API y 11 E2E correctas**. Las cinco E2E multilingües completan **los diez juegos en cada idioma** (50 recorridos), con guardado, cambios de idioma, informes pendientes/completados y ambos HTML descargados. Otras cuatro cubren CRUD, aislamiento, errores/conflictos y distribución; las dos nuevas verifican API directa sin cookies, recarga, revocación entre pestañas, caducidad y rechazo de orígenes. Los tests unitarios cubren además respuestas tardías que no deben borrar un login nuevo y caducidad durante una petición. Sin cambios de CSS. El build de Vite avisa del tamaño del bundle principal (aprox. 714 kB / 225 kB gzip); compila correctamente.
 
-Las E2E levantan API y Vite temporales en **3101/3100**, con base **en memoria**; no usan la SQLite del desarrollador. Requieren dependencias de ambos directorios y puertos libres. Windows usa Edge; Linux necesita `npx playwright install chromium`. En Windows una prueba de reapertura/limpieza de SQLite tarda unos 30 s.
+Las E2E levantan API y Vite temporales en **3101/3100**, con base **en memoria**; frontend en `localhost` y API en `127.0.0.1`, sin proxy. No usan la SQLite del desarrollador. Requieren dependencias de ambos directorios y puertos libres. Windows usa Edge; Linux necesita `npx playwright install chromium`. En Windows una prueba de reapertura/limpieza de SQLite tarda unos 30 s.
 
 ## Pruebas de integración que quedan a Floren
 
@@ -95,10 +99,11 @@ Las E2E levantan API y Vite temporales en **3101/3100**, con base **en memoria**
 
 - Solo estado actual y última validación; el registro acumulado de juegos ya existente alimenta el informe, pero no hay versiones históricas de evaluaciones.
 - Sin recuperación de contraseña ni verificación de identidad profesional. Cada asistente de la demo debe crear su propia cuenta ficticia.
+- Token opaco en sessionStorage: recargar conserva la sesión, cerrar la pestaña normalmente la pierde y una pestaña independiente pide login. Una pestaña duplicada puede compartir token. Es accesible al JavaScript del mismo origen; no introducir scripts de terceros ni asumir protección frente a XSS. Caduca a las 8 horas y logout lo revoca en servidor.
 - El guardado pendiente vive en memoria; cerrar/recargar antes de confirmarlo puede perderlo. Un 409 exige cargar el estado remoto, sin fusionar automáticamente. Evitar partidas simultáneas del mismo alumno en varios dispositivos.
 - Las notas editadas requieren pulsar «Guardar y validar» antes de navegar. No hay autoguardado del formulario de revisión.
 - Máximo 50 alumnos/cuenta, 500 registros/alumno, 256 KiB por petición y 2000 caracteres de notas. Autenticación limitada por IP/ruta: probar la wifi del evento y los tiempos del hosting gratuito.
 - Las observaciones de juego se guardan en español canónico para poder mostrarlas en cualquier idioma; **no es un fallo de traducción en la base**. Las antiguas observaciones reconocidas en cualquiera de los cinco idiomas también se traducen al mostrarlas. Texto libre o desconocido se conserva.
 - La voz depende de las voces instaladas en el dispositivo. Los porcentajes son reglas del prototipo, no puntuaciones psicométricas validadas; el profesional decide.
 
-La API no cambió durante el sprint de traducción. Quedan a Floren la integración, la revisión entre zonas horarias y el merge; este documento no presupone su aprobación.
+La API no cambió durante el sprint de traducción; el sprint posterior de desacoplamiento cambió su transporte de autenticación y CORS, conservando los datos y permisos. Quedan a Floren la integración, la revisión entre zonas horarias y el merge; este documento no presupone su aprobación. Miguel publica API/BBDD y entrega solo la URL pública; Floren configura esa URL en su build y comunica su origen para autorizarlo en la API.

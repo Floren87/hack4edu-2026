@@ -1,78 +1,122 @@
-# Despliegue gratuito para la demo
+# Despliegue de API y BBDD · Miguel
 
-Guía verificada contra documentación oficial el **4 de noviembre de 2026**. Se han probado API y base local; **no se han creado cuentas de hosting ni realizado un despliegue remoto**. Las condiciones de los planes pueden cambiar: comprobar los enlaces antes de publicar y elegir explícitamente las opciones gratuitas.
+**Arquitectura vigente:** API TypeScript/Fastify en Render + base **libSQL** en Turso. El frontend lo publica Floren/Delia de forma independiente; no necesita proxy. También se puede usar el frontend de localhost contra la API pública.
 
-## Arquitectura elegida
+Documentación oficial consultada el **4 de noviembre de 2026**. Se verifica el código y el flujo entre orígenes distintos en pruebas locales; **este sprint no crea cuentas de proveedores ni realiza un despliegue remoto**. Las URLs que aparecen abajo son ejemplos para reemplazar.
 
-**Render Free Web Service (Node) + base remota libSQL en el plan gratuito de Turso.** Render sirve el build React y `/api` desde un mismo origen HTTPS. El token de Turso existe solo en el servidor. No usar GitHub Pages para el recorrido conectado: tendría otro origen y no ejecuta el backend.
+## 1. Crear la base en Turso
 
-La documentación de [Render Free](https://render.com/docs/free) indica suspensión tras 15 minutos sin tráfico y sistema de archivos efímero. Por eso la base no puede ser `demo.db` dentro de Render: los datos persistentes van a Turso. Consultar el [plan gratuito de Turso](https://turso.tech/pricing) y la [referencia TypeScript/libSQL](https://docs.turso.tech/sdk/ts/reference). No se promete disponibilidad continua ni capacidad ilimitada; esto es una opción para el prototipo.
+1. Registrarse y seleccionar el plan gratuito disponible en [Turso](https://turso.tech/pricing).
+2. Crear una base **libSQL** para la demo, compatible con `@libsql/client`. La documentación de Turso distingue esa conexión de sus nuevos motores/SDK: seguir el apartado [Remote libSQL database: @libsql/client](https://docs.turso.tech/sdk/ts/quickstart). No cambiar las dependencias de este repositorio siguiendo un ejemplo de otro SDK.
+3. Copiar la URL de conexión `libsql://…` y generar un token de lectura/escritura **de esa base**, con vigencia suficiente para la presentación. No usar un token de solo lectura: la API crea el esquema y guarda alumnos.
+4. Guardar URL/token para configurarlos en Render. El token de BBDD nunca debe llegar al frontend, a Git ni a variables `VITE_`.
 
-## 1. Preparar la base persistente
-
-1. Crear una cuenta en Turso y elegir el plan gratuito disponible.
-2. Crear una base compatible con **libSQL** para la demo. El cliente de este proyecto es `@libsql/client`; no configurar una base de otro motor/protocolo.
-3. Obtener la URL `libsql://...` y generar un token de acceso a esa base siguiendo el [inicio rápido oficial](https://docs.turso.tech/sdk/ts/quickstart).
-4. Guardar URL y token en el gestor de secretos del hosting. No poner el token en commits, capturas, frontend ni variables con prefijo `VITE_`.
-5. El backend inicializa las tres tablas al primer arranque. No requiere crear alumnos ni usuarios en la consola ni ejecutar SQL manual.
-
-## 2. Crear el servicio de Render
-
-Según la [guía de Web Services](https://render.com/docs/web-services):
-
-1. Crear **Web Service**, conectar este repositorio y seleccionar `feat/backend` para probar (o `develop` cuando se fusione el PR).
-2. Runtime: **Node**, Root Directory: vacío (raíz del repositorio), plan: **Free**, una sola instancia.
-3. Build Command:
+Si prefieres CLI, instalarla desde la [guía oficial](https://docs.turso.tech/cli/installation) y autenticarse. Los comandos documentados para crear base y token son:
 
 ```sh
-npm --prefix backend ci --include=dev && npm --prefix backend run build && npm --prefix app ci --include=dev && npm --prefix app run build
+turso db create talento-demo
+turso db tokens create talento-demo --expiration 7d
 ```
 
-`--include=dev` es intencionado: con `NODE_ENV=production`, npm puede omitir TypeScript y las herramientas necesarias para compilar.
+El segundo comando imprime un secreto: copiarlo al gestor de secretos del hosting; no pegarlo en el chat ni en capturas. Obtener la URL en el panel de la base. Referencias: [crear base](https://docs.turso.tech/cli/db/create), [tokens y caducidad](https://docs.turso.tech/cli/db/tokens/create).
 
-4. Start Command:
+No hay que crear tablas manualmente. El primer arranque inicializa `accounts`, `sessions`, `students` e índices con `CREATE TABLE IF NOT EXISTS`. Una base nueva no contiene cuentas ni alumnos. `backend/demo.db` es solo la base local y **no se transfiere automáticamente**. Para la demo se recomienda empezar con datos ficticios nuevos.
 
-```sh
-npm --prefix backend start
-```
+## 2. Publicar solo la API en Render
 
-5. Configurar variables:
+Crear un **Web Service** desde el repositorio. Ver [despliegue Node](https://render.com/docs/deploy-node-express-app) y [servicios web](https://render.com/docs/web-services).
 
-| Variable | Valor |
+| Campo | Valor |
 |---|---|
-| `NODE_VERSION` | `22` (versión disponible de Node 22 que sea ≥22.12; comprobarla en los logs) |
-| `NODE_ENV` | `production` |
-| `HOST` | `0.0.0.0` |
-| `APP_ORIGIN` | URL pública exacta del servicio: `https://NOMBRE.onrender.com`, sin `/` final |
-| `DATABASE_URL` | URL real `libsql://...` de la base |
-| `DATABASE_AUTH_TOKEN` | Token real de Turso, marcado como secreto |
-| `STATIC_DIR` | `../app/dist` (npm ejecuta el servidor desde `backend/`) |
+| Branch | `feat/backend` durante la prueba; cambiar al integrar con Floren |
+| Runtime | Node |
+| Root Directory | `backend` |
+| Build Command | `npm ci --include=dev && npm run build` |
+| Start Command | `npm start` |
+| Plan | Free, una sola instancia |
+| Health Check Path | `/api/health` |
 
-Render proporciona `PORT`: no fijarlo a 3001. Si la URL pública no está disponible hasta crear el servicio, crear primero, obtener la URL, corregir `APP_ORIGIN` y volver a desplegar. Un origen incorrecto impide las escrituras; nunca usar `*` como solución.
+Las herramientas de TypeScript son dependencias de desarrollo: `--include=dev` evita que `NODE_ENV=production` las omita durante el build. No compilar `app/` ni configurar un proxy en este servicio.
 
-6. Configurar Health Check Path: `/api/health`.
-7. Desplegar y comprobar `https://NOMBRE.onrender.com/api/health` → `{ "ok": true }`.
-8. Abrir la URL raíz: debe servir la aplicación. Probar cuentas con los pasos de integración antes de distribuirla.
+Variables de entorno del servicio:
 
-**Estado de esta rama:** frontend integrado con la API. Publicar esta versión habilita login, CRUD de alumnos, resultados y modo niño. Antes de compartir el QR, comprobar el recorrido completo contra la base remota; esta sesión solo verifica el entorno local.
+```dotenv
+NODE_VERSION=22
+NODE_ENV=production
+HOST=0.0.0.0
+ALLOWED_ORIGINS=http://localhost:3000
+DATABASE_URL=libsql://URL-REAL-DE-TU-BASE
+DATABASE_AUTH_TOKEN=TOKEN-REAL-SOLO-EN-RENDER
+```
 
-## 3. Comprobación antes del QR
+- Node debe ser **22.12 o posterior**; comprobar la versión efectiva en el log de build.
+- Render proporciona `PORT`: no fijarlo a 3001.
+- `DATABASE_AUTH_TOKEN` es secreto. No sustituirlo por el token de sesión de un usuario.
+- Dejar `STATIC_DIR` sin configurar: este servicio solo publica la API.
+- `APP_ORIGIN` es un alias de compatibilidad para el `.env` antiguo. La configuración vigente es `ALLOWED_ORIGINS`, que tiene prioridad.
 
-- Registro y login desde el dominio final HTTPS, con un usuario inventado nuevo.
-- Crear un alumno con pseudónimo, completar un juego, guardarlo y volver a consultar su estado.
-- Activar modo niño, recargar, intentar volver con contraseña incorrecta y después con la correcta.
-- Probar otra cuenta en ventana privada: no ve alumnos de la primera.
-- Reiniciar/redeploy del servicio y verificar que el estado persiste en Turso.
-- Verificar que no hay service worker cacheando `/api`; la aplicación retira el worker antiguo al arrancar. `Cache-Control: no-store` por sí solo no evita que código de un worker haga `cache.put`.
-- Probar en móvil con datos, no solo desde la wifi del equipo.
-- Generar el QR con la URL raíz del servicio integrado, no `/api/health` ni el enlace antiguo de Pages.
+Con esa configuración puedes probar hoy desde localhost sin esperar a que Floren publique. Cuando conozcas la URL definitiva del frontend, actualizar **solo la configuración de la API** y desplegar de nuevo:
 
-## 4. Día de la sustentación
+```dotenv
+ALLOWED_ORIGINS=http://localhost:3000,https://TU-FRONTEND.netlify.app
+```
 
-Abrir el prototipo y `/api/health` unos minutos antes para que el servicio salga de suspensión. El primer acceso tras inactividad puede tardar; no prometer arranque instantáneo. No configurar tráfico artificial permanente para eludir restricciones del plan.
+Son orígenes exactos, sin `/` final ni rutas. `localhost` y `127.0.0.1`, o dos puertos distintos, son orígenes diferentes. Añadirlos explícitamente si se necesitan. Producción admite HTTPS y HTTP únicamente para loopback (`localhost`, `127.0.0.1`, `[::1]`). No usar `*`, comodines de Netlify ni `null`. Un preview de Netlify requiere su propio origen autorizado.
 
-El público se registra con usuarios inventados y usa alumnos ficticios. No hay recuperación de contraseña ni verificación profesional. Los límites de autenticación son por IP: muchas personas en una misma wifi pueden recibir 429; probar el tamaño esperado del grupo antes del evento, permitir reintentar al minuto o usar redes independientes. No desactivar los controles para la exposición.
+Después de publicar, comprobar:
 
-Guardar como respaldo un vídeo corto del recorrido y la demo local. Si se agota una cuota gratuita, el servicio externo falla o el frontend no está integrado, informar al público y mostrar ese respaldo; no afirmar que los datos se han guardado.
+```powershell
+Invoke-RestMethod https://TU-API.onrender.com/api/health
+```
 
-Después de la demo, retirar o limpiar los datos de prueba y revocar el token de la base si se abandona el despliegue. Las copias/retención del proveedor dependen de su plan: no prometer borrado de backups inmediato.
+Debe devolver `ok: true`; esto comprueba también acceso a BBDD. La raíz `/` puede devolver 404: es correcto en un servicio que solo sirve API. Si falta la configuración remota, el servidor de producción se niega a usar SQLite local deliberadamente.
+
+## 3. Usar tu frontend local contra la API desplegada
+
+Editar **`app/.env.local`**; si todavía no existe, puedes partir de `app/.env.example`. No sobrescribir otras variables de un archivo existente.
+
+```dotenv
+VITE_API_BASE_URL=https://TU-API.onrender.com/api
+```
+
+Desde `app/`:
+
+```powershell
+npm ci
+npm run dev
+```
+
+Abrir `http://localhost:3000`. Tras cambiar la variable hay que reiniciar Vite. No hay proxy: DevTools debe mostrar llamadas directas a `https://TU-API.onrender.com/api/…` y preflight `OPTIONS` cuando corresponda. La URL también puede especificarse sin `/api`; el cliente lo añade una sola vez.
+
+Login devuelve una sesión Bearer que el cliente conserva en `sessionStorage`, nunca la contraseña. Sobrevive a recargar; una pestaña independiente requiere login. Cerrar sesión revoca el token en servidor. Las sesiones previas con cookie requieren volver a iniciar sesión tras actualizar; cuentas y alumnos existentes se conservan.
+
+## 4. Lo único que necesita Floren para conectar su frontend
+
+Entregar la **URL pública de la API**, sin ningún secreto. En su build del frontend definir:
+
+```dotenv
+VITE_API_BASE_URL=https://TU-API.onrender.com/api
+```
+
+La variable es pública y se incorpora al compilar. Cambiarla requiere reconstruir/republicar; no se modifica un bundle ya generado. Con base de proyecto `app`, el build es `npm run build` y el directorio publicado `dist`. No hace falta una regla de proxy para `/api`. Nunca configurar `DATABASE_AUTH_TOKEN` en Netlify.
+
+Miguel añade el origen del frontend a `ALLOWED_ORIGINS` en Render. El frontend público y la API deben usar HTTPS. Para previsualizar un build local con `npm run preview` (habitualmente puerto 4173), añadir ese origen al backend; no asumir que comparte el origen de desarrollo.
+
+## 5. Validación antes de entregar el QR
+
+1. Registro → login → alumno ficticio → juego → esperar «Guardado» → recargar. Verificar resultados persistidos.
+2. Modo niño → recarga → contraseña incorrecta mantiene el bloqueo → contraseña correcta vuelve al profesional.
+3. Notas, descarga de ambos informes y cambio de idioma. Otra cuenta no debe ver alumnos de la primera.
+4. Reiniciar/redeploy de la API y comprobar que el alumno y su progreso siguen en Turso. La sesión vigente también debe funcionar hasta su caducidad, si conservas la pestaña.
+5. Probar desde otro dispositivo o red, y repetir desde el dominio final del frontend antes de compartir el QR.
+6. En DevTools confirmar `Authorization: Bearer …`, ausencia de cookies de autenticación y ninguna respuesta de API en caché. No incluir tokens en las capturas.
+
+Errores frecuentes: `NETWORK` puede ser CORS, URL equivocada o servicio arrancando; revisar Network y `OPTIONS`. `ORIGIN_NOT_ALLOWED` requiere corregir la lista de orígenes. `401 LOGIN_REQUIRED` implica sesión ausente/caducada: volver a entrar. `409 VERSION_CONFLICT` exige cargar el estado remoto. `429` requiere esperar, no repetir peticiones en bucle.
+
+## 6. Presentación y límites del plan gratuito
+
+[Render Free](https://render.com/docs/free) suspende la API tras 15 minutos de inactividad y su disco es efímero. Abrir `/api/health` antes de presentar y esperar la respuesta; el arranque puede tardar aproximadamente un minuto. No guardar la BBDD en el disco del servicio ni configurar tráfico artificial permanente para evitar la suspensión. Revisar cuotas de [Render](https://render.com/docs/free) y [Turso](https://turso.tech/pricing) en las cuentas creadas.
+
+Registro/login/desbloqueo tienen límites por IP/ruta; el público de una misma wifi puede compartirlos. Ensayar con la red del evento y conservar un vídeo de respaldo. No prometer capacidad ilimitada ni disponibilidad continua del plan gratuito.
+
+Después de la demo, limpiar datos ficticios y revocar el token de BBDD si se abandona el servicio. La API se puede trasladar a otro hosting manteniendo Turso: basta reconfigurar la URL pública en los builds frontend y revisar los orígenes permitidos. El autoalojamiento de la API en Raspberry con túnel HTTPS es compatible con ese contrato, pero no se ha desplegado ni probado en ARM durante este sprint.

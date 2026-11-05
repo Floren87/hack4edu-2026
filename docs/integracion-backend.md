@@ -1,81 +1,56 @@
-# Integración realizada en feat/backend
+# Integración frontend/API desacoplada · feat/backend
 
-Implementada en esta rama. El usuario autoriza subir los commits a `feat/backend`; la integración con el equipo y el PR quedan para Floren y el cierre del día. Contexto acumulado en [traspaso-floren.md](traspaso-floren.md).
+Implementada en esta rama por autorización de Miguel. Floren realiza la reconciliación con las demás ramas y el merge; no se abre PR durante este sprint. Contexto acumulado: [traspaso-floren.md](traspaso-floren.md). Publicación: [despliegue-demo.md](despliegue-demo.md).
 
-- Login/registro inicial; recuperación de sesión y modo en servidor.
-- Contexto único `AppContext` para sesión y estado: se evita un AuthContext adicional para mantener KISS.
-- `api.ts`: cookies, CSRF, errores comunes y ausencia de caché.
-- CRUD de alumnos y paneles/exportación solo en profesional. Ruta adicional `PUT /api/students/:id` para metadatos con control de versión.
-- Niño: solo juegos, alumno fijo, sin navegación profesional/familiar. Contraseña para salir; bloqueo aplicado también en API.
-- BroadcastChannel sincroniza cambios de sesión/modo entre pestañas del mismo origen; al volver a una pestaña se consulta la sesión antes de aceptar cambios de modo. No se guardan expedientes ni tokens en localStorage.
-- Progreso agrupado y serializado en memoria; interfaz de guardando/guardado/error. 409 exige recargar estado remoto; no hay fusión ni cola offline. Cambio de modo y logout esperan a guardar.
-- Crea/modifica alumno y guarda notas solo tras respuesta de servidor. Notas sin guardar en el formulario requieren pulsar Guardar antes de navegar.
-- Worker anterior retirado y caché `talento-sf-v1` eliminada. No se registra un worker nuevo.
-- Traducciones completas de controles, juegos, mensajes y ambos informes en ES/EN/FR/AR/UK. Catálogos y reglas de mantenimiento en [i18n.md](i18n.md); observaciones canónicas y fechas por idioma, sin traducir pseudónimos ni notas libres.
-- Pruebas E2E lanzan backend real temporal y frontend aislado en 3101/3100. Instalar dependencias de ambos antes de ejecutarlas.
+## Contrato de conexión
 
-## Límites deliberados
+- Frontend: `VITE_API_BASE_URL`, por ejemplo `http://localhost:3001/api` o `https://TU-API.onrender.com/api`. Se acepta también el origen sin `/api`; se normaliza una vez. La URL se valida en la configuración de Vite y en el cliente. No admite credenciales, query ni fragmentos; un frontend HTTPS rechaza una API HTTP.
+- Backend: `ALLOWED_ORIGINS`, lista explícita separada por comas. Se puede autorizar localhost y el frontend público al mismo tiempo, sin comodines. `APP_ORIGIN` se mantiene solo como alias de compatibilidad; la lista nueva tiene prioridad.
+- No hay proxy de Vite ni requisito de proxy en Netlify. `BACKEND_URL` dejó de utilizarse. Las llamadas del navegador van directamente a la API configurada.
+- Cambiar la URL requiere reiniciar Vite o reconstruir el frontend. Añadir un origen nuevo requiere actualizar la configuración del backend y reiniciarlo/republicarlo; no exige un cambio de código.
 
-Una partida no confirmada permanece solo en memoria y puede perderse al cerrar/recargar; la UI avisa. Un cambio de sesión en otra pestaña descarta el estado local para retirar los expedientes anteriores. Evitar jugar simultáneamente con el mismo alumno desde varios dispositivos; el servidor rechaza escrituras obsoletas con 409. No hay recuperación de contraseña ni sincronización offline.
+## Sesión Bearer
 
-## Plan original de referencia
+1. `POST /api/auth/register` crea la cuenta. El frontend llama después a `/auth/login`.
+2. Login devuelve `{ token, expiresAt, account, mode, studentId }`. Es un token opaco aleatorio, no un JWT; en BBDD solo se conserva su SHA-256. Caducidad: 8 horas, sin renovación automática.
+3. El cliente persiste **solo token y caducidad en `sessionStorage`**, con una clave asociada a la URL de API. Nunca guarda contraseña, expedientes ni notas. La preferencia de idioma continúa en localStorage.
+4. Todas las peticiones autenticadas envían `Authorization: Bearer <token>`, con `credentials: 'omit'` y `cache: 'no-store'`. La API no emite cookies ni autentica mediante cookies o parámetros de URL. No se usa `X-CSRF-Token`: la credencial ya no se adjunta automáticamente por el navegador.
+5. `GET /auth/me` recupera modo, cuenta, alumno activo y caducidad; no vuelve a devolver el token. La carga de alumnos se hace según el modo. Sin sesión se muestra login; un fallo de conexión con sesión conserva la credencial para reintentar.
+6. `401 LOGIN_REQUIRED` elimina la credencial y retira los expedientes de la UI. Contraseña incorrecta (`INVALID_CREDENTIALS`), 409 o caída de red no eliminan una sesión válida. Una respuesta antigua no borra un login nuevo.
+7. Logout revoca la sesión en BBDD, elimina la credencial del cliente y notifica a otras pestañas, sin transmitir el token por BroadcastChannel.
 
-# Plan de integración
+`sessionStorage` conserva la sesión al recargar. Una pestaña nueva independiente pide login; duplicar una pestaña o abrirla con `window.open` y opener puede copiar su sesión. Si comparten token, comparten el modo del servidor y la revocación. Sesiones independientes permanecen independientes. Las notificaciones provocan consulta de `/auth/me`, no un cambio de rol por un booleano local.
 
-El siguiente apartado conserva el plan que guio la integración; el resumen de arriba describe la implementación vigente.
+**Límite de seguridad explícito:** el token es accesible al JavaScript del mismo origen. `sessionStorage` reduce la persistencia frente a localStorage, pero no protege de XSS. No añadir scripts de terceros ni insertar notas/pseudónimos como HTML. La exportación mantiene el escape de datos. Una revisión de arquitectura para producción real queda fuera del alcance de esta demo.
 
-## Alcance aprobado
+## Módulos relevantes
 
-Una cuenta profesional con usuario inventado y contraseña, alumnos con pseudónimos, estado actual por alumno y alternancia profesional/niño en la misma sesión. Sin sincronización offline, recuperación por email, instituciones, historial de evaluaciones ni IA externa.
-
-## Cambios por archivo
-
-| Área | Cambio necesario |
+| Módulo | Responsabilidad |
 |---|---|
-| `src/context/AuthContext.tsx` (nuevo) | Inicializar con `/api/auth/me`; mantener cuenta, modo, alumno activo y CSRF solo en memoria. Separar «cargando» de «sin sesión» para no mostrar datos anteriores mientras se consulta |
-| `src/utils/api.ts` (nuevo) | `fetch('/api/...', { credentials: 'include' })`; JSON, cabecera CSRF para escrituras, manejo común de 400/401/403/409/413/429 y fallos de conexión |
-| Pantallas de acceso (nuevas) | Registro y login ES/EN: usuario inventado y contraseña, sin identidad real; aclarar ausencia de recuperación. Registro seguido de login explícito |
-| `AppContext.tsx` | Cargar alumnos desde servidor; crear alumno vía API y usar UUID devuelto. No inicializar cuentas reales con `INITIAL_PROFILES`. Mantener en memoria `version` por alumno |
-| `Navbar.tsx` | Modo profesional muestra alumnos y «Comenzar juego con…». Modo niño oculta profesional, familia, selector de alumno y gestión; muestra solo «Volver al profesional» |
-| Modal de salida (nuevo) | Solicitar contraseña y llamar `/mode/professional`. Limpiar la contraseña tras usarla. No desbloquear por un booleano local ni guardar un PIN |
-| `ProfileManager.tsx` | Crear/listar/borrar alumnos remotos. Informar que el borrado elimina su estado actual; no hay recuperación |
-| `ChildHome`, juegos y mundos | Conservar UI y mecánicas. Guardar el estado final a través de `/students/:id/progress`, incluyendo visitas a mundos, estrellas, niveles e insignias |
-| `TeacherDashboard.tsx` | Conservar cálculo por reglas y panel actual. Guardar última revisión con `/review`. No añadir gráficas ni histórico de evaluaciones |
-| `FamilyPortal.tsx` | Accesible solo en modo profesional para evitar exponer expedientes desde modo niño |
-| `main.tsx`, `index.html`, `public/sw.js` | Desactivar el registro de PWA/service worker para el recorrido conectado y retirar el worker antiguo de este sitio. Nunca cachear `/api`, aunque devuelva `no-store` |
-| `vite.config.ts` | Proxy de desarrollo `/api` → `http://127.0.0.1:3001`. Abrir la UI en `http://localhost:3000`, coincidente con `APP_ORIGIN` |
+| `app/src/utils/apiConfig.ts` | Normaliza y valida la URL pública |
+| `app/src/utils/session.ts` | Valida almacenamiento y caducidad de la credencial |
+| `app/src/utils/api.ts` | Fetch, Bearer, errores y retirada de sesión inválida |
+| `app/src/context/AppContext.tsx` | Sesión, modo, alumnos, carga y guardado serializado |
+| `backend/src/config.ts` | Lista de orígenes y compatibilidad del entorno anterior |
+| `backend/src/app.ts` | CORS/preflight, autenticación y autorización de cada ruta |
+| `backend/src/db.ts` | Esquema SQLite/libSQL compatible con los datos existentes |
 
-## Flujo de sesión y carga
+## Datos y permisos conservados
 
-1. Consultar `/auth/me`. 401 lleva a login. Un error de red muestra «No se pudo conectar» con reintento; no se interpreta como cierre de sesión ni carga ejemplos.
-2. En profesional, consultar `/students`, seleccionar alumno y cargar su estado. Si está vacío, ofrecer crear el primero.
-3. Antes de entrar al niño, terminar cualquier guardado pendiente. Llamar `/mode/child` con UUID y confirmar la respuesta; después retirar de la memoria los demás alumnos y las notas. Obtener el alumno activo con `/students/:id` (respuesta sin revisión profesional).
-4. Recargar una pestaña mantiene el modo del servidor. En niño no llamar al listado de alumnos ni habilitar accesos por URL. Un `403 PROFESSIONAL_REQUIRED` también debe cerrar cualquier vista profesional abierta en otra pestaña.
-5. Salir requiere `/mode/professional` con contraseña correcta; entonces recargar el listado y las notas, que el estado de niño no contiene. Contraseña incorrecta mantiene el modo niño.
-6. Logout elimina estado en memoria; no guardar copias remotas en localStorage, IndexedDB ni cache del navegador. Otras pestañas pueden notificar cambio con BroadcastChannel, pero la autoridad sigue siendo la API.
+- Profesional: CRUD y resultados/resumen familiar; edición de metadatos mediante `PUT /students/:id` con versión.
+- Niño: solo juegos del alumno activo. El backend oculta notas y rechaza listados, CRUD y revisión; salir sigue exigiendo contraseña.
+- Progreso agrupado y serializado en memoria, sin cola offline; se muestran los estados guardando/guardado/error y se esperan escrituras antes de cambiar de modo o salir.
+- Un 409 no se fusiona automáticamente: exige cargar el estado remoto. Cerrar/recargar antes de confirmar puede perder cambios pendientes. No jugar simultáneamente con el mismo alumno desde varios dispositivos.
+- La última revisión se guarda explícitamente; notas editadas sin guardar requieren pulsar Guardar antes de navegar.
+- No se importan perfiles de muestra ni se conservan expedientes en el navegador. No se registra un service worker de caché; se retira el antiguo.
+- Estilos y ES/EN/FR/AR/UK conservados; informes generados por reglas locales. Guía de idiomas: [i18n.md](i18n.md).
 
-## Guardado del estado actual
+## Actualización desde la versión de cookies
 
-- La interfaz debe indicar «Guardando», «Guardado» o «No guardado; reintentar». No mostrar éxito antes del 200 del servidor.
-- Serializar escrituras por alumno. Un juego actual dispara `logGameTelemetry`, `addStars` y a veces insignias en actualizaciones separadas: coalescer el estado final antes de enviar, para no mandar versiones incompatibles ni perder estrellas.
-- Enviar la instantánea completa de los campos aceptados por `/progress`, no todo el objeto del contexto. Nunca incluir `teacherValidation`, propietario o UUID en el cuerpo.
-- El backend devuelve solo `{version}`. Conservar el estado enviado y esa versión, o recargar el alumno antes de otra modificación.
-- Error 409: cargar estado del servidor y ofrecer continuar desde él; no aplicar automáticamente un cambio local sobre la nueva versión. Cambiar de dispositivo simultáneamente no incluye fusión.
-- Caída de red: conservar solo el intento actual en memoria y permitir reintentar; bloquear cambios de alumno/modo mientras no se haya guardado o descartado explícitamente. No implementar cola offline persistente. Recargar antes de guardar puede perder ese intento: explicar el estado sin prometer sincronización.
-- Tras nuevo progreso, `reviewed=false`; las notas anteriores permanecen como borrador para revisión. `/review` sustituye la última validación.
-- Identificar explícitamente «pseudónimo», no pedir nombre real. Notas exclusivamente educativas, sin datos de salud. `gender` es opcional en el frontend y el alta backend no lo solicita.
+Actualizar frontend y backend a este contrato antes de probarlos juntos. Clientes antiguos con cookies/CSRF deben volver a iniciar sesión con la nueva UI. No borrar la base: cuentas y alumnos siguen siendo compatibles. La columna antigua `sessions.csrf_token` se conserva vacía para evitar una migración destructiva; ya no participa en autenticación.
 
-## Pruebas de aceptación de la integración
+## Validación requerida
 
-1. Dos cuentas en contextos de navegador separados ven únicamente sus propios alumnos.
-2. Registro → login → alumno → juego completo → guardar → recargar → mismo progreso y panel.
-3. Modo niño: recargar y visitar rutas directamente no abre panel ni permite otro alumno; contraseña incorrecta no desbloquea.
-4. Guardar notas en dos alumnos no las mezcla. Una nueva partida marca revisión pendiente y conserva notas.
-5. Cerrar sesión y entrar con otra cuenta no muestra perfiles ni notas de la anterior.
-6. Cortar conexión y provocar un 409 muestran estados recuperables y no un falso «Guardado».
-7. DevTools confirma ausencia de service worker controlando el recorrido y de respuestas `/api` cacheadas.
-8. ES/EN/FR/AR/UK, móvil y navegador de escritorio, con cambios de idioma durante una partida e informes descargados. La misma URL HTTPS sirve UI y API en producción.
+Las E2E usan **frontend `http://localhost:3100` y API `http://127.0.0.1:3101`**, sin proxy, con base en memoria. Cubren CORS real, login, reload, revocación, pestañas, CRUD, niño, guardado/conflictos y juegos/informes en los cinco idiomas. Instalar dependencias de ambos directorios y dejar libres ambos puertos.
 
-## Demo pública
-
-Cada asistente crea su propia cuenta y pseudónimos ficticios. No compartir una cuenta entre todo el público: la sesión y modo serían confusos y los alumnos quedarían mezclados. El código no puede comprobar que un usuario es docente: es un registro autodeclarado para la demo, sin verificación profesional.
+Antes de entregar la URL pública, repetir el recorrido contra Render/Turso y el dominio definitivo. Las pruebas locales no certifican que se hayan configurado correctamente esas cuentas de hosting ni la red de la presentación.

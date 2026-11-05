@@ -13,7 +13,7 @@ Este fichero lo leen las IAs de los 4 miembros del equipo (Claude Code, Copilot,
 
 ## Stack
 - **App (`app/`):** React 19 + TypeScript + Vite + Tailwind, Online, sin service worker de caché. Datos de alumnos en el backend, informes con reglas locales (`src/utils/aiPedagogy.ts`). Necesita **Node 22.12+**. Instalación y comandos: `README.md`.
-- **Backend (`backend/`):** TypeScript + Fastify + SQLite/libSQL. Cuentas con usuario inventado, sesión profesional/niño y estado actual de alumnos. API y frontend integrados; contrato en `backend/README.md`, plan en `docs/integracion-backend.md`, despliegue en `docs/despliegue-demo.md`. Sin sincronización offline ni historial de evaluaciones.
+- **Backend (`backend/`):** TypeScript + Fastify + SQLite/libSQL. API independiente con Bearer y sesiones de servidor. Frontend: `VITE_API_BASE_URL`; backend: `ALLOWED_ORIGINS` (incluye localhost si se prueba contra API pública). Sin proxy ni cookies de autenticación. Contrato en `backend/README.md`, integración en `docs/integracion-backend.md`, despliegue API/BBDD en `docs/despliegue-demo.md`. Sin sincronización offline ni historial de evaluaciones.
 - **Traspaso de `feat/backend`:** antes de integrar con el equipo, leer `docs/traspaso-floren.md` (cambios acumulados, pruebas y pendientes) y `docs/i18n.md` (catálogos completos ES/EN/FR/AR/UK). La integración y el merge quedan a Floren; los commits de esta rama no implican su aprobación.
 
 ## 🌿 Ramas
@@ -24,7 +24,7 @@ Este fichero lo leen las IAs de los 4 miembros del equipo (Claude Code, Copilot,
 | Persona | Usuario de GitHub | Zona | Fuerte en |
 |---|---|---|---|
 | Floren | `Floren87` | Madrid (UTC+1) | Programación, coordinación del repo |
-| Miguel | `XxMigue03xX` | Colombia (UTC−5) | Programación, backend (FastAPI) |
+| Miguel | `XxMigue03xX` | Colombia (UTC−5) | Programación, backend (TypeScript/Fastify) |
 | Delia | `deliainclusiveapps` | Ecuador (UTC−5) | Diseño de pantallas, accesibilidad |
 | Cristina | _pendiente_ | Madrid (UTC+1) | Mercado, presentación, vídeo, investigación |
 
