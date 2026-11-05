@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "Talento sin Fronteras",
-  "short_name": "TalentoSF",
+  "name": "KoraMAP",
+  "short_name": "KoraMAP",
   "description": "Detección inclusiva de habilidades, fortalezas e intereses para niños migrantes y neurodivergentes.",
   "start_url": "./",
   "scope": "./",

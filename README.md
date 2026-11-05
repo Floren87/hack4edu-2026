@@ -1,6 +1,8 @@
-# Talento sin Fronteras
+# KoraMAP
 
 Juego visual, por niveles y en varios idiomas que ayuda a descubrir las **habilidades, intereses y fortalezas** de niños y niñas migrantes y refugiados (de 7 a 14 años). Sirve de apoyo al psicólogo, orientador o docente en su inserción escolar: **no diagnostica ni sustituye sus pruebas**. El profesional valida cada observación.
+
+**Demo:** https://floren87.github.io/hack4edu-2026/ (crea una cuenta con un usuario inventado).
 
 Proyecto del equipo para el **#Hack4Edu 2026** (ProFuturo + UPSA), **Reto 20**. Desarrollado del 3 al 5 de noviembre de 2026.
 

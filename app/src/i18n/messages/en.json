@@ -1,5 +1,5 @@
 {
-  "Talento sin Fronteras • Evaluación sin etiquetas ni barreras de idioma": "Talent Without Borders • Discovering strengths beyond language barriers",
+  "KoraMAP • Evaluación sin etiquetas ni barreras de idioma": "KoraMAP • Discovering strengths beyond language barriers",
   "Pensamiento Lógico": "Logical Thinking",
   "Comunicación": "Communication",
   "Colaboración": "Collaboration",
@@ -46,9 +46,9 @@
   "(icono de cuadrado con flecha hacia arriba) en la barra de Safari.": "(square with an upward arrow) button in Safari.",
   "2. Baja un poco y selecciona": "2. Scroll down and select",
   "«Añadir a la pantalla de inicio»": "“Add to Home Screen”",
-  "3. Podrás usar Talento sin Fronteras a pantalla completa. Se necesita conexión a Internet.": "3. You can use Talent Without Borders in full screen. An Internet connection is required.",
+  "3. Podrás usar KoraMAP a pantalla completa. Se necesita conexión a Internet.": "3. You can use KoraMAP in full screen. An Internet connection is required.",
   "Entendido": "Got it",
-  "Mundo Talento sin Fronteras": "Talent Without Borders World",
+  "Mundo KoraMAP": "KoraMAP World",
   "Descargando resumen para la familia...": "Downloading the family summary...",
   "¡Resumen familiar descargado listo para imprimir!": "Family summary downloaded and ready to print!",
   "Resumen adaptado para familias": "A summary for families",
@@ -570,7 +570,7 @@
   "Intereses": "Interests",
   "Ideas para casa": "Ideas for Home",
   "Imprimir / Guardar PDF": "Print / Save PDF",
-  "Talento sin Fronteras": "Talent Without Borders",
+  "KoraMAP": "KoraMAP",
   "Edad": "Age",
   "Insignias": "Badges",
   "actividades completadas": "activities completed",
@@ -636,5 +636,6 @@
   "En palabras del niño o la niña": "In the child's own words",
   "Borrar ahora": "Delete now",
   "Tal como lo escribió, sin traducir ni puntuar. No se guarda en el perfil: solo está en esta pestaña del navegador y se borra al cerrarla. Imprime o descarga el informe para conservarlo.": "As written by the child, not translated or scored. It is not saved in the profile: it only lives in this browser tab and is deleted when you close it. Print or download the report to keep it.",
-  "Tal como lo escribió, sin traducir ni puntuar.": "As written by the child, not translated or scored."
+  "Tal como lo escribió, sin traducir ni puntuar.": "As written by the child, not translated or scored.",
+  "Descubre las habilidades, intereses y fortalezas de cada niño o niña, sin etiquetas ni barreras de idioma.": "Discover each child's skills, interests and strengths, without labels or language barriers."
 }

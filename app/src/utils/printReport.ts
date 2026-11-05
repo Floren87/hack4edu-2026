@@ -88,7 +88,7 @@ export function printableReportHtml(
     article{border:1px solid #dbe1ea;padding:12px;margin:10px 0;border-radius:8px;break-inside:avoid}
     p,li{font-size:13px}footer{border-top:1px solid #dbe1ea;margin-top:20px;font-size:11px} @media print{button{display:none}body{padding:0}}</style>
     </head><body><button onclick="window.print()">${label("Imprimir / Guardar PDF")}</button>
-    <header><h1>${label("Talento sin Fronteras")} · ${title}</h1>
+    <header><h1>${label("KoraMAP")} · ${title}</h1>
     <p>${escapeHtml(student.avatar)} ${escapeHtml(student.nameOrAlias)} · ${formatDate(language, report.generatedAt)}</p>
     <p>${label("Edad")}: ${escapeHtml(student.age ?? '—')} · ${label("Estrellas")}: ${escapeHtml(student.starsCount)} ⭐ · ${label("Insignias")}: ${escapeHtml(student.unlockedBadges.length)}</p>
     <p>${report.completedActivities.length} / ${report.allActivities.length} ${label("actividades completadas")} · ${report.totalSessionsAnalyzed} ${label("sesiones")}</p></header>

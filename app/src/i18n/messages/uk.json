@@ -1,5 +1,5 @@
 {
-  "Talento sin Fronteras • Evaluación sin etiquetas ni barreras de idioma": "Талант без кордонів • Відкриваємо сильні сторони без ярликів і мовних бар’єрів",
+  "KoraMAP • Evaluación sin etiquetas ni barreras de idioma": "KoraMAP • Відкриваємо сильні сторони без ярликів і мовних бар’єрів",
   "Pensamiento Lógico": "Логічне мислення",
   "Comunicación": "Спілкування",
   "Colaboración": "Співпраця",
@@ -46,9 +46,9 @@
   "(icono de cuadrado con flecha hacia arriba) en la barra de Safari.": "(квадрат зі стрілкою вгору) на панелі Safari.",
   "2. Baja un poco y selecciona": "2. Прокрути вниз і вибери",
   "«Añadir a la pantalla de inicio»": "«На початковий екран»",
-  "3. Podrás usar Talento sin Fronteras a pantalla completa. Se necesita conexión a Internet.": "3. Можна відкривати Талант без кордонів на весь екран. Підключення до інтернету залишається потрібним.",
+  "3. Podrás usar KoraMAP a pantalla completa. Se necesita conexión a Internet.": "3. Можна відкривати KoraMAP на весь екран. Підключення до інтернету залишається потрібним.",
   "Entendido": "Зрозуміло",
-  "Mundo Talento sin Fronteras": "Світ Талантів без кордонів",
+  "Mundo KoraMAP": "Світ KoraMAP",
   "Descargando resumen para la familia...": "Завантаження підсумку для родини…",
   "¡Resumen familiar descargado listo para imprimir!": "Підсумок для родини завантажено й підготовлено до друку!",
   "Resumen adaptado para familias": "Підсумок для родини",
@@ -567,7 +567,7 @@
   "Intereses": "Інтереси",
   "Ideas para casa": "Ідеї для дому",
   "Imprimir / Guardar PDF": "Друкувати / Зберегти PDF",
-  "Talento sin Fronteras": "Талант без кордонів",
+  "KoraMAP": "KoraMAP",
   "Edad": "Вік",
   "Insignias": "Значки",
   "actividades completadas": "завершених ігор",
@@ -636,5 +636,6 @@
   "En palabras del niño o la niña": "Словами дитини",
   "Borrar ahora": "Видалити зараз",
   "Tal como lo escribió, sin traducir ni puntuar. No se guarda en el perfil: solo está en esta pestaña del navegador y se borra al cerrarla. Imprime o descarga el informe para conservarlo.": "Так, як написала дитина, без перекладу й оцінювання. Не зберігається в профілі: залишається лише в цій вкладці браузера й видаляється після її закриття. Роздрукуйте або завантажте звіт, щоб зберегти його.",
-  "Tal como lo escribió, sin traducir ni puntuar.": "Так, як написала дитина, без перекладу й оцінювання."
+  "Tal como lo escribió, sin traducir ni puntuar.": "Так, як написала дитина, без перекладу й оцінювання.",
+  "Descubre las habilidades, intereses y fortalezas de cada niño o niña, sin etiquetas ni barreras de idioma.": "Відкривайте навички, інтереси та сильні сторони кожної дитини — без ярликів і мовних бар’єрів."
 }

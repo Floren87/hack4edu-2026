@@ -1,6 +1,6 @@
 # Propuesta de producto · v2
 
-> **Talento sin Fronteras**: un juego visual, sin necesidad de leer ni de hablar el idioma del país, que ayuda al psicólogo, orientador o docente a **descubrir las fortalezas e intereses de niños y niñas que llegan desplazados a otro país**: creatividad, lógica, comunicación, colaboración y resolución de problemas. Los talentos que no salen en las notas.
+> **KoraMAP**: un juego visual, sin necesidad de leer ni de hablar el idioma del país, que ayuda al psicólogo, orientador o docente a **descubrir las fortalezas e intereses de niños y niñas que llegan desplazados a otro país**: creatividad, lógica, comunicación, colaboración y resolución de problemas. Los talentos que no salen en las notas.
 
 ## 1. Para quién
 | Persona | Qué necesita | Qué recibe |

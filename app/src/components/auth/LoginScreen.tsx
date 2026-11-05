@@ -3,6 +3,7 @@ import { ArrowRight, KeyRound, ShieldCheck, UserRound } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { ui } from '../../i18n/account';
 import { translations } from '../../i18n/translations';
+import { localizeText as text } from '../../i18n/localize';
 import { LanguagePicker } from '../common/LanguagePicker';
 import { WorldLogo } from '../common/WorldLogo';
 
@@ -22,7 +23,7 @@ export function LoginScreen() {
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-sky-400/30 bg-gradient-to-tr from-sky-500/20 via-indigo-600/30 to-emerald-500/20 shadow-md shadow-sky-500/10">
             <WorldLogo size={34} />
           </div>
-          <span className="hidden bg-gradient-to-r from-white via-white to-indigo-300 bg-clip-text text-sm font-black tracking-tight text-transparent sm:inline">{brand.appName}</span>
+          <span className="bg-gradient-to-r from-white via-white to-indigo-300 bg-clip-text text-sm font-black tracking-tight text-transparent">{brand.appName}</span>
         </div>
         <LanguagePicker variant="inline" disabled={busy} />
       </header>
@@ -30,6 +31,7 @@ export function LoginScreen() {
       <main className="relative mx-auto flex w-full max-w-lg flex-1 items-center py-8 sm:py-12">
         <section className="w-full space-y-6 rounded-3xl border border-slate-800 bg-slate-900/90 p-6 shadow-2xl backdrop-blur-md sm:p-8">
           <div className="space-y-3 text-center">
+            <p className="mx-auto max-w-sm text-sm font-semibold leading-relaxed text-indigo-200">{text(language, "Descubre las habilidades, intereses y fortalezas de cada niño o niña, sin etiquetas ni barreras de idioma.")}</p>
             <div className="mb-1 inline-flex h-16 w-16 items-center justify-center rounded-3xl border border-indigo-500/40 bg-indigo-950/60 text-indigo-300 shadow-inner">
               <ShieldCheck size={30} />
             </div>
