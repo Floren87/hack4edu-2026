@@ -53,3 +53,15 @@ test('Sin comentario ni emojis no aparece ninguna tarjeta', async ({ page }) => 
   await openResults(page);
   await expect(page.getByTestId('child-comments')).toHaveCount(0);
 });
+
+test('Al cerrar sesión se borran los comentarios de la pestaña', async ({ page }) => {
+  await openCreativityGame(page);
+  await page.getByLabel(/Cuéntanos tu invento/).fill('Un puente para mi hermana');
+  await savedProgress(page, () => page.getByRole('button', { name: 'Guardar mi invento' }).click());
+  await page.getByRole('button', { name: /a seguir jugando/ }).click();
+  await openResults(page);
+  await expect(page.getByTestId('child-comments')).toContainText('Un puente para mi hermana');
+  await page.getByRole('button', { name: 'Cerrar sesión' }).click();
+  await expect(page.getByRole('button', { name: 'Crear cuenta', exact: true })).toBeVisible();
+  expect(await page.evaluate(() => JSON.stringify({ ...sessionStorage }))).not.toContain('puente');
+});

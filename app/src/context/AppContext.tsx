@@ -5,6 +5,7 @@ import { speechManager } from '../utils/speech';
 import { translations } from '../i18n/translations';
 import { localizeEvidence, languages, direction } from '../i18n/localize';
 import { api, ApiError, apiBaseUrl, setSessionCredential } from '../utils/api';
+import { clearAllChildComments } from '../utils/childComments';
 export type ActiveView = 'child_hub' | 'worlds_map' | 'minigame' | 'world_activity' | 'teacher_dashboard' | 'family_portal' | 'passport' | 'profile_manager';
 export const EFFORT_BADGES: Record<string, Badge> = {
  perseverance: { id: 'perseverance', name: '💪 Gran Perseverancia', description: 'No te rendiste y probaste varias alternativas ante el reto.', icon: '💪', category: 'effort' },
@@ -136,9 +137,9 @@ function useModel() {
  async function unlock(password: string) { await action(async()=>{ await flush(); await api('/mode/professional','POST',{password}); notify(); await refresh(); }); }
  async function login(username: string,password: string,register: boolean) { await action(async()=>{
   if(register) await api('/auth/register','POST',{username,password});
-  const next = await api<Session & {token:string}>('/auth/login','POST',{username,password}); setSessionCredential({token:next.token,expiresAt:next.expiresAt}); notify(); await refresh();
+  const next = await api<Session & {token:string}>('/auth/login','POST',{username,password}); setSessionCredential({token:next.token,expiresAt:next.expiresAt}); clearAllChildComments(); notify(); await refresh();
  }); }
- async function logout() { await action(async()=>{ await flush(); await api('/auth/logout','POST',{}); setSessionCredential(null); notify(); await refresh(); }); }
+ async function logout() { await action(async()=>{ await flush(); await api('/auth/logout','POST',{}); setSessionCredential(null); clearAllChildComments(); notify(); await refresh(); }); }
  async function saveStudent(input: {nameOrAlias:string;avatar:string;preferredLanguage:Language;age:number}, id?: string) { await action(async()=>{
   await flush();
   if(id) { const result = await api<{version:number}>(`/students/${id}`, 'PUT', {...input,version:versions.current[id]}); versions.current[id] = result.version; await loadStudent(id); }
