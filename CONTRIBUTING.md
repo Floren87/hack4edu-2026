@@ -1,5 +1,7 @@
 # Cómo contribuir
 
+**Estado al 5 de noviembre, después del PR #36:** `develop` quedó integrada y fue eliminada. Para esta entrega, Miguel autoriza rama de tarea desde `origin/main` y PR hacia `main`; no se recrea `develop` ni se hace push directo a `main`. Las instrucciones con `develop` de abajo describen el flujo previo y solo vuelven a aplicar si el equipo restaura esa rama. La revisión por otra persona sigue siendo obligatoria. Base vigente: [AGENTS.md](AGENTS.md).
+
 ## Ramas
 | Rama | Para qué | Quién escribe |
 |---|---|---|

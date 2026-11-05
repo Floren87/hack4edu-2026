@@ -1,5 +1,7 @@
 # Backend · demo conectada
 
+**Estado final:** API TypeScript/Fastify externa, base remota Turso y aplicación **online, sin modo offline**. Arquitectura, tecnologías y límites en [arquitectura.md](../docs/arquitectura.md); tratamiento de datos y hashes en [datos-y-seguridad.md](../docs/datos-y-seguridad.md). El trabajo ya está integrado en `main`; `develop` fue eliminada después del PR #36. Verificar la rama de Render antes de un nuevo redeploy. Las referencias de rama originales de abajo son contexto histórico.
+
 Implementado en `feat/backend`, desde `develop`. El frontend está integrado: login inicial, CRUD de alumnos en modo profesional y juegos aislados en modo niño. La propuesta antigua de FastAPI e historial versionado queda sustituida por este alcance aprobado: TypeScript, una cuenta profesional, alumnos con pseudónimo, estado actual y modo niño protegido por contraseña.
 
 ## Arranque

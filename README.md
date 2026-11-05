@@ -4,6 +4,8 @@ Juego visual, por niveles y en varios idiomas que ayuda a descubrir las **habili
 
 **Demo:** https://floren87.github.io/hack4edu-2026/ (crea una cuenta con un usuario inventado).
 
+**Requiere Internet. No funciona offline.** Es una aplicación web con frontend en GitHub Pages, API externa TypeScript/Fastify en Render y base SQLite/libSQL remota en Turso. Instalar un acceso directo no habilita guardado ni uso completo sin conexión.
+
 Proyecto del equipo para el **#Hack4Edu 2026** (ProFuturo + UPSA), **Reto 20**. Desarrollado del 3 al 5 de noviembre de 2026.
 
 > ⚠️ **Prototipo.** Los porcentajes no son puntuaciones psicométricas validadas. Usa siempre **pseudónimos**, nunca nombres reales ni datos de salud de menores.
@@ -18,12 +20,30 @@ Proyecto del equipo para el **#Hack4Edu 2026** (ProFuturo + UPSA), **Reto 20**. 
 - **Idiomas:** español, inglés, francés, árabe (de derecha a izquierda) y ucraniano, en acceso, gestión, juegos, observaciones e informes descargados. Textos con voz mediante la síntesis de voz del dispositivo.
 - **Acceso:** login como primera pantalla. Cuenta con usuario inventado y contraseña; sin email ni datos reales.
 - **Profesional:** alta, edición y borrado de alumnos con pseudónimos; consulta/exportación de resultados y última revisión.
-- **Niño:** solo juegos del alumno seleccionado. No hay paneles, familia ni selector de alumnos. Volver al adulto requiere contraseña comprobada por el servidor.
+- **Niño:** solo juegos del alumno seleccionado. No hay paneles, familia ni selector de alumnos. Volver al Perfil Docente requiere contraseña comprobada por el servidor y conexión.
 - **Conectado:** estado guardado en SQLite/libSQL; no se utiliza localStorage para expedientes ni service worker para cachear la aplicación.
 - **Desacoplado:** una URL pública `VITE_API_BASE_URL` conecta la interfaz con la API local o publicada, sin proxy. Sesión Bearer de servidor; el token se guarda por pestaña en sessionStorage.
 - **Informes:** siguen generándose con reglas locales sobre los datos del alumno; no hay IA externa ni histórico de evaluaciones.
 
 [API y configuración](backend/README.md) · [Integración realizada](docs/integracion-backend.md) · [Despliegue gratuito](docs/despliegue-demo.md) · [Traspaso para Floren y Claude Code](docs/traspaso-floren.md)
+
+## Tecnologías, arquitectura y límites
+
+| Parte | Implementación |
+|---|---|
+| Interfaz | React 19 + TypeScript + Vite + Tailwind; ES/EN/FR/AR/UK. |
+| API externa | Node 22.12+, TypeScript, Fastify y validación Zod; sesiones de servidor con Bearer. |
+| Persistencia | SQLite/libSQL con `@libsql/client`; Turso remoto en la demo y archivo local en desarrollo. |
+| Informes | Reglas interpretables en el navegador y exportación HTML/PDF con html2pdf.js. No se consulta un modelo de IA externo. |
+| Pruebas | node:test, Playwright y GitHub Actions; API/base en memoria en E2E. |
+
+La [arquitectura final](docs/arquitectura.md) incluye diagrama, flujo de datos, tablas y límites. No hay sincronización offline, historial versionado de evaluaciones, recuperación de contraseña ni administración compartida de centros. La información pendiente de guardar vive en memoria y puede perderse al cerrar/recargar; esperar la confirmación «Guardado». Los informes descargados pueden conservarse localmente, pero eso no convierte la aplicación en offline.
+
+### Datos y protección
+
+No se solicitan nombres reales, email, documentos, fotos ni datos de salud. Se usan usuarios inventados y pseudónimos, con edad opcional, progreso y observaciones educativas. **No se garantiza anonimización irreversible:** un centro podría relacionar el pseudónimo con un niño, y los campos libres no eliminan datos identificativos automáticamente.
+
+Las contraseñas se guardan como **hash scrypt con sal aleatoria**, nunca en texto original; los tokens de sesión se guardan como SHA-256 en el servidor. La API verifica propietario y modo, exige contraseña para volver al profesional y limita intentos. El prototipo necesita revisión operativa y de protección de datos antes de usar información de menores reales. Ver [datos y seguridad](docs/datos-y-seguridad.md) y la [política pública](app/public/privacidad.html); no se declara una certificación de cumplimiento.
 
 ## Marco de referencia
 
@@ -71,6 +91,7 @@ Todos se ejecutan dentro de `app/`:
 | `npm test` | Reglas, idiomas, exportaciones y cliente HTTP/sesión/configuración de API |
 | `npm run test:e2e` | Recorridos con API real y base temporal, en puertos 3100/3101 libres. En Windows usa Edge; en Linux instalar Chromium con `npx playwright install chromium`. Instalar antes las dependencias de `backend/`. |
 | `npm run build` | Versión de producción en `app/dist/` |
+| `npm run brand:generate` | Regenera SVG/PNG del logo aprobado sin recortarlo; requiere Edge/Chromium de Playwright. |
 | `npm run preview` | Sirve el build estático; la API es independiente. Autorizar el origen de preview (habitualmente localhost:4173) en el backend |
 
 ### Problemas habituales
@@ -78,7 +99,7 @@ Todos se ejecutan dentro de `app/`:
 - **La app no se actualiza después de instalarla como PWA:** borra la caché del sitio en el navegador.
 
 ## Despliegue
-La **API Render y BBDD Turso ya están publicadas** por Miguel. El frontend final se publica en **[GitHub Pages](https://floren87.github.io/hack4edu-2026/)** al integrar el PR #24 hacia `main`; el build usa Render por defecto y admite `VITE_API_BASE_URL` como override público. Render despliega la rama estable `develop` y permite `ALLOWED_ORIGINS=http://localhost:3000,https://floren87.github.io` (preflight 204 verificado). No usar la rama eliminada `feat/backend`, ni incluir `/hack4edu-2026/` en el origen. No se necesita proxy ni secretos en el frontend. La CI comprueba tipos, tests y build de [app](.github/workflows/ci.yml) y [backend](.github/workflows/backend.yml); las E2E se ejecutan aparte. Seguir [operación y despliegue](docs/despliegue-demo.md) para comprobar el commit y el límite de autenticación publicados.
+La **API Render y BBDD Turso ya están publicadas** por Miguel; el frontend está en **[GitHub Pages](https://floren87.github.io/hack4edu-2026/)** y se actualiza al integrar en `main`. El build usa Render por defecto y admite `VITE_API_BASE_URL` como override público. CORS permite `http://localhost:3000,https://floren87.github.io`, sin `/hack4edu-2026/` en el origen. `develop` fue integrada y eliminada después del PR #36: antes del próximo redeploy de Render, revisar que su Branch apunte a `main`. No se cambia Render ni Turso en esta entrega. No se necesita proxy ni secretos en el frontend. La CI comprueba tipos, unitarios, build y navegador con API/base en memoria de [app](.github/workflows/ci.yml), y tipos/tests/build de [backend](.github/workflows/backend.yml). Seguir [operación y despliegue](docs/despliegue-demo.md).
 
 ## Estructura
 ```
@@ -103,6 +124,8 @@ docs/                     Documentación del proyecto (ver abajo)
 ## Documentación
 | Documento | Qué contiene |
 |---|---|
+| [`docs/arquitectura.md`](docs/arquitectura.md) | Arquitectura final online, tecnologías, despliegue, esquema y límites del prototipo |
+| [`docs/datos-y-seguridad.md`](docs/datos-y-seguridad.md) | Datos almacenados, pseudónimos, hash de contraseñas, controles y pendientes de protección de datos |
 | [`docs/propuesta.md`](docs/propuesta.md) | Propuesta de producto: usuarios, cumplimiento del Reto 20 frase a frase, criterios del jurado, minijuegos, IA ética y alcance |
 | [`docs/decisiones.md`](docs/decisiones.md) | Registro de decisiones del equipo (manda sobre todo lo demás) |
 | [`docs/estado.md`](docs/estado.md) | Quién hace qué ahora y diario de sesiones |
@@ -124,7 +147,7 @@ docs/                     Documentación del proyecto (ver abajo)
 | Miguel (`XxMigue03xX`) | Colombia 🇨🇴 | Programación y backend |
 
 ## Cómo contribuir
-Trabajamos en la rama **`develop`**. Cada tarea va en su propia rama, que sale de `develop` y vuelve a ella con un Pull Request revisado. `main` solo recibe versiones ya comprobadas. Detalles en [`CONTRIBUTING.md`](CONTRIBUTING.md). Si usas una IA, haz que lea [`AGENTS.md`](AGENTS.md) y pregúntale «¿con qué sigo?».
+Tras integrar el PR #36, `develop` fue eliminada y `main` contiene el trabajo del equipo. Esta entrega parte de `origin/main` en una rama independiente y vuelve mediante **PR revisado hacia `main`**, por autorización de Miguel. No se hacen commits ni push directos a ramas protegidas. Si el equipo restaura `develop`, actualizar la base de trabajo. Detalles en [`CONTRIBUTING.md`](CONTRIBUTING.md) y [`AGENTS.md`](AGENTS.md).
 
 ## Licencia
 Código: [MIT](LICENSE). Documentación: CC BY-NC-SA 3.0 (según las bases del hackathon).
