@@ -1,6 +1,6 @@
 # Traspaso a Floren y Claude Code · feat/backend
 
-**Estado final del 5 de noviembre:** las entregas previas ya están integradas en `main`, incluidos #30/#31 y la integración #36. `develop` fue eliminada. Esta entrega de logo aprobado y documentación final parte de `main` en `feat/logo-arquitectura-online` y vuelve por PR hacia `main`, autorizado por Miguel. Leer [arquitectura final online](arquitectura.md) y [datos y seguridad](datos-y-seguridad.md); los bloques anteriores de despliegue pendiente/Netlify/develop de este documento son contexto histórico. API actual comprobada con health 200, CORS de Pages y límite 60/min; verificar la rama de Render antes de volver a desplegar. No hay modo offline: los perfiles se guardan remotamente y no se llama a un modelo de IA externo.
+**Estado final del 5 de noviembre:** las entregas previas ya están integradas en `main`, incluidos #30/#31 y la integración #36. `develop` fue eliminada. Esta entrega de logo aprobado y documentación final parte de `main` en `feat/logo-arquitectura-online` y vuelve por PR hacia `main`, autorizado por Miguel. Leer [arquitectura final online](../arquitectura.md) y [datos y seguridad](../datos-y-seguridad.md); los bloques anteriores de despliegue pendiente/Netlify/develop de este documento son contexto histórico. API actual comprobada con health 200, CORS de Pages y límite 60/min; verificar la rama de Render antes de volver a desplegar. No hay modo offline: los perfiles se guardan remotamente y no se llama a un modelo de IA externo.
 
 **Fecha:** 4 de noviembre de 2026, Bogotá. **Objetivo:** facilitar las pruebas y la integración del equipo del día siguiente. Este documento resume todo el trabajo desde la construcción del backend; no solo el último sprint.
 
@@ -11,7 +11,7 @@
 - Rama: **`feat/backend`**, creada desde `develop` en `d9b5040`. No se ha fusionado posteriormente `develop` ni se ha modificado `main`.
 - Miguel autorizó continuar frontend e idiomas en esta rama y subir sus commits; ahora autoriza preparar el **PR `feat/backend` → `develop`**, tras validar la conexión pública y documentarla. **La integración con las ramas del equipo y el merge los hará Floren.** No se fusionan aquí las ramas concurrentes.
 - Decisión vigente: TypeScript, demo conectada, cuenta con usuario inventado y contraseña, alumnos con pseudónimos y **estado actual**. Sin offline, historial de evaluaciones, recuperación por email ni IA externa.
-- Referencia completa: [decisiones](decisiones.md), [API](../backend/README.md), [integración frontend](integracion-backend.md), [despliegue](despliegue-demo.md).
+- Referencia completa: [decisiones](../decisiones.md), [API](../../backend/README.md), [integración frontend](integracion-backend.md), [despliegue](despliegue-demo.md).
 
 **Actualización posterior al sprint de idiomas:** Miguel aprobó el desacoplamiento. El contrato vigente es **Bearer + `VITE_API_BASE_URL` + `ALLOWED_ORIGINS`**, sin proxy ni cookies. Leer las guías enlazadas antes de publicar: el frontend ya puede apuntar desde localhost a una API remota. Las versiones antiguas de frontend con cookie/CSRF requieren actualizarse y volver a iniciar sesión; no borrar las cuentas ni los alumnos.
 
@@ -71,7 +71,7 @@ npm run dev
 
 Abrir **http://localhost:3000/**; el cliente conecta directamente a Render, sin backend local ni `.env.local`. No hace falta que la API sirva el frontend. Una cuenta nueva no tiene alumnos: crearlos con datos ficticios.
 
-Para desarrollar todo localmente, iniciar también `backend/` según su [README](../backend/README.md), definir `VITE_API_BASE_URL=http://localhost:3001/api` en `app/.env.local` y reiniciar Vite. `ALLOWED_ORIGINS` de esa API debe incluir el origen del navegador. No sobrescribir configuraciones existentes ni copiar secretos al frontend.
+Para desarrollar todo localmente, iniciar también `backend/` según su [README](../../backend/README.md), definir `VITE_API_BASE_URL=http://localhost:3001/api` en `app/.env.local` y reiniciar Vite. `ALLOWED_ORIGINS` de esa API debe incluir el origen del navegador. No sobrescribir configuraciones existentes ni copiar secretos al frontend.
 
 ## Validación del sprint
 

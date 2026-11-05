@@ -25,7 +25,7 @@ Proyecto del equipo para el **#Hack4Edu 2026** (ProFuturo + UPSA), **Reto 20**. 
 - **Desacoplado:** una URL pública `VITE_API_BASE_URL` conecta la interfaz con la API local o publicada, sin proxy. Sesión Bearer de servidor; el token se guarda por pestaña en sessionStorage.
 - **Informes:** siguen generándose con reglas locales sobre los datos del alumno; no hay IA externa ni histórico de evaluaciones.
 
-[API y configuración](backend/README.md) · [Integración realizada](docs/integracion-backend.md) · [Despliegue gratuito](docs/despliegue-demo.md) · [Traspaso para Floren y Claude Code](docs/traspaso-floren.md)
+[API y configuración](backend/README.md) · [Integración realizada](docs/equipo/integracion-backend.md) · [Despliegue gratuito](docs/equipo/despliegue-demo.md) · [Traspaso para Floren y Claude Code](docs/equipo/traspaso-floren.md)
 
 ## Tecnologías, arquitectura y límites
 
@@ -99,7 +99,7 @@ Todos se ejecutan dentro de `app/`:
 - **La app no se actualiza después de instalarla como PWA:** borra la caché del sitio en el navegador.
 
 ## Despliegue
-La **API Render y BBDD Turso ya están publicadas** por Miguel; el frontend está en **[GitHub Pages](https://floren87.github.io/hack4edu-2026/)** y se actualiza al integrar en `main`. El build usa Render por defecto y admite `VITE_API_BASE_URL` como override público. CORS permite `http://localhost:3000,https://floren87.github.io`, sin `/hack4edu-2026/` en el origen. `develop` fue integrada y eliminada después del PR #36: antes del próximo redeploy de Render, revisar que su Branch apunte a `main`. No se cambia Render ni Turso en esta entrega. No se necesita proxy ni secretos en el frontend. La CI comprueba tipos, unitarios, build y navegador con API/base en memoria de [app](.github/workflows/ci.yml), y tipos/tests/build de [backend](.github/workflows/backend.yml). Seguir [operación y despliegue](docs/despliegue-demo.md).
+La **API Render y BBDD Turso ya están publicadas** por Miguel; el frontend está en **[GitHub Pages](https://floren87.github.io/hack4edu-2026/)** y se actualiza al integrar en `main`. El build usa Render por defecto y admite `VITE_API_BASE_URL` como override público. CORS permite `http://localhost:3000,https://floren87.github.io`, sin `/hack4edu-2026/` en el origen. `develop` fue integrada y eliminada después del PR #36: antes del próximo redeploy de Render, revisar que su Branch apunte a `main`. No se cambia Render ni Turso en esta entrega. No se necesita proxy ni secretos en el frontend. La CI comprueba tipos, unitarios, build y navegador con API/base en memoria de [app](.github/workflows/ci.yml), y tipos/tests/build de [backend](.github/workflows/backend.yml). Seguir [operación y despliegue](docs/equipo/despliegue-demo.md).
 
 ## Estructura
 ```
@@ -118,23 +118,22 @@ docs/                     Documentación del proyecto (ver abajo)
 
 ### Añadir o cambiar textos
 - Catálogos: `translations.ts` (claves del prototipo), `account/*.json` (controles de cuenta) y `messages/*.json` (juegos, observaciones e informes), dentro de `app/src/i18n/`.
-- `localizeText(idioma, mensaje, valores)` traduce mensajes escritos por la aplicación y rellena sus parámetros. `localizeEvidence` reconoce observaciones guardadas en cualquiera de los cinco idiomas. Cada frase nueva requiere traducción en todos los idiomas; `npm test` comprueba la cobertura. Guía: [docs/i18n.md](docs/i18n.md).
+- `localizeText(idioma, mensaje, valores)` traduce mensajes escritos por la aplicación y rellena sus parámetros. `localizeEvidence` reconoce observaciones guardadas en cualquiera de los cinco idiomas. Cada frase nueva requiere traducción en todos los idiomas; `npm test` comprueba la cobertura. Guía: [docs/equipo/i18n.md](docs/equipo/i18n.md).
 - Los pseudónimos y las notas libres del profesional no se traducen. Los identificadores de actividades y métricas no dependen del idioma.
 
 ## Documentación
+Índice completo y orden de lectura: [`docs/README.md`](docs/README.md).
+
 | Documento | Qué contiene |
 |---|---|
+| [`docs/propuesta.md`](docs/propuesta.md) | Propuesta de producto: usuarios, cumplimiento del Reto 20 frase a frase, criterios del jurado, marco de referencia (DUA y ODS 4), minijuegos, IA ética y alcance |
 | [`docs/arquitectura.md`](docs/arquitectura.md) | Arquitectura final online, tecnologías, despliegue, esquema y límites del prototipo |
 | [`docs/datos-y-seguridad.md`](docs/datos-y-seguridad.md) | Datos almacenados, pseudónimos, hash de contraseñas, controles y pendientes de protección de datos |
-| [`docs/propuesta.md`](docs/propuesta.md) | Propuesta de producto: usuarios, cumplimiento del Reto 20 frase a frase, criterios del jurado, minijuegos, IA ética y alcance |
+| [`docs/investigacion/`](docs/investigacion/) | Entrevistas, mapas de empatía y tests profesionales de referencia |
 | [`docs/decisiones.md`](docs/decisiones.md) | Registro de decisiones del equipo (manda sobre todo lo demás) |
-| [`docs/estado.md`](docs/estado.md) | Quién hace qué ahora y diario de sesiones |
-| [`docs/traspaso-floren.md`](docs/traspaso-floren.md) | Resumen de todos los cambios desde el backend y pendientes para la integración del equipo |
-| [`docs/i18n.md`](docs/i18n.md) | Arquitectura, mantenimiento y pruebas de los cinco idiomas |
-| [`docs/backend-profesionales.md`](docs/backend-profesionales.md) | Propuesta histórica FastAPI/historial, sustituida por el alcance implementado de [backend/README.md](backend/README.md) |
-| [`docs/investigacion/entrevistas.md`](docs/investigacion/entrevistas.md) | Entrevistas con familias |
-| [`docs/investigacion/mapas-de-empatia.md`](docs/investigacion/mapas-de-empatia.md) | Mapas de empatía del niño, la familia y el profesional |
-| [`docs/investigacion/tests-de-referencia.md`](docs/investigacion/tests-de-referencia.md) | Tests profesionales de referencia y cómo nos situamos frente a ellos |
+| [`docs/estado.md`](docs/estado.md) | Quién hace qué, próximos pasos, mejoras futuras y diario de sesiones |
+| [`docs/equipo/`](docs/equipo/) | Notas técnicas internas: integración del backend, despliegue, idiomas y descripciones de PR |
+| [`backend/README.md`](backend/README.md) | API: contrato, configuración y seguridad |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Ramas, Pull Requests y revisiones |
 | [`AGENTS.md`](AGENTS.md) | Contexto y reglas para las IAs del equipo (`CLAUDE.md` lo importa) |
 
