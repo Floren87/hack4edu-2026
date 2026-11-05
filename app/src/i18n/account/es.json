@@ -1,9 +1,9 @@
 {
   "login": "Iniciar sesión",
   "register": "Crear cuenta",
-  "username": "Usuario inventado",
+  "username": "Usuario anónimo",
   "password": "Contraseña",
-  "loginHint": "Acceso para profesionales. Usa un usuario inventado, sin datos reales.",
+  "loginHint": "Acceso para profesionales. Usa un usuario anónimo, sin datos reales.",
   "registerHint": "Usuario de 3–32 letras minúsculas, números, guiones o _. Contraseña de 10–128 caracteres. Sin recuperación por email.",
   "loading": "Conectando…",
   "retry": "Reintentar",

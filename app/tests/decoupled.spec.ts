@@ -7,7 +7,7 @@ async function register(page:Page,suffix:string) {
   await page.goto('/');
   await page.getByRole('group').getByRole('button',{name:'English',exact:true}).click();
   await page.getByRole('button',{name:'Create account',exact:true}).click();
-  await page.getByLabel('Made-up username').fill(`cross-${suffix}-${Date.now()}`);
+  await page.getByLabel('Anonymous username').fill(`cross-${suffix}-${Date.now()}`);
   await page.getByLabel('Password',{exact:true}).fill(password);
   await page.getByRole('button',{name:'Create account',exact:true}).click();
   await expect(page.getByRole('heading',{name:'My students'})).toBeVisible();

@@ -84,7 +84,7 @@ for (const language of languages) test(`${language}: ten complete games, live la
   await page.goto('/');
   await page.getByRole('group').getByRole('button', { name: 'English', exact: true }).click();
   await page.getByRole('button', { name: 'Create account', exact: true }).click();
-  await page.getByLabel('Made-up username').fill(`i18n-${language}-${Date.now()}`);
+  await page.getByLabel('Anonymous username').fill(`i18n-${language}-${Date.now()}`);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Create account', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'My students' })).toBeVisible();

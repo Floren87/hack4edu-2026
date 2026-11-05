@@ -11,7 +11,7 @@ async function register(page: Page, username: string, password: string) {
   await page.goto('/');
   await page.getByRole('group').getByRole('button', { name: 'English', exact: true }).click();
   await page.getByRole('button', { name: 'Create account', exact: true }).click();
-  await page.getByLabel('Made-up username').fill(username);
+  await page.getByLabel('Anonymous username').fill(username);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Create account', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'My students', exact: true })).toBeVisible();
@@ -132,7 +132,7 @@ test('Render/libSQL: real browser CRUD, child lock, persistence, Arabic exports 
     await page.getByRole('button', { name: ui('ar').logout, exact: true }).click();
     await expect(page.getByRole('heading', { name: ui('ar').login, exact: true })).toBeVisible();
     await page.getByRole('group').getByRole('button', { name: 'English', exact: true }).click();
-    await page.getByLabel('Made-up username').fill(username);
+    await page.getByLabel('Anonymous username').fill(username);
     await page.getByLabel('Password', { exact: true }).fill(password);
     await page.getByRole('button', { name: 'Sign in', exact: true }).click();
     await expect(page.getByRole('heading', { name: editedAlias, exact: true })).toBeVisible();
