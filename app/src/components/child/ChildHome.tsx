@@ -161,7 +161,7 @@ export const ChildHome: React.FC = () => {
         <div className="space-y-2 text-center sm:text-left">
           <div className="flex items-center justify-center sm:justify-start gap-2 text-indigo-400 text-xs font-bold uppercase tracking-wider">
             <MapPin size={16} />
-            <span>{' '}{text(language, "Mundos de Curiosidad e Intereses (R2)")}{' '}</span>
+            <span>{' '}{text(language, "Mundos de Curiosidad e Intereses")}{' '}</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-white">
             {t.worldsMapTitle}
